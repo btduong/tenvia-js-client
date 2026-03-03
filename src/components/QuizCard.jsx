@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function QuizCard({ question }) {
+export default function QuizCard({ question, onResult }) {
     const [selectedOptionId, setSelectedOptionId] = useState(null);
     const [result, setResult] = useState(null);
 
@@ -85,12 +85,20 @@ export default function QuizCard({ question }) {
             )}
           </div>
     
-          {/* 4. Result Section stays at the bottom */}
+          {/* 4. Result Section stays at the bottom and next question button */}
           {result && (
             <div style={{ marginTop: '10px', color: result.correct ? 'green' : 'red' }}>
               <hr />
               <p>{result.correct ? "ĐÚNG!" : "SAI!"}</p>
               <p>Giải thích: {result.explanation}</p>
+
+              {/* Next question button */}
+              <button 
+              className="next-btn" 
+              onClick={() => onResult(result.correct)}
+            >
+              Next question
+            </button>
             </div>
           )}
         </div>
