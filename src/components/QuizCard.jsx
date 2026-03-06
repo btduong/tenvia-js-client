@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function QuizCard({ question, onResult }) {
+export default function QuizCard({ question, onResult, sessionId }) {
     const [selectedOptionId, setSelectedOptionId] = useState(null);
     const [result, setResult] = useState(null);
 
@@ -22,11 +22,10 @@ export default function QuizCard({ question, onResult }) {
 
     const handleVerify = async () => {
         try {
-            const response = await fetch('http://localhost:8080/questions/verify', {
+            const response = await fetch(`http://localhost:8080/sessions/${sessionId}/answer`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    questionId: question.id,
                     selectedOptionId: selectedOptionId
                 })
             });
