@@ -1,13 +1,13 @@
 import { useState } from 'react';
 
-export default function QuizCard({ question, onResult, sessionId }) {
+export default function QuizCard({ question, onResult, sessionId, fiftyFiftyUsed, onFiftyFiftyUsed }) {
     const [selectedOptionId, setSelectedOptionId] = useState(null);
     const [result, setResult] = useState(null);
 
     const [hiddenOptionIds, setHiddenOptionIds] = useState([]);
 
     const handleFiftyFifty = async () => {
-        const response = await fetch(`http://localhost:8080/questions/${question.id}/fifty-fifty`, {
+        const response = await fetch(`http://localhost:8080/sessions/${sessionId}/${question.id}/fifty-fifty`, {
             method: 'POST'
         });
         const remainingIds = await response.json();
@@ -18,6 +18,7 @@ export default function QuizCard({ question, onResult, sessionId }) {
             .filter(id => !remainingIds.includes(id));
 
         setHiddenOptionIds(toHide);
+        onFiftyFiftyUsed();
     };
 
     const handleVerify = async () => {
@@ -75,7 +76,7 @@ export default function QuizCard({ question, onResult, sessionId }) {
                 <button 
                   type="button" 
                   onClick={handleFiftyFifty} 
-                  disabled={hiddenOptionIds.length > 0} // Disable if already used
+                  disabled={fiftyFiftyUsed} // Disable if already used
                   style={{ marginLeft: '10px' }}
                 >
                   50/50 Lifeline
