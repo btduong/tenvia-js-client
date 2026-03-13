@@ -1,10 +1,13 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function QuizCard({ question, onResult, sessionId, fiftyFiftyUsed, onFiftyFiftyUsed }) {
     const [selectedOptionId, setSelectedOptionId] = useState(null);
     const [result, setResult] = useState(null);
-
     const [hiddenOptionIds, setHiddenOptionIds] = useState([]);
+
+    // Use nagivator to different path ie /leaderboard, /home
+    const navigate = useNavigate();
 
     const handleFiftyFifty = async () => {
         const response = await fetch(`http://localhost:8080/sessions/${sessionId}/${question.id}/fifty-fifty`, {
@@ -101,6 +104,7 @@ export default function QuizCard({ question, onResult, sessionId, fiftyFiftyUsed
             </button>
             </div>
           )}
+          <button onClick={() => navigate('/')}>Back to Home</button>
         </div>
       );
 }

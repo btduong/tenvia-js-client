@@ -1,7 +1,10 @@
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router';
 import { useState, useEffect } from 'react';
 import './App.css'
 
 import QuizCard from './components/QuizCard';
+import Leaderboard from './components/Leaderboard';
+import Home from './components/Home';
 
 function App() {
   const [questions, setQuestions] = useState([]);
@@ -10,7 +13,7 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
-  
+
 
   // useEffect(() => {
   //   // Gọi API lấy 10 câu hỏi ngẫu nhiên khi trang web load
@@ -31,8 +34,13 @@ function App() {
     setQuestions(data.questions); // data contains sessionId, firstQuestion, and fiftyFiftyUsed status
     setLoading(false);
     setSessionId(data.id);
-    setHasFiftyFiftyOption(data.fiftyFiftyUsed);
+    setFiftyFiftyUsed(data.fiftyFiftyUsed);
   };
+
+  const showTopScores = async () => {
+    const res = await fetch('http://localhost:8080/leaderboard', { method: 'GET' });
+    const data = await res.json();
+  }
 
 
   const handleAnswer = (isCorrect) => {
@@ -46,7 +54,7 @@ function App() {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
-      setGameState('WON');
+      // setGameState('WON');
     }
   };
 
@@ -57,16 +65,37 @@ function App() {
 
   // if (loading) return <div className="text-center mt-10">Đang tải câu hỏi...</div>;
 
-  return (
+  // return (
 
+  //   <div>
+  //     {!sessionId ? <button onClick={startNewGame}> Start Quiz</button> :
+  //       <div className="container mx-auto p-4">
+  //         <h1 className="text-3xl font-bold text-center mb-8">Trắc nghiệm Kiến thức</h1>
+  //         <h2>Question: {currentIndex + 1}</h2>
+  //         <div className="grid gap-6">
+  //           {<QuizCard key={questions[currentIndex].id} question={questions[currentIndex]} onResult={handleAnswer} sessionId={sessionId} fiftyFiftyUsed={fiftyFiftyUsed} onFiftyFiftyUsed={handleFiftyFiftyUsed} />}
+  //         </div>
+  //       </div>
+  //     }
+
+  //     {/* <button onClick={showTopScores}>Top scores</button> */}
+  //   </div>
+
+  // );
+
+  return (
     <div>
+
+
       {!sessionId ? <button onClick={startNewGame}> Start Quiz</button> :
-        <div className="container mx-auto p-4">
-          <h1 className="text-3xl font-bold text-center mb-8">Trắc nghiệm Kiến thức</h1>
-          <h2>Question: {currentIndex + 1}</h2>
-          <div className="grid gap-6">
-            {<QuizCard key={questions[currentIndex].id} question={questions[currentIndex]} onResult={handleAnswer} sessionId={sessionId} fiftyFiftyUsed={fiftyFiftyUsed} onFiftyFiftyUsed={handleFiftyFiftyUsed} />}
-          </div>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {/* <Route path="/quiz" element={<QuizCard />} /> */}
+            <Route path="/quiz" element={<QuizCard key={questions[currentIndex].id} question={questions[currentIndex]} onResult={handleAnswer} sessionId={sessionId} fiftyFiftyUsed={fiftyFiftyUsed} onFiftyFiftyUsed={handleFiftyFiftyUsed} />} />
+
+            <Route path="/leaderboard" element={<Leaderboard />} />
+          </Routes>
         </div>
       }
     </div>
