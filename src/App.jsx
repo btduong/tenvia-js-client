@@ -101,19 +101,24 @@ function App() {
     <div>
       {!user ? (
         <div className="login-container">
-          <input type='text' placeholder='Enter username' onChange={(e) => setTypedUsername(e.target.value)}/>
+          <input type='text' placeholder='Enter username' onChange={(e) => setTypedUsername(e.target.value)} />
           <button onClick={handleLogin} disabled={!typedUsername.trim()}>Login</button>
-        </div> )
-        : ( <>
-          {!sessionId ? (<button onClick={startNewGame}> Start Quiz</button>) : 
-        
-        <div className="App">
-          <Routes>
-            <Route path="/" element={<Home hasActivateSession={!sessionId} onStartNewGame={startNewGame}/>} />
-            <Route path="/quiz" element={<QuizCard key={questions[currentIndex].id} question={questions[currentIndex]} onResult={handleAnswer} sessionId={sessionId} fiftyFiftyUsed={fiftyFiftyUsed} onFiftyFiftyUsed={handleFiftyFiftyUsed} />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-          </Routes>
-        </div> }</>)
+        </div>)
+        : (<>
+          {!sessionId ? (<button onClick={startNewGame}> Start Quiz</button>) :
+
+            <div className="App">
+              <Routes>
+                <Route path="/" element={<Home hasActivateSession={!sessionId} onStartNewGame={startNewGame} />} />
+                <Route path="/quiz" element={
+                  <div>
+                    <div><h2>Question: {currentIndex + 1} / {questions.length}</h2></div>
+                    <QuizCard key={questions[currentIndex].id} question={questions[currentIndex]} onResult={handleAnswer} sessionId={sessionId} fiftyFiftyUsed={fiftyFiftyUsed} onFiftyFiftyUsed={handleFiftyFiftyUsed} />
+                  </div>
+                } />
+                <Route path="/leaderboard" element={<Leaderboard />} />
+              </Routes>
+            </div>}</>)
       }
     </div>
 
