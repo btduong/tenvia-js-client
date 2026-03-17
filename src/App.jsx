@@ -5,8 +5,13 @@ import './App.css'
 import QuizCard from './components/QuizCard';
 import Leaderboard from './components/Leaderboard';
 import Home from './components/Home';
+import { useNavigate } from 'react-router-dom';
+
+
 
 function App() {
+  const [typedUsername, setTypedUsername] = useState("");
+  const [user, setUser] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [sessionId, setSessionId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -14,6 +19,8 @@ function App() {
   const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
 
+  // Use react-dom to nagivate to different url ie /home, /quiz etc.
+  const navigate = useNavigate();
 
   // useEffect(() => {
   //   // Gọi API lấy 10 câu hỏi ngẫu nhiên khi trang web load
@@ -29,12 +36,23 @@ function App() {
   // }, []);
 
   const startNewGame = async () => {
-    const res = await fetch('http://localhost:8080/sessions/start', { method: 'POST' });
+    const res = await fetch(`http://localhost:8080/sessions/start?id=${user.id}`, { method: 'POST' });
+    if (res.ok) {
+      const data = await res.json();
+      setQuestions(data.questions); // data contains sessionId, firstQuestion, and fiftyFiftyUsed status
+      setLoading(false);
+      setSessionId(data.id);
+      setFiftyFiftyUsed(data.fiftyFiftyUsed);
+      navigate('/quiz');
+    }
+
+  };
+
+  const handleLogin = async () => {
+
+    const res = await fetch(`http://localhost:8080/users/login?username=${typedUsername}`, { method: 'POST' });
     const data = await res.json();
-    setQuestions(data.questions); // data contains sessionId, firstQuestion, and fiftyFiftyUsed status
-    setLoading(false);
-    setSessionId(data.id);
-    setFiftyFiftyUsed(data.fiftyFiftyUsed);
+    setUser(data);
   };
 
   const showTopScores = async () => {
@@ -44,17 +62,13 @@ function App() {
 
 
   const handleAnswer = (isCorrect) => {
-    // Let 
-    // if (!isCorrect) {
-    //   setGameState('LOST');
-    //   return;
-    // }
 
     // Progress to the next question
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
       // setGameState('WON');
+      navigate('/');
     }
   };
 
@@ -85,18 +99,21 @@ function App() {
 
   return (
     <div>
-
-
-      {!sessionId ? <button onClick={startNewGame}> Start Quiz</button> :
+      {!user ? (
+        <div className="login-container">
+          <input type='text' placeholder='Enter username' onChange={(e) => setTypedUsername(e.target.value)}/>
+          <button onClick={handleLogin} disabled={!typedUsername.trim()}>Login</button>
+        </div> )
+        : ( <>
+          {!sessionId ? (<button onClick={startNewGame}> Start Quiz</button>) : 
+        
         <div className="App">
           <Routes>
-            <Route path="/" element={<Home />} />
-            {/* <Route path="/quiz" element={<QuizCard />} /> */}
+            <Route path="/" element={<Home hasActivateSession={!sessionId} onStartNewGame={startNewGame}/>} />
             <Route path="/quiz" element={<QuizCard key={questions[currentIndex].id} question={questions[currentIndex]} onResult={handleAnswer} sessionId={sessionId} fiftyFiftyUsed={fiftyFiftyUsed} onFiftyFiftyUsed={handleFiftyFiftyUsed} />} />
-
             <Route path="/leaderboard" element={<Leaderboard />} />
           </Routes>
-        </div>
+        </div> }</>)
       }
     </div>
 
