@@ -60,13 +60,36 @@ function App() {
     const data = await res.json();
   }
 
+  const handleGameOver = async () => {
+    setCurrentIndex(0);
+    try {
+      const response = await fetch(`http://localhost:8080/sessions/${sessionId}/finish`, {
+        method: 'POST'
+      });
+
+      if (response.ok) {
+        const rewardData = await response.json();
+        console.log(rewardData);
+        // Store this to show on your Summary/Home screen
+        // setLastReward(rewardData);
+
+        // Now that the DB is updated, we can clean up
+        setSessionId(null);
+        // navigate('/summary'); // Or back to '/'
+      }
+    } catch (error) {
+      console.error("Failed to finish session:", error);
+    }
+  }
 
   const handleAnswer = (isCorrect) => {
+    console.log('currentIndex=', currentIndex);
 
     // Progress to the next question
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
+      handleGameOver();
       // setGameState('WON');
       navigate('/');
     }
@@ -105,7 +128,7 @@ function App() {
           <button onClick={handleLogin} disabled={!typedUsername.trim()}>Login</button>
         </div>)
         : (<>
-          {!sessionId ? (<button onClick={startNewGame}> Start Quiz</button>) :
+            {!sessionId ? (<button onClick={startNewGame}> Start Quiz</button>) :
 
             <div className="App">
               <Routes>
@@ -118,7 +141,8 @@ function App() {
                 } />
                 <Route path="/leaderboard" element={<Leaderboard />} />
               </Routes>
-            </div>}</>)
+            </div>}
+          </>)
       }
     </div>
 
