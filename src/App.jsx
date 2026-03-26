@@ -69,6 +69,11 @@ function App() {
 
       if (response.ok) {
         const rewardData = await response.json();
+        setUser(previous => ({
+            ...previous,
+            balance : rewardData.newTotalBalance
+
+        }));
         console.log(rewardData);
         // Store this to show on your Summary/Home screen
         // setLastReward(rewardData);
