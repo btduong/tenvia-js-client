@@ -5,8 +5,8 @@ import './App.css'
 import QuizCard from './components/QuizCard';
 import Leaderboard from './components/Leaderboard';
 import Home from './components/Home';
+import TopBar from './components/Topbar';
 import { useNavigate } from 'react-router-dom';
-
 
 
 function App() {
@@ -128,6 +128,7 @@ function App() {
           <button onClick={handleLogin} disabled={!typedUsername.trim()}>Login</button>
         </div>)
         : (<>
+            {<div>{<TopBar user={user} />}</div>}
             {!sessionId ? (<button onClick={startNewGame}> Start Quiz</button>) :
 
             <div className="App">
