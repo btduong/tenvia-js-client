@@ -123,6 +123,8 @@ function App() {
         // Since the controller returns 'Void', we have to do a separate fetch 
         // or modify the controller to return the UserDTO.
         // refreshUserData();
+        const newData = await response.json();
+        setUser(previous => ({ ...previous, inventory: newData.inventory }));
         alert(`Success! You bought a ${itemType}.`);
       } else {
         alert("Purchase failed. Check your gold balance!");
@@ -152,6 +154,21 @@ function App() {
 
   // );
 
+  const handleUsePowerUp = async (type) => {
+    try {
+      // We reuse our Inventory API!
+      const response = await fetch(`http://localhost:8080/api/powerups/use?type=${type}&userId=${user.id}&sessionId=${sessionId}`, { method: 'POST' });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.updatedUser); // This triggers a re-render of QuizCard with the new count
+        return data.powerUpEffect;
+      }
+    } catch (error) {
+      console.error("Failed to use power-up", error);
+      return null;
+    }
+  };
 
   return (
     <div className="App">
@@ -183,32 +200,34 @@ function App() {
                 <Link to="/shop"><button>Open Shop 🛒</button></Link>
               </div>
             } />
-  
+
             {/* SHOP ROUTE */}
             <Route path="/shop" element={
-              <ShopModal 
-                user={user} 
-                onPurchase={(item) => handlePurchase(item)} 
+              <ShopModal
+                user={user}
+                onPurchase={(item) => handlePurchase(item)}
               />
             } />
-  
+
             {/* QUIZ ROUTE (Protected by sessionId) */}
             <Route path="/quiz" element={
               sessionId ? (
                 <div className="quiz-page">
                   <h2>Question: {currentIndex + 1} / {questions.length}</h2>
-                  <QuizCard 
-                    key={questions[currentIndex].id} 
-                    question={questions[currentIndex]} 
-                    onResult={handleAnswer} 
-                    sessionId={sessionId} 
-                    fiftyFiftyUsed={fiftyFiftyUsed} 
-                    onFiftyFiftyUsed={handleFiftyFiftyUsed} 
+                  <QuizCard
+                    key={questions[currentIndex].id}
+                    question={questions[currentIndex]}
+                    onResult={handleAnswer}
+                    sessionId={sessionId}
+                    inventory={user.inventory || {}}
+                    onUsePowerUp={handleUsePowerUp}
+                  // fiftyFiftyUsed={fiftyFiftyUsed} 
+                  // onFiftyFiftyUsed={handleFiftyFiftyUsed} 
                   />
                 </div>
               ) : <navigate to="/" />
             } />
-  
+
             <Route path="/leaderboard" element={<Leaderboard />} />
           </Routes>
         </>

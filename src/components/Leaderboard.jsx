@@ -33,7 +33,7 @@ export default function Leaderboard({ }) {
                     ))}
                 </tbody>
             </table>
-            <button onClick={() => navigate('/home')}>Back to Home</button>
+            <button onClick={() => navigate('/')}>Back to Home</button>
         </div>
     );
 }
