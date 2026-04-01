@@ -152,6 +152,7 @@ function App() {
 
   // );
 
+
   return (
     <div className="App">
       {!user ? (
@@ -164,7 +165,11 @@ function App() {
         /* 2. AUTHENTICATED APP */
         <>
           <TopBar user={user} />
-          
+          {/* TODO: pay off Architectural Deb
+          - move rout content into Page components
+          - move repetitive logic into Custom Hooks
+          - use React Router Outlets for shared UI ie TopBar
+           */}
           <Routes>
             {/* HOME / LOBBY */}
             <Route path="/" element={
