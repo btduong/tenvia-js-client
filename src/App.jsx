@@ -6,6 +6,7 @@ import QuizCard from './components/QuizCard';
 import Leaderboard from './components/Leaderboard';
 import Home from './components/Home';
 import TopBar from './components/Topbar';
+import ShopModal from './components/ShopModal';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -18,6 +19,7 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
+  const [isShopOpen, setIsShopOpen] = useState(false);
 
   // Use react-dom to nagivate to different url ie /home, /quiz etc.
   const navigate = useNavigate();
@@ -70,8 +72,8 @@ function App() {
       if (response.ok) {
         const rewardData = await response.json();
         setUser(previous => ({
-            ...previous,
-            balance : rewardData.newTotalBalance
+          ...previous,
+          balance: rewardData.newTotalBalance
 
         }));
         console.log(rewardData);
@@ -105,6 +107,31 @@ function App() {
     setFiftyFiftyUsed(true);
   }
 
+  const handlePurchase = async (itemType) => {
+    try {
+      // 1. Construct the URL with query parameters
+      // Assuming you have 'user.id' available in your state
+      const url = `http://localhost:8080/shop/buy?userId=${user.id}&type=${itemType}`;
+
+      const response = await fetch(url, {
+        method: 'POST'
+        // No 'body' or 'headers' needed because we are using @RequestParam
+      });
+
+      if (response.ok) {
+        // 2. Fetch the updated user data to refresh the balance and inventory
+        // Since the controller returns 'Void', we have to do a separate fetch 
+        // or modify the controller to return the UserDTO.
+        // refreshUserData();
+        alert(`Success! You bought a ${itemType}.`);
+      } else {
+        alert("Purchase failed. Check your gold balance!");
+      }
+    } catch (err) {
+      console.error("Connection error:", err);
+    }
+  };
+
   // if (loading) return <div className="text-center mt-10">Đang tải câu hỏi...</div>;
 
   // return (
@@ -126,32 +153,62 @@ function App() {
   // );
 
   return (
-    <div>
+    <div className="App">
       {!user ? (
+        /* 1. LOGIN GUARD */
         <div className="login-container">
           <input type='text' placeholder='Enter username' onChange={(e) => setTypedUsername(e.target.value)} />
           <button onClick={handleLogin} disabled={!typedUsername.trim()}>Login</button>
-        </div>)
-        : (<>
-            {<div>{<TopBar user={user} />}</div>}
-            {!sessionId ? (<button onClick={startNewGame}> Start Quiz</button>) :
-
-            <div className="App">
-              <Routes>
-                <Route path="/" element={<Home hasActivateSession={!sessionId} onStartNewGame={startNewGame} />} />
-                <Route path="/quiz" element={
-                  <div>
-                    <div><h2>Question: {currentIndex + 1} / {questions.length}</h2></div>
-                    <QuizCard key={questions[currentIndex].id} question={questions[currentIndex]} onResult={handleAnswer} sessionId={sessionId} fiftyFiftyUsed={fiftyFiftyUsed} onFiftyFiftyUsed={handleFiftyFiftyUsed} />
-                  </div>
-                } />
-                <Route path="/leaderboard" element={<Leaderboard />} />
-              </Routes>
-            </div>}
-          </>)
-      }
+        </div>
+      ) : (
+        /* 2. AUTHENTICATED APP */
+        <>
+          <TopBar user={user} />
+          
+          <Routes>
+            {/* HOME / LOBBY */}
+            <Route path="/" element={
+              <div className="lobby">
+                {!sessionId ? (
+                  <button onClick={startNewGame}>Start Quiz</button>
+                ) : (
+                  <Home hasActivateSession={true} onStartNewGame={startNewGame} />
+                )}
+                {/* Navigation to Shop */}
+                <Link to="/shop"><button>Open Shop 🛒</button></Link>
+              </div>
+            } />
+  
+            {/* SHOP ROUTE */}
+            <Route path="/shop" element={
+              <ShopModal 
+                user={user} 
+                onPurchase={(item) => handlePurchase(item)} 
+              />
+            } />
+  
+            {/* QUIZ ROUTE (Protected by sessionId) */}
+            <Route path="/quiz" element={
+              sessionId ? (
+                <div className="quiz-page">
+                  <h2>Question: {currentIndex + 1} / {questions.length}</h2>
+                  <QuizCard 
+                    key={questions[currentIndex].id} 
+                    question={questions[currentIndex]} 
+                    onResult={handleAnswer} 
+                    sessionId={sessionId} 
+                    fiftyFiftyUsed={fiftyFiftyUsed} 
+                    onFiftyFiftyUsed={handleFiftyFiftyUsed} 
+                  />
+                </div>
+              ) : <navigate to="/" />
+            } />
+  
+            <Route path="/leaderboard" element={<Leaderboard />} />
+          </Routes>
+        </>
+      )}
     </div>
-
   );
 }
 export default App
