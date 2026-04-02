@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styles from './QuizCard.module.css';
 
 export default function QuizCard({ question, onResult, sessionId, inventory, onUsePowerUp }) {
   const [selectedOptionId, setSelectedOptionId] = useState(null);
@@ -46,7 +47,6 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
       <p><strong>{question.questionText}</strong></p>
 
       {/* 2. Options List */}
-      <form>
         {question.options.map((option) => {
           // CHECK: Should we skip rendering this specific option?
           if (hiddenOptionIds.includes(option.id)) {
@@ -54,19 +54,22 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
           }
 
           return (
-            <div key={option.id}>
-              <input
-                type="radio"
-                id={`opt-${option.id}`}
-                name={`q-${question.id}`}
+            <div className={styles.container} key={option.id}>
+              <button className={`${styles.optionBtn} ${selectedOptionId === option.id ? styles.selected : ''}`}
+              style={{ 
+                visibility: hiddenOptionIds.includes(option.id) ? 'hidden' : 'visible',
+                pointerEvents: hiddenOptionIds.includes(option.id) ? 'none' : 'auto'
+              }}
+                // id={`opt-${option.id}`}
+                // name={`q-${question.id}`}
                 disabled={result !== null}
-                onChange={() => setSelectedOptionId(option.id)}
-              />
-              <label htmlFor={`opt-${option.id}`}> {option.content}</label>
+                onClick={() => setSelectedOptionId(option.id)}
+              >
+              {option.content}
+              </button>
             </div>
           );
         })}
-      </form>
 
       {/* 3. Buttons Section */}
       <div style={{ marginTop: '10px' }}>
