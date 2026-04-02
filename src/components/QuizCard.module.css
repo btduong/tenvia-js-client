@@ -1,23 +1,23 @@
-.option-btn {
+.optionBtn {
     display: block;
     width: 100%;
     padding: 15px;
     margin: 10px 0;
     border: 2px solid #ddd;
     border-radius: 8px;
-    background-color: white;
+    background-color: rgb(171, 74, 74);
     cursor: pointer;
     transition: all 0.2s ease; /* Smooth color change */
     font-size: 1rem;
   }
   
-  .option-btn:hover {
+  .optionBtn:hover {
     border-color: #3498db;
-    background-color: #f7fbff;
+    background-color: #8fb107;
   }
   
   /* This class is added by React when isSelected is true */
-  .option-btn.selected {
+  .optionBtn.selected {
     background-color: #3498db;
     color: white;
     border-color: #2980b9;
