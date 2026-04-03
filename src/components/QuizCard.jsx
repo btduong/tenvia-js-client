@@ -58,7 +58,6 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
         })
       });
       const data = await response.json();
-      console.log('data :', data);
       setResult(data);
       onBalanceUpdated(data.newBalance);
     } catch (error) {
