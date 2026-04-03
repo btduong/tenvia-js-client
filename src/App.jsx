@@ -89,7 +89,7 @@ function App() {
     }
   }
 
-  const handleAnswer = (isCorrect) => {
+  const handleAnswer = () => {
     console.log('currentIndex=', currentIndex);
 
     // Progress to the next question

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './QuizCard.module.css';
 
@@ -6,6 +6,23 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
   const [selectedOptionId, setSelectedOptionId] = useState(null);
   const [result, setResult] = useState(null);
   const [hiddenOptionIds, setHiddenOptionIds] = useState([]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter' && selectedOptionId !== null && result === null) {
+        handleVerify();
+      } else if (result !== null) {
+        onResult();
+      }
+    }
+
+    // Listener to the window
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedOptionId, result]);
 
   // Use nagivator to different path ie /leaderboard, /home
   const navigate = useNavigate();
@@ -75,7 +92,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
       <div style={{ marginTop: '10px' }}>
         {!result && (
           <>
-            <button onClick={handleVerify} disabled={!selectedOptionId}>
+            <button className='submitBtn' onClick={handleVerify} disabled={!selectedOptionId}>
               Kiểm tra
             </button>
 
@@ -114,7 +131,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
           {/* Next question button */}
           <button
             className="next-btn"
-            onClick={() => onResult(result.correct)}
+            onClick={() => onResult()}
           >
             Next question
           </button>
