@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './QuizCard.module.css';
 
-export default function QuizCard({ question, onResult, sessionId, inventory, onUsePowerUp }) {
+export default function QuizCard({ question, onResult, sessionId, inventory, onUsePowerUp, onBalanceUpdated }) {
   const [selectedOptionId, setSelectedOptionId] = useState(null);
   const [result, setResult] = useState(null);
   const [hiddenOptionIds, setHiddenOptionIds] = useState([]);
+  const [goldReward, setGoldReward] = useState(0);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -57,7 +58,9 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
         })
       });
       const data = await response.json();
+      console.log('data :', data);
       setResult(data);
+      onBalanceUpdated(data.newBalance);
     } catch (error) {
       console.error("Error:", error);
     }

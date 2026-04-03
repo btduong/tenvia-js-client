@@ -134,6 +134,10 @@ function App() {
     }
   };
 
+  const handleBalanceUpdate = (newBalance) => {
+    setUser(previous => ({ ...previous, balance: newBalance }));
+  };
+
   // if (loading) return <div className="text-center mt-10">Đang tải câu hỏi...</div>;
 
   // return (
@@ -221,6 +225,7 @@ function App() {
                     sessionId={sessionId}
                     inventory={user.inventory || {}}
                     onUsePowerUp={handleUsePowerUp}
+                    onBalanceUpdated={handleBalanceUpdate}
                   // fiftyFiftyUsed={fiftyFiftyUsed} 
                   // onFiftyFiftyUsed={handleFiftyFiftyUsed} 
                   />
