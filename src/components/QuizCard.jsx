@@ -8,6 +8,8 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
   const [hiddenOptionIds, setHiddenOptionIds] = useState([]);
   const [goldReward, setGoldReward] = useState(0);
 
+  const isDisabled = question.powerUpDisabled;
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Enter' && selectedOptionId !== null && result === null) {
@@ -117,7 +119,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
                 <button
                   key={type}
                   className="powerup-btn"
-                  disabled={count <= 0}
+                  disabled={count <= 0 || isDisabled}
                   onClick={() => handlePowerUpClick(type)}
                 >
                   {type}: {count}
