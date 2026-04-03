@@ -38,6 +38,11 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
         .filter(id => !remainingIds.includes(id));
 
       setHiddenOptionIds(toHide);
+    } else if (effect && type === 'HAMMER') {
+      const toHideIds = effect.hiddenSelectionsIds;
+      const toHide = question.options.map(opt => opt.id).filter(id => toHideIds.includes(id));
+      console.log('toHide:' + toHide);
+      setHiddenOptionIds(toHide);
     }
 
   };
