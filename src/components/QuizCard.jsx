@@ -44,7 +44,6 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
     } else if (effect && type === 'HAMMER') {
       const toHideIds = effect.hiddenSelectionsIds;
       const toHide = question.options.map(opt => opt.id).filter(id => toHideIds.includes(id));
-      console.log('toHide:' + toHide);
       setHiddenOptionIds(toHide);
     }
 
@@ -75,20 +74,18 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
       {/* 2. Options List */}
         {question.options.map((option) => {
           // CHECK: Should we skip rendering this specific option?
-          if (hiddenOptionIds.includes(option.id)) {
-            return null; // This option disappears, but the loop continues
-          }
+          // if (hiddenOptionIds.includes(option.id)) {
+          //   return null; // This option disappears, but the loop continues
+          // }
 
           return (
             <div className={styles.container} key={option.id}>
               <button className={`${styles.optionBtn} ${selectedOptionId === option.id ? styles.selected : ''}`}
-              style={{ 
-                visibility: hiddenOptionIds.includes(option.id) ? 'hidden' : 'visible',
-                pointerEvents: hiddenOptionIds.includes(option.id) ? 'none' : 'auto'
-              }}
-                // id={`opt-${option.id}`}
-                // name={`q-${question.id}`}
-                disabled={result !== null}
+              // style={{ 
+              //   visibility: hiddenOptionIds.includes(option.id) ? 'hidden' : 'visible',
+              //   pointerEvents: hiddenOptionIds.includes(option.id) ? 'none' : 'auto'
+              // }}
+                disabled={result !== null || hiddenOptionIds.includes(option.id)}
                 onClick={() => setSelectedOptionId(option.id)}
               >
               {option.content}
