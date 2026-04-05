@@ -1,3 +1,70 @@
+.optionCircle {
+  display: flex;          /* To center the letter inside the circle */
+  align-items: center;
+  justify-content: center;
+  
+  width: 40px;            /* Equal width and height are key */
+  height: 40px;
+  min-width: 40px;        /* Prevents the circle from squishing if text is long */
+  
+  background-color: #4a5568; /* Slightly lighter than button */
+  border: 2px solid #fbbf24; /* Gold border for the "pop" */
+  border-radius: 50%;     /* Makes it a perfect circle */
+  
+  color: #fbbf24;         /* Match the border color */
+  font-weight: 900;
+  font-size: 1.2rem;
+  margin-right: 15px;
+}
+
+.optionText {
+  color: white;
+  font-size: 1.1rem;
+  text-align: left;
+}
+
+.optionLetter {
+  font-size: 1.4rem;   /* Bigger than the answer text */
+  font-weight: 900;    /* Extra bold */
+  color: #fbbf24;      /* A nice "Gold/Amber" or your primary brand color */
+  margin-right: 12px;  /* Space between "A" and "Yellow" */
+  font-family: 'serif'; /* Optional: A different font for the letters looks cool */
+}
+
+.questionText {
+  font-size: 1.5rem; /* ~24px, significantly larger than standard 16px */
+  font-weight: 700;  /* Bold makes it "pop" */
+  text-align: center;
+  margin-bottom: 2rem; /* Pushes the 2x2 grid down so it's not cramped */
+  color: #1a202c;    /* Deep charcoal/black for high contrast */
+  line-height: 1.4;  /* Better readability for longer questions */
+}
+
+/* Optional: Make it even bigger on Large screens */
+@media (min-width: 768px) {
+  .question-text {
+    font-size: 2rem; /* ~32px */
+  }
+}
+
+.optionsContainer {
+  display: grid;
+  /* Create 2 columns of equal width */
+  grid-template-columns: repeat(2, 1fr); 
+  /* Add space between the buttons */
+  gap: 15px; 
+  /* Optional: limit width on large screens */
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* When the screen is wider than 480px, switch to 2x2 */
+@media (min-width: 480px) {
+  .optionsContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 .optionBtn {
     display: block;
     width: 100%;

@@ -67,9 +67,10 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
   return (
     <div style={{ border: '1px solid black', margin: '10px', padding: '10px' }}>
       {/* 1. Question Text stays visible */}
-      <p><strong>{question.questionText}</strong></p>
+      <h2 className="{style.questionText}">{question.questionText}</h2>
 
       {/* 2. Options List */}
+      <div className={styles.optionsContainer}>
         {question.options.map((option) => {
           // CHECK: Should we skip rendering this specific option?
           // if (hiddenOptionIds.includes(option.id)) {
@@ -79,24 +80,25 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
           return (
             <div className={styles.container} key={option.id}>
               <button className={`${styles.optionBtn} ${selectedOptionId === option.id ? styles.selected : ''}`}
-              // style={{ 
-              //   visibility: hiddenOptionIds.includes(option.id) ? 'hidden' : 'visible',
-              //   pointerEvents: hiddenOptionIds.includes(option.id) ? 'none' : 'auto'
-              // }}
+                // style={{ 
+                //   visibility: hiddenOptionIds.includes(option.id) ? 'hidden' : 'visible',
+                //   pointerEvents: hiddenOptionIds.includes(option.id) ? 'none' : 'auto'
+                // }}
                 disabled={result !== null || hiddenOptionIds.includes(option.id)}
                 onClick={() => setSelectedOptionId(option.id)}
               >
-              {option.content}
+                <span className={styles.optionCircle}>{option.letter}</span> 
+                <span className={styles.optionText}>{option.content}</span>
               </button>
             </div>
           );
         })}
-
+      </div>
       {/* 3. Buttons Section */}
       <div style={{ marginTop: '10px' }}>
         {!result && (
           <>
-            <button className='submitBtn' onClick={handleVerify} disabled={!selectedOptionId}>
+            <button className={styles.submitBtn} onClick={handleVerify} disabled={!selectedOptionId}>
               Kiểm tra
             </button>
 
