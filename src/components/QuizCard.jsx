@@ -88,7 +88,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
                 onClick={() => setSelectedOptionId(option.id)}
               >
                 <span className={styles.optionCircle}>{option.letter}</span> 
-                <span className={styles.optionText}>{option.content}</span>
+                <span className={styles.questionText}>{option.content}</span>
               </button>
             </div>
           );

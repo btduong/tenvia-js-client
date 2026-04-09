@@ -7,7 +7,7 @@ export default function Leaderboard({ }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('http://localhost:8080/leaderboard')
+        fetch('http://localhost:8081/leaderboard')
             .then(res => res.json())
             .then(data => setScores(data));
     }, []);
