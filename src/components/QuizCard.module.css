@@ -54,7 +54,29 @@
   color: #1a202c;
   /* Deep charcoal/black for high contrast */
   line-height: 1.4;
-  /* Better readability for longer questions */
+  /* Very light gray/blue (Tailwind-style) */
+  background-color: #f7fafc;
+  /* Soft border that isn't too "loud" */
+  border: 2px solid #e2e8f0;
+  /* Rounded corners for a modern look */
+  border-radius: 12px;
+  /* Space inside the box so text doesn't touch edges */
+  padding: 1.5rem;
+  /* Space between the box and the options */
+  margin-bottom: 2rem;
+
+  /* Optional: Soft shadow to make it "float" */
+  /* box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); */
+
+}
+
+.optionText {
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  /* margin-bottom: 2rem; */
+  color: #1a202c;
+  /* line-height: 1.1; */
 }
 
 /* Optional: Make it even bigger on Large screens */

@@ -68,7 +68,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
   return (
     <div style={{ border: '1px solid black', margin: '10px', padding: '10px' }}>
       {/* 1. Question Text stays visible */}
-      <h2 className="{style.questionText}">{question.questionText}</h2>
+      <div className={styles.questionText}>{question.questionText}</div>
 
       {/* 2. Options List */}
       <div className={styles.optionsContainer}>
@@ -100,7 +100,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
                 onClick={() => setSelectedOptionId(option.id)}
               >
                 <span className={styles.optionCircle}>{option.letter}</span> 
-                <span className={styles.questionText}>{option.content}</span>
+                <span className={styles.optionText}>{option.content}</span>
               </button>
             </div>
           );
