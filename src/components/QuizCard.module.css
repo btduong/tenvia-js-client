@@ -1,17 +1,24 @@
 .optionCircle {
-  display: flex;          /* To center the letter inside the circle */
+  display: flex;
+  /* To center the letter inside the circle */
   align-items: center;
   justify-content: center;
-  
-  width: 40px;            /* Equal width and height are key */
+
+  width: 40px;
+  /* Equal width and height are key */
   height: 40px;
-  min-width: 40px;        /* Prevents the circle from squishing if text is long */
-  
-  background-color: #4a5568; /* Slightly lighter than button */
-  border: 2px solid #fbbf24; /* Gold border for the "pop" */
-  border-radius: 50%;     /* Makes it a perfect circle */
-  
-  color: #fbbf24;         /* Match the border color */
+  min-width: 40px;
+  /* Prevents the circle from squishing if text is long */
+
+  background-color: #4a5568;
+  /* Slightly lighter than button */
+  border: 2px solid #fbbf24;
+  /* Gold border for the "pop" */
+  border-radius: 50%;
+  /* Makes it a perfect circle */
+
+  color: #fbbf24;
+  /* Match the border color */
   font-weight: 900;
   font-size: 1.2rem;
   margin-right: 15px;
@@ -24,35 +31,46 @@
 }
 
 .optionLetter {
-  font-size: 1.4rem;   /* Bigger than the answer text */
-  font-weight: 900;    /* Extra bold */
-  color: #fbbf24;      /* A nice "Gold/Amber" or your primary brand color */
-  margin-right: 12px;  /* Space between "A" and "Yellow" */
-  font-family: 'serif'; /* Optional: A different font for the letters looks cool */
+  font-size: 1.4rem;
+  /* Bigger than the answer text */
+  font-weight: 900;
+  /* Extra bold */
+  color: #fbbf24;
+  /* A nice "Gold/Amber" or your primary brand color */
+  margin-right: 12px;
+  /* Space between "A" and "Yellow" */
+  font-family: 'serif';
+  /* Optional: A different font for the letters looks cool */
 }
 
 .questionText {
-  font-size: 1.1rem; /* ~24px, significantly larger than standard 16px */
-  font-weight: 700;  /* Bold makes it "pop" */
+  font-size: 1.1rem;
+  /* ~24px, significantly larger than standard 16px */
+  font-weight: 700;
+  /* Bold makes it "pop" */
   text-align: center;
-  margin-bottom: 2rem; /* Pushes the 2x2 grid down so it's not cramped */
-  color: #1a202c;    /* Deep charcoal/black for high contrast */
-  line-height: 1.4;  /* Better readability for longer questions */
+  margin-bottom: 2rem;
+  /* Pushes the 2x2 grid down so it's not cramped */
+  color: #1a202c;
+  /* Deep charcoal/black for high contrast */
+  line-height: 1.4;
+  /* Better readability for longer questions */
 }
 
 /* Optional: Make it even bigger on Large screens */
 @media (min-width: 768px) {
   .question-text {
-    font-size: 2rem; /* ~32px */
+    font-size: 2rem;
+    /* ~32px */
   }
 }
 
 .optionsContainer {
   display: grid;
   /* Create 2 columns of equal width */
-  grid-template-columns: repeat(2, 1fr); 
+  grid-template-columns: repeat(2, 1fr);
   /* Add space between the buttons */
-  gap: 15px; 
+  gap: 15px;
   /* Optional: limit width on large screens */
   max-width: 800px;
   margin: 0 auto;
@@ -66,32 +84,76 @@
 }
 
 .optionBtn {
-    display: block;
-    width: 100%;
-    padding: 15px;
-    margin: 10px 0;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    background-color: rgb(171, 74, 74);
-    cursor: pointer;
-    transition: all 0.2s ease; /* Smooth color change */
-    font-size: 1rem;
-  }
-  
-  .optionBtn:hover {
-    border-color: #3498db;
-    background-color: #8fb107;
-  }
-  
-  /* This class is added by React when isSelected is true */
-  .optionBtn.selected {
-    background-color: #3498db;
-    color: white;
-    border-color: #2980b9;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
+  display: block;
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background-color: rgb(197, 197, 197);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  /* Smooth color change */
+  font-size: 1rem;
+}
 
-  .submitBtn:active {
-    transform: scale(0.98); /* Slight shrink when pressed */
-    filter: brightness(0.9);
-  }
+.optionIncorrectBtn {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  background-color: rgb(167, 7, 7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  /* Smooth color change */
+  font-size: 1rem;
+}
+
+.optionCorrectBtn {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  background-color: rgb(15, 223, 77);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  /* Smooth color change */
+  font-size: 1rem;
+}
+
+.optionSelected {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  background-color: #ca7321;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  /* Smooth color change */
+  font-size: 1rem;
+}
+
+.optionBtn:hover {
+  border-color: #3498db;
+  background-color: #ca7321;
+}
+
+/* This class is added by React when isSelected is true */
+.optionBtn.selected {
+  background-color: #ca7321;
+  color: white;
+  border-color: #2980b9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.submitBtn:active {
+  transform: scale(0.98);
+  /* Slight shrink when pressed */
+  filter: brightness(0.9);
+}

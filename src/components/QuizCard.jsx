@@ -6,6 +6,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
   const [selectedOptionId, setSelectedOptionId] = useState(null);
   const [result, setResult] = useState(null);
   const [hiddenOptionIds, setHiddenOptionIds] = useState([]);
+  const [correctLetter, setCorrectLetter] = useState(null);
   const [goldReward, setGoldReward] = useState(0);
 
   const isDisabled = question.powerUpDisabled;
@@ -76,10 +77,21 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
           // if (hiddenOptionIds.includes(option.id)) {
           //   return null; // This option disappears, but the loop continues
           // }
+          let optionButtonStyle = styles.optionBtn;
+          if (result !== null && option.letter === result.correctLetter) {
+            optionButtonStyle = `${styles.optionCorrectBtn}`;
+          }
+          else if (result === null && selectedOptionId !== null && selectedOptionId === option.id) {
+            optionButtonStyle = `${styles.optionSelected}`;
+          }
+          else if (result !== null && option.letter !== result.correctLetter && selectedOptionId === option.id) {
+            optionButtonStyle = `${styles.optionIncorrectBtn}`;
+          } 
+      
 
           return (
             <div className={styles.container} key={option.id}>
-              <button className={`${styles.optionBtn} ${selectedOptionId === option.id ? styles.selected : ''}`}
+              <button className={`${optionButtonStyle} `}
                 // style={{ 
                 //   visibility: hiddenOptionIds.includes(option.id) ? 'hidden' : 'visible',
                 //   pointerEvents: hiddenOptionIds.includes(option.id) ? 'none' : 'auto'
@@ -131,8 +143,8 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
       {result && (
         <div style={{ marginTop: '10px', color: result.correct ? 'green' : 'red' }}>
           <hr />
-          <p>{result.correct ? "ĐÚNG!" : "SAI!"}</p>
-          <p>Giải thích: {result.explanation}</p>
+          {/* <p>{result.correct ? "ĐÚNG!" : "SAI!"}</p>
+          <p>Giải thích: {result.explanation}</p> */}
 
           {/* Next question button */}
           <button
