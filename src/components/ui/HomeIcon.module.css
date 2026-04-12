@@ -1,0 +1,37 @@
+/* This targets the <svg> tag inside the component */
+.homeSvg {
+  width: 28px;
+  /* Control the size here */
+  height: 28px;
+  color: #f8f8f8;
+  /* Initial gray color */
+  transition: transform 0.2s, color 0.2s;
+}
+
+/* Target the SVG inside the button specifically */
+.homeIconBtn svg {
+  width: 24px!important;   /* Force the giant 640px coordinate system into 24px */
+  height: 24px!important;
+  margin: 0 auto; /* Extra insurance for centering */
+  display: block;
+}
+
+.homeIconBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin: 0 auto;
+
+  width: 48px;
+  height: 48px;
+  padding: 0;             /* Prevents default button padding from pushing the icon */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.homeIconBtn:hover {
+  background-color: #f7fafc;
+  transform: translateY(-2px);
+}
