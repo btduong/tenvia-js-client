@@ -92,12 +92,11 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
           return (
             <div className={styles.container} key={option.id}>
               <button className={`${optionButtonStyle} `}
-                // style={{ 
-                //   visibility: hiddenOptionIds.includes(option.id) ? 'hidden' : 'visible',
-                //   pointerEvents: hiddenOptionIds.includes(option.id) ? 'none' : 'auto'
-                // }}
                 disabled={result !== null || hiddenOptionIds.includes(option.id)}
-                onClick={() => setSelectedOptionId(option.id)}
+                onClick={() => {
+                  setSelectedOptionId(option.id);
+                  handleVerify()}
+                }
               >
                 <span className={styles.optionCircle}>{option.letter}</span> 
                 <span className={styles.optionText}>{option.content}</span>
@@ -110,18 +109,6 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
       <div style={{ marginTop: '10px' }}>
         {!result && (
           <>
-            <button className={styles.submitBtn} onClick={handleVerify} disabled={!selectedOptionId}>
-              Kiểm tra
-            </button>
-
-            {/* <button 
-                  type="button" 
-                  onClick={handleFiftyFifty} 
-                  disabled={fiftyFiftyUsed} // Disable if already used
-                  style={{ marginLeft: '10px' }}
-                >
-                  50/50 Lifeline
-                </button> */}
             <div className="inventory-bar">
               <h4>Your Power-Ups:</h4>
               {Object.entries(inventory).map(([type, count]) => (
