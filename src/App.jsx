@@ -125,7 +125,6 @@ function App() {
         // refreshUserData();
         const newData = await response.json();
         setUser(previous => ({ ...previous, inventory: newData.inventory }));
-        alert(`Success! You bought a ${itemType}.`);
       } else {
         alert("Purchase failed. Check your gold balance!");
       }
