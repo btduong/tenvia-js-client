@@ -36,13 +36,9 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
     const effect = await onUsePowerUp(type);
     if (effect && type === 'FIFTY_FIFTY') {
       const toHideIds = effect.hiddenSelectionsIds;
-      // const toHide = question.options
-      //   .map(opt => opt.id)
-      //   .filter(id => !toHideIds.includes(id));
       setHiddenOptionIds(toHideIds);
     } else if (effect && type === 'HAMMER') {
       const toHideIds = effect.hiddenSelectionsIds;
-      // const toHide = question.options.map(opt => opt.id).filter(id => toHideIds.includes(id));
       setHiddenOptionIds(toHideIds);
     }
 
