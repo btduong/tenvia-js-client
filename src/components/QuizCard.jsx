@@ -4,6 +4,7 @@ import styles from './QuizCard.module.css';
 
 import homeStyles from '../components/ui/HomeIcon.module.css';
 import { HomeIcon } from './ui/HomeIcon';
+import { playClick } from '../utils/sounds';
 
 export default function QuizCard({ question, onResult, sessionId, inventory, onUsePowerUp, onBalanceUpdated }) {
   const [selectedOptionId, setSelectedOptionId] = useState(null);
@@ -97,7 +98,9 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
                 disabled={result !== null || hiddenOptionIds.includes(option.id)}
                 onClick={() => {
                   setSelectedOptionId(option.id);
-                  handleVerify()}
+                  handleVerify();
+                  playClick();
+                }
                 }
               >
                 <span className={styles.optionCircle}>{option.letter}</span> 
