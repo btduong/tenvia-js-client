@@ -105,6 +105,15 @@
   }
 }
 
+.optionDisabled {
+  opacity: 0.3;              /* Makes it look faded */
+  cursor: not-allowed;      /* Changes the mouse cursor to a 'circle-slash' */
+  pointer-events: none;      /* Safety net: prevents clicks even if JS fails */
+  filter: grayscale(80%);    /* Removes the color pop */
+  border: 1px dashed #cbd5e0; /* Optional: change solid border to dashed */
+  box-shadow: none !important; /* Remove any "glow" or lift */
+}
+
 .optionBtn {
   display: block;
   width: 100%;

@@ -78,7 +78,10 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
           //   return null; // This option disappears, but the loop continues
           // }
           let optionButtonStyle = styles.optionBtn;
-          if (result !== null && option.letter === result.correctLetter) {
+          if (hiddenOptionIds.includes(option.id)) {
+            optionButtonStyle = `${styles.optionDisabled}`;
+          }
+          else if (result !== null && option.letter === result.correctLetter) {
             optionButtonStyle = `${styles.optionCorrectBtn}`;
           }
           else if (result === null && selectedOptionId !== null && selectedOptionId === option.id) {
