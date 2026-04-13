@@ -18,7 +18,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Enter' && selectedOptionId !== null && result === null) {
-        handleVerify();
+        handleVerify(selectedOptionId);
       } else if (result !== null) {
         onResult();
       }
@@ -48,13 +48,13 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
 
   };
 
-  const handleVerify = async () => {
+  const handleVerify = async (optionId) => {
     try {
       const response = await fetch(`http://localhost:8080/sessions/${sessionId}/answer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          selectedOptionId: selectedOptionId
+          selectedOptionId: optionId
         })
       });
       const data = await response.json();
@@ -98,7 +98,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
                 disabled={result !== null || hiddenOptionIds.includes(option.id)}
                 onClick={() => {
                   setSelectedOptionId(option.id);
-                  handleVerify();
+                  handleVerify(option.id);
                   playClick();
                 }
                 }
