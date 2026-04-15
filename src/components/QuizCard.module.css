@@ -44,7 +44,7 @@
 }
 
 .questionText {
-  width: 800px;
+  width: 100%;
   font-size: 1.1rem;
   /* ~24px, significantly larger than standard 16px */
   font-weight: 700;
@@ -62,7 +62,7 @@
   /* Rounded corners for a modern look */
   border-radius: 12px;
   /* Space inside the box so text doesn't touch edges */
-  padding: 1.5rem;
+  padding: 1rem;
   /* Space between the box and the options */
   margin-bottom: 2rem;
 
@@ -117,7 +117,7 @@
 
 .optionBtn {
   display: block;
-  width: 350px;
+  width: 100%;
   padding: 15px;
   margin: 10px 0;
   border: 3px solid #0e0202;
@@ -131,7 +131,7 @@
 
 .optionIncorrectBtn {
   display: block;
-  width: 350px;
+  width: 100%;
   padding: 15px;
   margin: 10px 0;
   border: 2px solid #000000;
@@ -145,7 +145,7 @@
 
 .optionCorrectBtn {
   display: block;
-  width: 350px;
+  width: 100%;
   padding: 15px;
   margin: 10px 0;
   border: 2px solid #000000;

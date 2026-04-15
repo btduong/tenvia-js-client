@@ -108,7 +108,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
                 }
                 }
               >
-                <span className={styles.optionCircle}>{option.letter}</span>
+                {/* <span className={styles.optionCircle}>{option.letter}</span> */}
                 <span className={styles.optionText}>{option.content}</span>
               </button>
             </div>

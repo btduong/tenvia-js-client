@@ -10,7 +10,7 @@
     border-radius: 0 0 12px 12px;
     /* Rounds only the bottom corners */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    width: 800px;
+    /* width: 800px; */
     height: 25px;
 }
 

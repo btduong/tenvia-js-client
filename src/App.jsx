@@ -7,6 +7,10 @@ import Leaderboard from './components/Leaderboard';
 import Home from './components/Home';
 import TopBar from './components/Topbar';
 import ShopModal from './components/ShopModal';
+
+// UI buttons
+import LeaderboardButton from './components/ui/LeaderboardButton';
+
 import { useNavigate } from 'react-router-dom';
 
 
@@ -175,6 +179,7 @@ function App() {
                 )}
                 {/* Navigation to Shop */}
                 <Link to="/shop"><button>Open Shop 🛒</button></Link>
+                <Link to="/leaderboard"><LeaderboardButton/></Link>
               </div>
             } />
 
@@ -190,7 +195,7 @@ function App() {
             <Route path="/quiz" element={
               sessionId ? (
                 <div className="quiz-page">
-                  <h2>Question: {currentIndex + 1} / {questions.length}</h2>
+                  {/* <h2>Question: {currentIndex + 1} / {questions.length}</h2> */}
                   <QuizCard
                     key={questions[currentIndex].id}
                     question={questions[currentIndex]}

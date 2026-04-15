@@ -1,5 +1,7 @@
 #root {
-  max-width: 1280px;
+  /* max-width: 1280px; */
+  width: 100vw;
+  height: 100vh;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
@@ -12,9 +14,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -23,6 +27,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -40,4 +45,18 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.lobby {
+  display: grid;
+  grid-template-columns: 1fr;
+  /* Space between buttons */
+  gap: 20px;
+  /* Dont touch the edge */
+  padding: 15px;
+  width: 100%;
+  /* Limits width on larger screen */
+  max-width: 400px;
+  /* 0 top/bootom auto left/right  */
+  margin: 0 auto;
 }
