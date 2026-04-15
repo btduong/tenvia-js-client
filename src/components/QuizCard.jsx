@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './QuizCard.module.css';
 
-import homeStyles from '../components/ui/HomeIcon.module.css';
-import { HomeIcon } from './ui/HomeIcon';
+// import homeStyles from '../components/ui/HomeIcon.module.css';
+
 import { playClick, playCorrect, playIncorrectAnswer, playQuestionStart } from '../utils/sounds';
+import HomeButton from './ui/HomeButton';
 
 export default function QuizCard({ question, onResult, sessionId, inventory, onUsePowerUp, onBalanceUpdated }) {
   const [selectedOptionId, setSelectedOptionId] = useState(null);
@@ -159,7 +160,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
           </button>
         </div>
       )}
-      <button className={homeStyles.homeIconBtn} onClick={() => navigate('/')}><HomeIcon className={homeStyles.homeSvg} /></button>
+      <HomeButton/>
     </div>
   );
 }
