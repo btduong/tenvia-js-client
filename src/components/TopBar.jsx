@@ -2,8 +2,8 @@ import React from 'react';
 import styles from './TopBar.module.css';
 
 // TopBar.jsx
-const TopBar = ({ user }) => {
-    if (!user) return null; // Don't show if not logged in
+const TopBar = ({ user, sessionId }) => {
+    if (!user || !sessionId) return null; // Don't show if not logged in
 
     return (
         <div className={styles.topBar}>
