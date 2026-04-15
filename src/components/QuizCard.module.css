@@ -1,3 +1,13 @@
+.mainQuestionContainer {
+  color: white;
+  background-color: #fbbf24;
+  max-width: 600px;
+  align-content: center;
+  border: #000000;
+  margin: 0 auto;
+  padding: 10px;
+}
+
 .optionCircle {
   display: flex;
   /* To center the letter inside the circle */
@@ -31,7 +41,7 @@
 }
 
 .optionLetter {
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   /* Bigger than the answer text */
   font-weight: 900;
   /* Extra bold */
@@ -45,26 +55,28 @@
 
 .questionText {
   width: 100%;
-  font-size: 1.1rem;
-  /* ~24px, significantly larger than standard 16px */
+  max-width: 600px;
+  margin: 0 auto;
+  color: #1a202c;
+  font-size: 1.3rem;
   font-weight: 700;
   /* Bold makes it "pop" */
   text-align: center;
-  margin-bottom: 2rem;
   /* Pushes the 2x2 grid down so it's not cramped */
-  color: #1a202c;
+
   /* Deep charcoal/black for high contrast */
-  line-height: 1.4;
+  /* line-height: 1.4; */
   /* Very light gray/blue (Tailwind-style) */
-  background-color: #f7fafc;
+  /* background-color: #f7fafc; */
   /* Soft border that isn't too "loud" */
-  border: 5px solid #000000;
+  /* border: 5px solid #000000; */
   /* Rounded corners for a modern look */
   border-radius: 12px;
   /* Space inside the box so text doesn't touch edges */
-  padding: 1rem;
+  /* Padding only the inside of the specified width */
+  box-sizing: border-box;
+  padding: 10px;
   /* Space between the box and the options */
-  margin-bottom: 2rem;
 
   /* Optional: Soft shadow to make it "float" */
   /* box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); */
@@ -72,8 +84,8 @@
 }
 
 .optionText {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.rem;
+  /* font-weight: 700; */
   text-align: center;
   /* margin-bottom: 2rem; */
   color: #1a202c;
@@ -82,7 +94,7 @@
 
 /* Optional: Make it even bigger on Large screens */
 @media (min-width: 768px) {
-  .question-text {
+  .questionText {
     font-size: 2rem;
     /* ~32px */
   }
@@ -91,11 +103,14 @@
 .optionsContainer {
   display: grid;
   /* Create 2 columns of equal width */
-  grid-template-columns: repeat(2, 1fr);
+  /* grid-template-columns: repeat(2, 1fr); */
+  /* Vertical stack of buttons */
+  grid-template-columns: 1fr;
   /* Add space between the buttons */
-  gap: 15px;
+  gap: 5px;
   /* Optional: limit width on large screens */
-  max-width: 800px;
+  width: 100%;
+  /* max-width: 400px; */
   margin: 0 auto;
 }
 
@@ -103,6 +118,7 @@
 @media (min-width: 480px) {
   .optionsContainer {
     grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
   }
 }
 

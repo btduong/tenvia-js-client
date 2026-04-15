@@ -72,7 +72,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
   };
 
   return (
-    <div style={{ border: '1px solid black', margin: '10px', padding: '10px', backgroundColor: 'orange' }}>
+    <div className={styles.mainQuestionContainer}>
       {/* 1. Question Text stays visible */}
       <div className={styles.questionText}>{question.questionText}</div>
 

@@ -162,55 +162,57 @@ function App() {
       ) : (
         /* 2. AUTHENTICATED APP */
         <>
-          <TopBar user={user} sessionId={sessionId} />
-          {/* TODO: pay off Architectural Deb
+          <div>
+            <TopBar user={user} sessionId={sessionId} />
+            {/* TODO: pay off Architectural Deb
           - move rout content into Page components
           - move repetitive logic into Custom Hooks
           - use React Router Outlets for shared UI ie TopBar
            */}
-          <Routes>
-            {/* HOME / LOBBY */}
-            <Route path="/" element={
-              <div className="lobby">
-                {!sessionId ? (
-                  <button onClick={startNewGame}>Start Quiz</button>
-                ) : (
-                  <Home hasActivateSession={true} onStartNewGame={startNewGame} />
-                )}
-                {/* Navigation to Shop */}
-                <Link to="/shop"><button>Open Shop 🛒</button></Link>
-                <Link to="/leaderboard"><LeaderboardButton/></Link>
-              </div>
-            } />
-
-            {/* SHOP ROUTE */}
-            <Route path="/shop" element={
-              <ShopModal
-                user={user}
-                onPurchase={(item) => handlePurchase(item)}
-              />
-            } />
-
-            {/* QUIZ ROUTE (Protected by sessionId) */}
-            <Route path="/quiz" element={
-              sessionId ? (
-                <div className="quiz-page">
-                  {/* <h2>Question: {currentIndex + 1} / {questions.length}</h2> */}
-                  <QuizCard
-                    key={questions[currentIndex].id}
-                    question={questions[currentIndex]}
-                    onResult={handleAnswer}
-                    sessionId={sessionId}
-                    inventory={user.inventory || {}}
-                    onUsePowerUp={handleUsePowerUp}
-                    onBalanceUpdated={handleBalanceUpdate}
-                  />
+            <Routes>
+              {/* HOME / LOBBY */}
+              <Route path="/" element={
+                <div className="lobby">
+                  {!sessionId ? (
+                    <button onClick={startNewGame}>Start Quiz</button>
+                  ) : (
+                    <Home hasActivateSession={true} onStartNewGame={startNewGame} />
+                  )}
+                  {/* Navigation to Shop */}
+                  <Link to="/shop"><button>Open Shop 🛒</button></Link>
+                  <Link to="/leaderboard"><LeaderboardButton /></Link>
                 </div>
-              ) : <navigate to="/" />
-            } />
+              } />
 
-            <Route path="/leaderboard" element={<Leaderboard />} />
-          </Routes>
+              {/* SHOP ROUTE */}
+              <Route path="/shop" element={
+                <ShopModal
+                  user={user}
+                  onPurchase={(item) => handlePurchase(item)}
+                />
+              } />
+
+              {/* QUIZ ROUTE (Protected by sessionId) */}
+              <Route path="/quiz" element={
+                sessionId ? (
+                  <div className="quiz-page">
+                    {/* <h2>Question: {currentIndex + 1} / {questions.length}</h2> */}
+                    <QuizCard
+                      key={questions[currentIndex].id}
+                      question={questions[currentIndex]}
+                      onResult={handleAnswer}
+                      sessionId={sessionId}
+                      inventory={user.inventory || {}}
+                      onUsePowerUp={handleUsePowerUp}
+                      onBalanceUpdated={handleBalanceUpdate}
+                    />
+                  </div>
+                ) : <navigate to="/" />
+              } />
+
+              <Route path="/leaderboard" element={<Leaderboard />} />
+            </Routes>
+          </div>
         </>
       )}
     </div>
