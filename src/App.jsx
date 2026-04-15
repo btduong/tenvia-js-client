@@ -102,11 +102,6 @@ function App() {
     }
   };
 
-
-  const handleFiftyFiftyUsed = () => {
-    setFiftyFiftyUsed(true);
-  }
-
   const handlePurchase = async (itemType) => {
     try {
       // 1. Construct the URL with query parameters
@@ -137,26 +132,6 @@ function App() {
     setUser(previous => ({ ...previous, balance: newBalance }));
   };
 
-  // if (loading) return <div className="text-center mt-10">Đang tải câu hỏi...</div>;
-
-  // return (
-
-  //   <div>
-  //     {!sessionId ? <button onClick={startNewGame}> Start Quiz</button> :
-  //       <div className="container mx-auto p-4">
-  //         <h1 className="text-3xl font-bold text-center mb-8">Trắc nghiệm Kiến thức</h1>
-  //         <h2>Question: {currentIndex + 1}</h2>
-  //         <div className="grid gap-6">
-  //           {<QuizCard key={questions[currentIndex].id} question={questions[currentIndex]} onResult={handleAnswer} sessionId={sessionId} fiftyFiftyUsed={fiftyFiftyUsed} onFiftyFiftyUsed={handleFiftyFiftyUsed} />}
-  //         </div>
-  //       </div>
-  //     }
-
-  //     {/* <button onClick={showTopScores}>Top scores</button> */}
-  //   </div>
-
-  // );
-
   const handleUsePowerUp = async (type) => {
     try {
       // We reuse our Inventory API!
@@ -184,7 +159,7 @@ function App() {
       ) : (
         /* 2. AUTHENTICATED APP */
         <>
-          <TopBar user={user} />
+          <TopBar user={user} sessionId={sessionId} />
           {/* TODO: pay off Architectural Deb
           - move rout content into Page components
           - move repetitive logic into Custom Hooks
@@ -225,8 +200,6 @@ function App() {
                     inventory={user.inventory || {}}
                     onUsePowerUp={handleUsePowerUp}
                     onBalanceUpdated={handleBalanceUpdate}
-                  // fiftyFiftyUsed={fiftyFiftyUsed} 
-                  // onFiftyFiftyUsed={handleFiftyFiftyUsed} 
                   />
                 </div>
               ) : <navigate to="/" />
