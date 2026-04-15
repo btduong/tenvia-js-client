@@ -89,8 +89,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
           }
           else if (result !== null && option.letter !== result.correctLetter && selectedOptionId === option.id) {
             optionButtonStyle = `${styles.optionIncorrectBtn}`;
-          } 
-      
+          }
 
           return (
             <div className={styles.container} key={option.id}>
@@ -103,7 +102,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
                 }
                 }
               >
-                <span className={styles.optionCircle}>{option.letter}</span> 
+                <span className={styles.optionCircle}>{option.letter}</span>
                 <span className={styles.optionText}>{option.content}</span>
               </button>
             </div>
@@ -114,19 +113,23 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
       <div style={{ marginTop: '10px' }}>
         {!result && (
           <>
-            <div className="inventory-bar">
-              <h4>Your Power-Ups:</h4>
-              {Object.entries(inventory).map(([type, count]) => (
-                <button
-                  key={type}
-                  className="powerup-btn"
-                  disabled={count <= 0 || isDisabled}
-                  onClick={() => handlePowerUpClick(type)}
-                >
-                  {type}: {count}
-                </button>
-              ))}
-            </div>
+            {Object.keys(inventory).length > 0 ?
+              <div className="inventory-bar">
+                <h4>Your Power-Ups:</h4>
+                {Object.entries(inventory).map(([type, count]) => (
+                  <button
+                    key={type}
+                    className="powerup-btn"
+                    disabled={count <= 0 || isDisabled}
+                    onClick={() => handlePowerUpClick(type)}
+                  >
+                    {type}: {count}
+                  </button>
+                ))}
+              </div>
+              : <></>
+            }
+
           </>
         )}
       </div>
@@ -147,7 +150,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
           </button>
         </div>
       )}
-      <button className={homeStyles.homeIconBtn} onClick={() => navigate('/')}><HomeIcon className={homeStyles.homeSvg}/></button>
+      <button className={homeStyles.homeIconBtn} onClick={() => navigate('/')}><HomeIcon className={homeStyles.homeSvg} /></button>
     </div>
   );
 }
