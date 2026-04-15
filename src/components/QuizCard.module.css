@@ -35,7 +35,7 @@
   /* Bigger than the answer text */
   font-weight: 900;
   /* Extra bold */
-  color: #fbbf24;
+  color: #fbe924;
   /* A nice "Gold/Amber" or your primary brand color */
   margin-right: 12px;
   /* Space between "A" and "Yellow" */
@@ -44,6 +44,7 @@
 }
 
 .questionText {
+  width: 800px;
   font-size: 1.1rem;
   /* ~24px, significantly larger than standard 16px */
   font-weight: 700;
@@ -57,7 +58,7 @@
   /* Very light gray/blue (Tailwind-style) */
   background-color: #f7fafc;
   /* Soft border that isn't too "loud" */
-  border: 2px solid #e2e8f0;
+  border: 5px solid #000000;
   /* Rounded corners for a modern look */
   border-radius: 12px;
   /* Space inside the box so text doesn't touch edges */
@@ -116,10 +117,10 @@
 
 .optionBtn {
   display: block;
-  width: 100%;
+  width: 350px;
   padding: 15px;
   margin: 10px 0;
-  border: 2px solid #ddd;
+  border: 3px solid #0e0202;
   border-radius: 8px;
   background-color: rgb(255, 255, 255);
   cursor: pointer;
@@ -130,7 +131,7 @@
 
 .optionIncorrectBtn {
   display: block;
-  width: 100%;
+  width: 350px;
   padding: 15px;
   margin: 10px 0;
   border: 2px solid #000000;
@@ -144,7 +145,7 @@
 
 .optionCorrectBtn {
   display: block;
-  width: 100%;
+  width: 350px;
   padding: 15px;
   margin: 10px 0;
   border: 2px solid #000000;

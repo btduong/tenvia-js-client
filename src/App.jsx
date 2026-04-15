@@ -97,7 +97,6 @@ function App() {
       setCurrentIndex(prev => prev + 1);
     } else {
       handleGameOver();
-      // setGameState('WON');
       navigate('/');
     }
   };

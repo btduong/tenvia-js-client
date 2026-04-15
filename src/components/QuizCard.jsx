@@ -4,7 +4,7 @@ import styles from './QuizCard.module.css';
 
 import homeStyles from '../components/ui/HomeIcon.module.css';
 import { HomeIcon } from './ui/HomeIcon';
-import { playClick } from '../utils/sounds';
+import { playClick, playCorrect, playIncorrectAnswer, playQuestionStart } from '../utils/sounds';
 
 export default function QuizCard({ question, onResult, sessionId, inventory, onUsePowerUp, onBalanceUpdated }) {
   const [selectedOptionId, setSelectedOptionId] = useState(null);
@@ -58,6 +58,11 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
         })
       });
       const data = await response.json();
+      if (data.correct) {
+        playCorrect();
+      } else {
+        playIncorrectAnswer();
+      }
       setResult(data);
       onBalanceUpdated(data.newBalance);
     } catch (error) {
@@ -66,7 +71,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
   };
 
   return (
-    <div style={{ border: '1px solid black', margin: '10px', padding: '10px' }}>
+    <div style={{ border: '1px solid black', margin: '10px', padding: '10px', backgroundColor: 'orange' }}>
       {/* 1. Question Text stays visible */}
       <div className={styles.questionText}>{question.questionText}</div>
 
@@ -98,7 +103,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
                 onClick={() => {
                   setSelectedOptionId(option.id);
                   handleVerify(option.id);
-                  playClick();
+                  // playClick();
                 }
                 }
               >
@@ -144,7 +149,11 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
           {/* Next question button */}
           <button
             className="next-btn"
-            onClick={() => onResult()}
+              onClick={() => {
+                onResult();
+                playQuestionStart();
+              }
+            }
           >
             Next question
           </button>

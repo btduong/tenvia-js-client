@@ -1,7 +1,28 @@
 import clickSfx from '../assets/selectSound.mp3';
+import correctSfx from '../assets/freesound-correct.mp3';
+import questionSwooshSfx from '../assets/freesound-question-swoosh.mp3';
+import incorrectAnswerSfx from '../assets/freesound-incorrect-answer.mp3';
 
 export const playClick = () => {
     const audio = new Audio(clickSfx);
+    audio.volume = .5;
+    audio.play();
+}
+
+export const playCorrect = () => {
+    const audio = new Audio(correctSfx);
+    audio.volume = .5;
+    audio.play();
+}
+
+export const playQuestionStart = () => {
+    const audio = new Audio(questionSwooshSfx);
+    audio.volume = .5;
+    audio.play();
+}
+
+export const playIncorrectAnswer = () => {
+    const audio = new Audio(incorrectAnswerSfx);
     audio.volume = .5;
     audio.play();
 }
