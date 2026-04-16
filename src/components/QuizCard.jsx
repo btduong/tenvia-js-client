@@ -11,7 +11,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
   const [selectedOptionId, setSelectedOptionId] = useState(null);
   const [result, setResult] = useState(null);
   const [hiddenOptionIds, setHiddenOptionIds] = useState([]);
-  const [correctLetter, setCorrectLetter] = useState(null);
+  const [isCorrect, setIsCorrect] = useState(false);
   const [goldReward, setGoldReward] = useState(0);
 
   const isDisabled = question.powerUpDisabled;
@@ -21,7 +21,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
       if (event.key === 'Enter' && selectedOptionId !== null && result === null) {
         handleVerify(selectedOptionId);
       } else if (result !== null) {
-        onResult();
+        onResult(result);
       }
     }
 
@@ -66,6 +66,10 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
       }
       setResult(data);
       onBalanceUpdated(data.newBalance);
+      if (data.isGameOver) {
+        onResult(data);
+        navigate('/summary', { state: { sessionSummary: data.summary } });
+      }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -103,9 +107,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
                 disabled={result !== null || hiddenOptionIds.includes(option.id)}
                 onClick={() => {
                   setSelectedOptionId(option.id);
-                  handleVerify(option.id);
-                  // playClick();
-                }
+                  handleVerify(option.id);}
                 }
               >
                 {/* <span className={styles.optionCircle}>{option.letter}</span> */}
@@ -144,23 +146,20 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
       {result && (
         <div style={{ marginTop: '10px', color: result.correct ? 'green' : 'red' }}>
           <hr />
-          {/* <p>{result.correct ? "ĐÚNG!" : "SAI!"}</p>
-          <p>Giải thích: {result.explanation}</p> */}
-
           {/* Next question button */}
           <button
             className="next-btn"
-              onClick={() => {
-                onResult();
-                playQuestionStart();
-              }
+            onClick={() => {
+              onResult(result);
+              playQuestionStart();
+            }
             }
           >
             Next question
           </button>
         </div>
       )}
-      <HomeButton/>
+      <HomeButton />
     </div>
   );
 }

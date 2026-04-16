@@ -4,6 +4,7 @@ import './App.css'
 
 import QuizCard from './components/QuizCard';
 import Leaderboard from './components/Leaderboard';
+import SummaryPage from './components/SummaryPage';
 import Home from './components/Home';
 import TopBar from './components/Topbar';
 import ShopModal from './components/ShopModal';
@@ -66,43 +67,24 @@ function App() {
     }
   };
 
-  const handleGameOver = async () => {
+  const handleGameOver = () => {
+    setSessionId(null);
+    setCurrentQuestion(null);
     setCurrentIndex(0);
-    try {
-      const response = await fetch(`http://localhost:8080/sessions/${sessionId}/finish`, {
-        method: 'POST'
-      });
-
-      if (response.ok) {
-        const rewardData = await response.json();
-        setUser(previous => ({
-          ...previous,
-          balance: rewardData.newTotalBalance
-
-        }));
-        console.log(rewardData);
-        // Store this to show on your Summary/Home screen
-        // setLastReward(rewardData);
-
-        // Now that the DB is updated, we can clean up
-        setSessionId(null);
-        // navigate('/summary'); // Or back to '/'
-      }
-    } catch (error) {
-      console.error("Failed to finish session:", error);
-    }
+    // TODO: Updat the balance
   };
 
-  const handleAnswer = () => {
+  const handleAnswer = (answerResponse) => {
     console.log('currentIndex=', currentIndex);
-
+    console.log('answerResponse', answerResponse);
     // Progress to the next question
-    if (currentIndex < questions.length - 1) {
+    // if (isCorrect) {
+    if (!answerResponse.isGameOver) {
+
       setCurrentIndex(prev => prev + 1);
       getNextQuestion(sessionId);
     } else {
       handleGameOver();
-      navigate('/');
     }
   };
 
@@ -172,13 +154,13 @@ function App() {
               <Route path="/" element={
                 <div className="lobby">
                   {!sessionId ? (
-                    <button onClick={startNewGame}>Start Quiz</button>
+                    <Home hasActivateSession={false} onStartNewGame={startNewGame} />
                   ) : (
                     <Home hasActivateSession={true} onStartNewGame={startNewGame} />
                   )}
                   {/* Navigation to Shop */}
                   <Link to="/shop"><button>Open Shop 🛒</button></Link>
-                  <Link to="/leaderboard"><LeaderboardButton /></Link>
+                  {/* <Link to="/leaderboard"><LeaderboardButton /></Link> */}
                 </div>
               } />
 
@@ -207,6 +189,8 @@ function App() {
                   </div>
                 ) : <navigate to="/" />
               } />
+
+              <Route path="/summary" element={<SummaryPage/>} />
 
               <Route path="/leaderboard" element={<Leaderboard />} />
             </Routes>
