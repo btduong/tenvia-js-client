@@ -18,6 +18,7 @@ function App() {
   const [typedUsername, setTypedUsername] = useState("");
   const [user, setUser] = useState(null);
   const [questions, setQuestions] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState(null);
   const [sessionId, setSessionId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -28,28 +29,17 @@ function App() {
   // Use react-dom to nagivate to different url ie /home, /quiz etc.
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   // Gọi API lấy 10 câu hỏi ngẫu nhiên khi trang web load
-  //   fetch('http://localhost:8080/sessions/start', { method: 'POST' })
-  //     .then(res => res.json())
-  //     .then(data => {
-  //       setQuestions(data.questions);
-  //       setLoading(false);
-  //       setSessionId(data.id);
-  //       setHasFiftyFiftyOption(data.fiftyFiftyUsed);
-  //     })
-  //     .catch(err => console.error("Không thể lấy dữ liệu:", err));
-  // }, []);
-
   const startNewGame = async () => {
     const res = await fetch(`http://localhost:8080/sessions/start?id=${user.id}`, { method: 'POST' });
     if (res.ok) {
       const data = await res.json();
-      setQuestions(data.questions); // data contains sessionId, firstQuestion, and fiftyFiftyUsed status
       setLoading(false);
       setSessionId(data.id);
       setFiftyFiftyUsed(data.fiftyFiftyUsed);
       navigate('/quiz');
+      // Pass the data.id (sessionId) in here because
+      // it is yet to be updated from setSessionId(data.id);
+      getNextQuestion(data.id);
     }
 
   };
@@ -61,10 +51,20 @@ function App() {
     setUser(data);
   };
 
-  const showTopScores = async () => {
-    const res = await fetch('http://localhost:8080/leaderboard', { method: 'GET' });
-    const data = await res.json();
-  }
+
+  const getNextQuestion = async (newSessionID) => {
+    try {
+      const response = await fetch(`http://localhost:8080/sessions/${newSessionID}/questions/next`);
+
+      if (response.ok) {
+        const questionData = await response.json();
+        setCurrentQuestion(questionData);
+      }
+
+    } catch (error) {
+      console.log("Fail to get next question");
+    }
+  };
 
   const handleGameOver = async () => {
     setCurrentIndex(0);
@@ -91,7 +91,7 @@ function App() {
     } catch (error) {
       console.error("Failed to finish session:", error);
     }
-  }
+  };
 
   const handleAnswer = () => {
     console.log('currentIndex=', currentIndex);
@@ -99,6 +99,7 @@ function App() {
     // Progress to the next question
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(prev => prev + 1);
+      getNextQuestion(sessionId);
     } else {
       handleGameOver();
       navigate('/');
@@ -107,8 +108,6 @@ function App() {
 
   const handlePurchase = async (itemType) => {
     try {
-      // 1. Construct the URL with query parameters
-      // Assuming you have 'user.id' available in your state
       const url = `http://localhost:8080/shop/buy?userId=${user.id}&type=${itemType}`;
 
       const response = await fetch(url, {
@@ -137,7 +136,6 @@ function App() {
 
   const handleUsePowerUp = async (type) => {
     try {
-      // We reuse our Inventory API!
       const response = await fetch(`http://localhost:8080/api/powerups/use?type=${type}&userId=${user.id}&sessionId=${sessionId}`, { method: 'POST' });
 
       if (response.ok) {
@@ -155,7 +153,7 @@ function App() {
     <div className="App">
       {!user ? (
         /* 1. LOGIN GUARD */
-        <div className="login-container">
+        <div className="loginContainer">
           <input type='text' placeholder='Enter username' onChange={(e) => setTypedUsername(e.target.value)} />
           <button onClick={handleLogin} disabled={!typedUsername.trim()}>Login</button>
         </div>
@@ -194,12 +192,12 @@ function App() {
 
               {/* QUIZ ROUTE (Protected by sessionId) */}
               <Route path="/quiz" element={
-                sessionId ? (
+                currentQuestion ? (
                   <div className="quiz-page">
-                    {/* <h2>Question: {currentIndex + 1} / {questions.length}</h2> */}
+                    <div>Question: {currentIndex + 1} / {questions.length}</div>
                     <QuizCard
-                      key={questions[currentIndex].id}
-                      question={questions[currentIndex]}
+                      key={currentQuestion.id}
+                      question={currentQuestion}
                       onResult={handleAnswer}
                       sessionId={sessionId}
                       inventory={user.inventory || {}}

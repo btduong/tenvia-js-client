@@ -1,0 +1,9 @@
+.homeKontainer {
+    display: grid;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    grid-template-columns: 1fr;
+    /* Space between buttons */
+    gap: 20px;
+}
