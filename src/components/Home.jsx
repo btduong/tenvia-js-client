@@ -3,6 +3,7 @@ import styles from './Home.module.css';
 
 import LeaderboardButton from './ui/LeaderboardButton';
 import ShopButton from './ui/ShopButton';
+import { playQuestionStart } from '../utils/sounds';
 
 export default function Home({ hasActivateSession, onStartNewGame }) {
   const navigate = useNavigate();
@@ -12,7 +13,10 @@ export default function Home({ hasActivateSession, onStartNewGame }) {
       <h1>Quiz Game</h1>
       {hasActivateSession ?
         <button onClick={() => navigate('/quiz')}>Resume Game</button> :
-        <button onClick={onStartNewGame}>New Game</button>}
+        <button onClick={() => {
+          onStartNewGame();
+          playQuestionStart();
+        }}>New Game</button>}
 
       <LeaderboardButton/>
       <ShopButton/>

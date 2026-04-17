@@ -10,7 +10,6 @@ import TopBar from './components/Topbar';
 import ShopModal from './components/ShopModal';
 
 // UI buttons
-import LeaderboardButton from './components/ui/LeaderboardButton';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -18,7 +17,6 @@ import { useNavigate } from 'react-router-dom';
 function App() {
   const [typedUsername, setTypedUsername] = useState("");
   const [user, setUser] = useState(null);
-  const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [sessionId, setSessionId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,12 +24,13 @@ function App() {
   const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isShopOpen, setIsShopOpen] = useState(false);
+  const [questionLimit, setQuestionLimit] = useState(10); // How many questions per game
 
   // Use react-dom to nagivate to different url ie /home, /quiz etc.
   const navigate = useNavigate();
 
   const startNewGame = async () => {
-    const res = await fetch(`http://localhost:8080/sessions/start?id=${user.id}`, { method: 'POST' });
+    const res = await fetch(`http://localhost:8080/sessions/start?id=${user.id}&limit=${questionLimit}`, { method: 'POST' });
     if (res.ok) {
       const data = await res.json();
       setLoading(false);
@@ -173,7 +172,7 @@ function App() {
               <Route path="/quiz" element={
                 currentQuestion ? (
                   <div className="quiz-page">
-                    <div>Question: {currentIndex + 1} / {questions.length}</div>
+                    <div>Question: {currentIndex + 1} / {questionLimit}</div>
                     <QuizCard
                       key={currentQuestion.id}
                       question={currentQuestion}
