@@ -132,7 +132,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div>
       {!user ? (
         /* 1. LOGIN GUARD */
         <div className="loginContainer">
@@ -141,8 +141,7 @@ function App() {
         </div>
       ) : (
         /* 2. AUTHENTICATED APP */
-        <>
-          <div>
+          <div className='lobby'>
             <TopBar user={user} sessionId={sessionId} />
             {/* TODO: pay off Architectural Deb
           - move rout content into Page components
@@ -152,15 +151,13 @@ function App() {
             <Routes>
               {/* HOME / LOBBY */}
               <Route path="/" element={
-                <div className="lobby">
+                <div>
                   {!sessionId ? (
                     <Home hasActivateSession={false} onStartNewGame={startNewGame} />
                   ) : (
                     <Home hasActivateSession={true} onStartNewGame={startNewGame} />
                   )}
-                  {/* Navigation to Shop */}
-                  <Link to="/shop"><button>Open Shop 🛒</button></Link>
-                  {/* <Link to="/leaderboard"><LeaderboardButton /></Link> */}
+
                 </div>
               } />
 
@@ -195,7 +192,6 @@ function App() {
               <Route path="/leaderboard" element={<Leaderboard />} />
             </Routes>
           </div>
-        </>
       )}
     </div>
   );

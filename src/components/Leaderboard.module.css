@@ -1,0 +1,12 @@
+.leaderboard {
+    display: table;
+    margin: 0 auto;
+    border-collapse: collapse;
+    /* text-align: center; */
+}
+
+.leaderboard th,
+.leaderboard td {
+    padding: 12px 8px;
+    text-align: left;
+}

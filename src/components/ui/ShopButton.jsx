@@ -1,13 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
-const HomeButton = () => {
+const ShopButton = () => {
     const navigate = useNavigate();
 
     return (
-        <button onClick={() => navigate('/leaderboard')}>Leaderboard</button>
+        <button onClick={() => navigate('/shop')}>Shop</button>
     );
 };
 
-export default HomeButton;
+export default ShopButton;

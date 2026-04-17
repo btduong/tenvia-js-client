@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styles from './Leaderboard.module.css';
+import HomeButton from './ui/HomeButton';
 
 export default function Leaderboard({ }) {
     const [scores, setScores] = useState([]);
@@ -13,7 +15,7 @@ export default function Leaderboard({ }) {
     }, []);
 
     return (
-        <div className="leaderboard">
+        <div className={styles.leaderboard}>
             <h2>Top 10 High Scores</h2>
             <table>
                 <thead>
@@ -33,7 +35,7 @@ export default function Leaderboard({ }) {
                     ))}
                 </tbody>
             </table>
-            <button onClick={() => navigate('/')}>Back to Home</button>
+            <HomeButton/>
         </div>
     );
 }

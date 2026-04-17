@@ -1,12 +1,25 @@
 #root {
-  /* max-width: 1280px; */
   width: 100vw;
   height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
-  background-color: rgb(0, 0, 0);
+  gap: 10px;
+  /* background-color: rgb(0, 0, 0); */
+
 }
+
+/* .mainApp {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: stretch;
+  width: 100%;
+  grid-template-columns: 1fr;
+  margin: 0 auto;
+} */
+
+
 
 .logo {
   height: 6em;
@@ -50,6 +63,7 @@
 .lobby {
   display: grid;
   grid-template-columns: 1fr;
+  justify-items: stretch;
   /* Space between buttons */
   gap: 20px;
   /* Dont touch the edge */
@@ -59,4 +73,5 @@
   max-width: 400px;
   /* 0 top/bootom auto left/right  */
   margin: 0 auto;
+  background-color: red;
 }
