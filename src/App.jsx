@@ -135,8 +135,9 @@ function App() {
       {!user ? (
         /* 1. LOGIN GUARD */
         <div className="loginContainer">
-          <input type='text' placeholder='Enter username' onChange={(e) => setTypedUsername(e.target.value)} />
-          <button onClick={handleLogin} disabled={!typedUsername.trim()}>Login</button>
+          <h2>Enter a name to play</h2>
+          <input type='text' placeholder='Name' onChange={(e) => setTypedUsername(e.target.value)} />
+          <button onClick={handleLogin} disabled={!typedUsername.trim()}>Play</button>
         </div>
       ) : (
         /* 2. AUTHENTICATED APP */

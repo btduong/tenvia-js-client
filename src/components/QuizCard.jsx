@@ -144,19 +144,13 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
 
       {/* 4. Result Section stays at the bottom and next question button */}
       {result && (
-        <div style={{ marginTop: '10px', color: result.correct ? 'green' : 'red' }}>
+        <div className={styles.nextButtonContainer}>
           <hr />
-          {/* Next question button */}
           <button
             className="next-btn"
             onClick={() => {
               onResult(result);
-              playQuestionStart();
-            }
-            }
-          >
-            Next question
-          </button>
+              playQuestionStart();}}>Next question</button>
         </div>
       )}
       <HomeButton />

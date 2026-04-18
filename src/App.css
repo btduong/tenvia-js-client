@@ -19,7 +19,17 @@
   margin: 0 auto;
 } */
 
-
+.loginContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content:first baseline;
+  align-items: center;
+  gap: 15px;
+  background-color: rgb(203, 203, 203);
+  max-width: 600px;
+  margin: 0 auto;
+}
 
 .logo {
   height: 6em;

@@ -1,3 +1,18 @@
+.nextButtonContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+}
+
+.nextButtonContainer hr {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid #000000; /* Very light gray line */
+  margin: 10px 0;
+}
+
 .mainQuestionContainer {
   color: white;
   background-color: #fbbf24;
