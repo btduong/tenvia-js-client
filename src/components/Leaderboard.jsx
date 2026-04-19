@@ -9,7 +9,7 @@ export default function Leaderboard({ }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('http://localhost:8081/leaderboard')
+        fetch('http://192.168.1.43:8081/leaderboard')
             .then(res => res.json())
             .then(data => setScores(data));
     }, []);

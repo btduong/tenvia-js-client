@@ -51,7 +51,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
 
   const handleVerify = async (optionId) => {
     try {
-      const response = await fetch(`http://localhost:8080/sessions/${sessionId}/answer`, {
+      const response = await fetch(`http://192.168.1.43:8080/sessions/${sessionId}/answer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

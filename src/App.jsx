@@ -30,7 +30,7 @@ function App() {
   const navigate = useNavigate();
 
   const startNewGame = async () => {
-    const res = await fetch(`http://localhost:8080/sessions/start?id=${user.id}&limit=${questionLimit}`, { method: 'POST' });
+    const res = await fetch(`http://192.168.1.43:8080/sessions/start?id=${user.id}&limit=${questionLimit}`, { method: 'POST' });
     if (res.ok) {
       const data = await res.json();
       setLoading(false);
@@ -46,7 +46,7 @@ function App() {
 
   const handleLogin = async () => {
 
-    const res = await fetch(`http://localhost:8080/users/login?username=${typedUsername}`, { method: 'POST' });
+    const res = await fetch(`http://192.168.1.43:8080/users/login?username=${typedUsername}`, { method: 'POST' });
     const data = await res.json();
     setUser(data);
   };
@@ -54,7 +54,7 @@ function App() {
 
   const getNextQuestion = async (newSessionID) => {
     try {
-      const response = await fetch(`http://localhost:8080/sessions/${newSessionID}/questions/next`);
+      const response = await fetch(`http://192.168.1.43:8080/sessions/${newSessionID}/questions/next`);
 
       if (response.ok) {
         const questionData = await response.json();
@@ -89,7 +89,7 @@ function App() {
 
   const handlePurchase = async (itemType) => {
     try {
-      const url = `http://localhost:8080/shop/buy?userId=${user.id}&type=${itemType}`;
+      const url = `http://192.168.1.43:8080/shop/buy?userId=${user.id}&type=${itemType}`;
 
       const response = await fetch(url, {
         method: 'POST'
@@ -117,7 +117,7 @@ function App() {
 
   const handleUsePowerUp = async (type) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/powerups/use?type=${type}&userId=${user.id}&sessionId=${sessionId}`, { method: 'POST' });
+      const response = await fetch(`http://192.168.1.43:8080/api/powerups/use?type=${type}&userId=${user.id}&sessionId=${sessionId}`, { method: 'POST' });
 
       if (response.ok) {
         const data = await response.json();
