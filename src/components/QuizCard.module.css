@@ -9,18 +9,23 @@
 .nextButtonContainer hr {
   width: 100%;
   border: 0;
-  border-top: 1px solid #000000; /* Very light gray line */
+  border-top: 1px solid #000000;
+  /* Very light gray line */
   margin: 10px 0;
 }
 
 .mainQuestionContainer {
+  display: flex;
+  flex-direction: column;
   color: white;
-  background-color: #fbbf24;
+  /* background-color: #f9f9f9; */
   max-width: 600px;
   align-content: center;
   border: #000000;
   margin: 0 auto;
   padding: 10px;
+  gap: 50px;
+  /* Gap between the question and the answer options */
 }
 
 .optionCircle {
@@ -49,11 +54,11 @@
   margin-right: 15px;
 }
 
-.optionText {
+/* '.optionText {
   color: white;
   font-size: 1.1rem;
   text-align: left;
-}
+}' */
 
 .optionLetter {
   font-size: 1.1rem;
@@ -71,20 +76,20 @@
 .questionText {
   width: 100%;
   max-width: 600px;
-  margin: 0 auto;
-  color: #1a202c;
-  font-size: 1.3rem;
-  font-weight: 700;
+  /* margin: 0 auto; */
+  color: #000000;
+  font-size: 1.1rem;
+  font-weight: 800;
   /* Bold makes it "pop" */
   text-align: center;
   /* Pushes the 2x2 grid down so it's not cramped */
 
   /* Deep charcoal/black for high contrast */
-  /* line-height: 1.4; */
+  line-height: 1.2;
   /* Very light gray/blue (Tailwind-style) */
-  /* background-color: #f7fafc; */
+  background-color: #ffffff00;
   /* Soft border that isn't too "loud" */
-  /* border: 5px solid #000000; */
+  /* border: 3px solid #000000; */
   /* Rounded corners for a modern look */
   border-radius: 12px;
   /* Space inside the box so text doesn't touch edges */
@@ -94,26 +99,27 @@
   /* Space between the box and the options */
 
   /* Optional: Soft shadow to make it "float" */
-  /* box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 
 }
 
 .optionText {
-  font-size: 1.rem;
+  /* font-size: 1.rem; */
   /* font-weight: 700; */
   text-align: center;
   /* margin-bottom: 2rem; */
-  color: #1a202c;
+  color: #1b1e25;
   /* line-height: 1.1; */
+  /* border: 3px solid #751775; */
 }
 
 /* Optional: Make it even bigger on Large screens */
-@media (min-width: 768px) {
+/* @media (min-width: 768px) {
   .questionText {
-    font-size: 2rem;
-    /* ~32px */
+    font-size: 1.3rem;
+    font-weight: 600;
   }
-}
+} */
 
 .optionsContainer {
   display: grid;
@@ -127,23 +133,30 @@
   width: 100%;
   /* max-width: 400px; */
   margin: 0 auto;
+  /* border: 3px solid #751775; */
 }
 
 /* When the screen is wider than 480px, switch to 2x2 */
-@media (min-width: 480px) {
+/* @media (min-width: 480px) {
   .optionsContainer {
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
   }
-}
+} */
 
 .optionDisabled {
-  opacity: 0.3;              /* Makes it look faded */
-  cursor: not-allowed;      /* Changes the mouse cursor to a 'circle-slash' */
-  pointer-events: none;      /* Safety net: prevents clicks even if JS fails */
-  filter: grayscale(80%);    /* Removes the color pop */
-  border: 1px dashed #cbd5e0; /* Optional: change solid border to dashed */
-  box-shadow: none !important; /* Remove any "glow" or lift */
+  opacity: 0.3;
+  /* Makes it look faded */
+  cursor: not-allowed;
+  /* Changes the mouse cursor to a 'circle-slash' */
+  pointer-events: none;
+  /* Safety net: prevents clicks even if JS fails */
+  filter: grayscale(80%);
+  /* Removes the color pop */
+  border: 1px dashed #cbd5e0;
+  /* Optional: change solid border to dashed */
+  box-shadow: none !important;
+  /* Remove any "glow" or lift */
 }
 
 .optionBtn {
@@ -151,13 +164,13 @@
   width: 100%;
   padding: 15px;
   margin: 10px 0;
-  border: 3px solid #0e0202;
-  border-radius: 8px;
+  border: 2px solid #171616f2;
+  border-radius: 24px;
   background-color: rgb(255, 255, 255);
   cursor: pointer;
   transition: all 0.2s ease;
   /* Smooth color change */
-  font-size: 1rem;
+  /* font-size: 1rem; */
 }
 
 .optionIncorrectBtn {
@@ -166,7 +179,7 @@
   padding: 15px;
   margin: 10px 0;
   border: 2px solid #000000;
-  border-radius: 8px;
+  border-radius: 24px;
   background-color: rgb(167, 7, 7);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -180,7 +193,7 @@
   padding: 15px;
   margin: 10px 0;
   border: 2px solid #000000;
-  border-radius: 8px;
+  border-radius: 24px;
   background-color: rgb(15, 223, 77);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -219,4 +232,42 @@
   transform: scale(0.98);
   /* Slight shrink when pressed */
   filter: brightness(0.9);
+}
+
+.controlBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;         /* Ensure it starts at the very left */
+  width: 100%;
+  box-sizing: border-box; /* CRITICAL: Padding stays inside the 100% */
+  padding: 0 20px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  height: 70px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* These two share the side space equally */
+.navSpacer, 
+.navRight {
+  flex: 1;
+}
+
+/* Ensures the Next button stays on the far right of its container */
+.navRight {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.nextBtn {
+  padding: 8px 16px;
+  /* border-radius: 2px; */
+  background-color: #000000;
+  color: white;
+  border: none;
+  font-weight: bold;
 }

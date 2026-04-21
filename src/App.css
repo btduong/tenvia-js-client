@@ -4,7 +4,7 @@
   display: grid;
   grid-template-columns: 1fr;
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2rem; */
   gap: 10px;
   /* background-color: rgb(0, 0, 0); */
 
@@ -71,17 +71,37 @@
 }
 
 .lobby {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
   justify-items: stretch;
   /* Space between buttons */
   gap: 20px;
   /* Dont touch the edge */
   padding: 15px;
-  width: 100%;
+  width: 100hw;
+  height: 100vh;
   /* Limits width on larger screen */
   max-width: 400px;
   /* 0 top/bootom auto left/right  */
   margin: 0 auto;
-  background-color: red;
+  background: linear-gradient(90deg, #5499cf 0%, #b63dce 100%);
+  background-attachment: fixed;
+}
+
+.quizPage {
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.mobileAppWrapper {
+  max-width: 430px; /* Max width of the largest iPhone Pro Max */
+  margin: 0 auto;   /* Center on your laptop screen */
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: linear-gradient(90deg, #5499cf 0%, #b63dce 100%);
+  overflow-x: hidden; /* Prevents annoying horizontal scrolling */
 }

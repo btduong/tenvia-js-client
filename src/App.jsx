@@ -75,7 +75,6 @@ function App() {
 
   const handleAnswer = (answerResponse) => {
     console.log('currentIndex=', currentIndex);
-    console.log('answerResponse', answerResponse);
     // Progress to the next question
     // if (isCorrect) {
     if (!answerResponse.isGameOver) {
@@ -141,12 +140,12 @@ function App() {
         </div>
       ) : (
         /* 2. AUTHENTICATED APP */
-          <div className='lobby'>
+          <div className='mobileAppWrapper'>
             <TopBar user={user} sessionId={sessionId} />
             {/* TODO: pay off Architectural Deb
-          - move rout content into Page components
-          - move repetitive logic into Custom Hooks
-          - use React Router Outlets for shared UI ie TopBar
+            - move rout content into Page components
+            - move repetitive logic into Custom Hooks
+            - use React Router Outlets for shared UI ie TopBar
            */}
             <Routes>
               {/* HOME / LOBBY */}
@@ -172,7 +171,7 @@ function App() {
               {/* QUIZ ROUTE (Protected by sessionId) */}
               <Route path="/quiz" element={
                 currentQuestion ? (
-                  <div className="quiz-page">
+                  <div className="quizPage">
                     <div>Question: {currentIndex + 1} / {questionLimit}</div>
                     <QuizCard
                       key={currentQuestion.id}

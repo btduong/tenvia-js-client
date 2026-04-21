@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './QuizCard.module.css';
 
-// import homeStyles from '../components/ui/HomeIcon.module.css';
-
 import { playClick, playCorrect, playIncorrectAnswer, playQuestionStart } from '../utils/sounds';
 import HomeButton from './ui/HomeButton';
+
+const NextButton = () => {
+
+}
 
 export default function QuizCard({ question, onResult, sessionId, inventory, onUsePowerUp, onBalanceUpdated }) {
   const [selectedOptionId, setSelectedOptionId] = useState(null);
@@ -18,7 +20,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === 'Enter' && selectedOptionId !== null && result === null) {
+      if (event.key === 'Space' && selectedOptionId !== null && result === null) {
         handleVerify(selectedOptionId);
       } else if (result !== null) {
         onResult(result);
@@ -107,7 +109,8 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
                 disabled={result !== null || hiddenOptionIds.includes(option.id)}
                 onClick={() => {
                   setSelectedOptionId(option.id);
-                  handleVerify(option.id);}
+                  handleVerify(option.id);
+                }
                 }
               >
                 {/* <span className={styles.optionCircle}>{option.letter}</span> */}
@@ -143,17 +146,32 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
       </div>
 
       {/* 4. Result Section stays at the bottom and next question button */}
-      {result && (
-        <div className={styles.nextButtonContainer}>
-          <hr />
+
+
+      <nav className={styles.controlBar}>
+        <hr />
+        {/* left space */}
+        <div className={styles.navSpacer}></div>
+        {/* center space*/}
+        <div className={styles.homeBtn}>
+
+          <HomeButton />
+        </div>
+        {/* rigth space */}
+        <div className={styles.navRight}>
+
           <button
-            className="next-btn"
+            className={styles.nextBtn}
+            disabled={!result}
             onClick={() => {
               onResult(result);
-              playQuestionStart();}}>Next question</button>
+              playQuestionStart();
+            }}>Next</button>
         </div>
-      )}
-      <HomeButton />
+
+      </nav>
+      
+
     </div>
   );
 }
