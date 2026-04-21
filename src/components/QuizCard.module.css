@@ -239,6 +239,13 @@
   bottom: 0;
   left: 0;         /* Ensure it starts at the very left */
   width: 100%;
+  max-width: 430px; /* Same as the appWrapper */
+
+  /* Needs these two settings to make the controlBar at the centre because with 'position: fixed', it breaks the flow
+  ie width: 100% will ginore the parent and sketch the full width of the browser */
+  left: 50%;
+  transform: translateX(-50%);
+
   box-sizing: border-box; /* CRITICAL: Padding stays inside the 100% */
   padding: 0 20px;
   
