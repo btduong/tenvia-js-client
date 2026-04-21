@@ -1,20 +1,26 @@
 .topBar {
+    position: fixed;
+    top: 0;
+    /* Glue to top */
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 100%;
+    max-width: 430px;
+    /* Match your app's max-width */
+    height: 60px;
+
     display: flex;
     justify-content: space-between;
-    /* Pushes player left, gold right */
     align-items: center;
-    /* padding: 1rem 1.5rem; */
-    /* padding: 1rem; */
-    background-color: #1fde88;
-    border-bottom: 2px solid #e2e8f0;
-    /* margin-bottom: 2rem; */
-    border-radius: 0 0 12px 12px;
-    /* Rounds only the bottom corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    width: 100%;
-    height: 15px;
-    max-width: 600px;
-    margin: 0 auto;
+
+    padding: 0 20px;
+    /* CRITICAL: Space for the iPhone Notch / Android Punch-hole */
+    padding-top: env(safe-area-inset-top, 10px);
+
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    /* z-index: 100;   */
 
 }
 
@@ -28,12 +34,16 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.4rem 1rem; /* Space inside the badge */
-    background-color: #fefcbf; /* A very light yellow background */
-    border: 1.5px solid #faf089; /* A slightly darker yellow border */
-    border-radius: 999px; /* This creates the "pill" shape */
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4); /* Subtle inner shine */
-  }
+    padding: 0.4rem 1rem;
+    /* Space inside the badge */
+    background-color: #fefcbf;
+    /* A very light yellow background */
+    border: 1.5px solid #faf089;
+    /* A slightly darker yellow border */
+    /* border-radius: 999px; */
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    /* Subtle inner shine */
+}
 
 .avatar {
     width: 40px;

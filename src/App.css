@@ -93,6 +93,8 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr;
+  flex: 1;
+  padding-bottom: 80px;
 }
 
 .mobileAppWrapper {
@@ -104,4 +106,13 @@
   position: relative;
   background: linear-gradient(90deg, #5499cf 0%, #b63dce 100%);
   overflow-x: hidden; /* Prevents annoying horizontal scrolling */
+}
+
+.currentQuestionCount {
+  text-align: center;
+  width: 100%;
+  display: block;
+  margin-top: 40px;
+  margin-bottom: 50px;
+  /* margin: 10px 0; */
 }

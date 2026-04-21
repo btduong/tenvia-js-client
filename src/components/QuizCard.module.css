@@ -75,7 +75,7 @@
 
 .questionText {
   width: 100%;
-  max-width: 600px;
+  max-width: 430px;
   /* margin: 0 auto; */
   color: #000000;
   font-size: 1.1rem;
@@ -95,11 +95,14 @@
   /* Space inside the box so text doesn't touch edges */
   /* Padding only the inside of the specified width */
   box-sizing: border-box;
-  padding: 10px;
+  /* padding: 10px; */
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: #fbbf24;
   /* Space between the box and the options */
 
   /* Optional: Soft shadow to make it "float" */
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 16px -1px rgba(4, 4, 4, 0.1);
 
 }
 
@@ -254,8 +257,8 @@
   justify-content: space-between;
   
   height: 70px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  /* background: rgba(255, 255, 255, 0.1); */
+  /* backdrop-filter: blur(10px); */
 }
 
 /* These two share the side space equally */
@@ -273,7 +276,7 @@
 .nextBtn {
   padding: 8px 16px;
   /* border-radius: 2px; */
-  background-color: #000000;
+  background-color: #d97935;
   color: white;
   border: none;
   font-weight: bold;

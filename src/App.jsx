@@ -140,39 +140,40 @@ function App() {
         </div>
       ) : (
         /* 2. AUTHENTICATED APP */
-          <div className='mobileAppWrapper'>
-            <TopBar user={user} sessionId={sessionId} />
-            {/* TODO: pay off Architectural Deb
+        <div className='mobileAppWrapper'>
+          {/* <TopBar user={user} sessionId={sessionId} /> */}
+          {/* TODO: pay off Architectural Deb
             - move rout content into Page components
             - move repetitive logic into Custom Hooks
             - use React Router Outlets for shared UI ie TopBar
            */}
-            <Routes>
-              {/* HOME / LOBBY */}
-              <Route path="/" element={
-                <div>
-                  {!sessionId ? (
-                    <Home hasActivateSession={false} onStartNewGame={startNewGame} />
-                  ) : (
-                    <Home hasActivateSession={true} onStartNewGame={startNewGame} />
-                  )}
+          <Routes>
+            {/* HOME / LOBBY */}
+            <Route path="/" element={
+              <div>
+                {!sessionId ? (
+                  <Home hasActivateSession={false} onStartNewGame={startNewGame} />
+                ) : (
+                  <Home hasActivateSession={true} onStartNewGame={startNewGame} />
+                )}
 
-                </div>
-              } />
+              </div>
+            } />
 
-              {/* SHOP ROUTE */}
-              <Route path="/shop" element={
-                <ShopModal
-                  user={user}
-                  onPurchase={(item) => handlePurchase(item)}
-                />
-              } />
+            {/* SHOP ROUTE */}
+            <Route path="/shop" element={
+              <ShopModal
+                user={user}
+                onPurchase={(item) => handlePurchase(item)}
+              />
+            } />
 
-              {/* QUIZ ROUTE (Protected by sessionId) */}
-              <Route path="/quiz" element={
-                currentQuestion ? (
+            {/* QUIZ ROUTE (Protected by sessionId) */}
+            <Route path="/quiz" element={
+              currentQuestion ? (
+                <>
+                  <div className='currentQuestionCount'>Question: {currentIndex + 1} / {questionLimit}</div>
                   <div className="quizPage">
-                    <div>Question: {currentIndex + 1} / {questionLimit}</div>
                     <QuizCard
                       key={currentQuestion.id}
                       question={currentQuestion}
@@ -183,14 +184,15 @@ function App() {
                       onBalanceUpdated={handleBalanceUpdate}
                     />
                   </div>
-                ) : <navigate to="/" />
-              } />
+                </>
+              ) : <navigate to="/" />
+            } />
 
-              <Route path="/summary" element={<SummaryPage/>} />
+            <Route path="/summary" element={<SummaryPage />} />
 
-              <Route path="/leaderboard" element={<Leaderboard />} />
-            </Routes>
-          </div>
+            <Route path="/leaderboard" element={<Leaderboard />} />
+          </Routes>
+        </div>
       )}
     </div>
   );
