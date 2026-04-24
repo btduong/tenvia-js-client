@@ -98,7 +98,7 @@
   /* padding: 10px; */
   padding-top: 20px;
   padding-bottom: 20px;
-  background-color: #fbbf24;
+  background-color: #3d3a330b;
   /* Space between the box and the options */
 
   /* Optional: Soft shadow to make it "float" */
@@ -276,7 +276,7 @@
 .nextBtn {
   padding: 8px 16px;
   /* border-radius: 2px; */
-  background-color: #d97935;
+  background-color: #706c6a3b;
   color: white;
   border: none;
   font-weight: bold;
