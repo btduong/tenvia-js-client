@@ -4,7 +4,7 @@ import './App.css'
 
 import QuizCard from './components/QuizCard';
 import Leaderboard from './components/Leaderboard';
-import SummaryPage from './components/SummaryPage';
+import SummaryPage from './features/SummaryPage/SummaryPage';
 import Home from './components/Home';
 import TopBar from './components/Topbar';
 import ShopModal from './components/ShopModal';
@@ -12,6 +12,34 @@ import ShopModal from './components/ShopModal';
 // UI buttons
 
 import { useNavigate } from 'react-router-dom';
+
+const SessionTimer = ({ duration }) => {
+
+  const [timeRemaining, setTimeRemaining] = useState(duration || 0);
+  
+  useEffect(() => {
+    if (duration !== undefined && duration !== null) {
+      console.log('Fetch delivered data! Setting timer to:', duration);
+      setTimeRemaining(duration);
+    }
+  }, [duration]); // Only runs when the 'duration' prop changes
+
+  useEffect(() => {
+    if (timeRemaining <= 0) return;
+
+    const timerId = setInterval(() => {
+      setTimeRemaining((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timerId);
+
+  }, [timeRemaining]);
+
+  return (
+    <div> { timeRemaining > 0 ? timeRemaining : "..."}
+    </div>
+  );
+};
 
 
 function App() {
@@ -25,6 +53,7 @@ function App() {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [questionLimit, setQuestionLimit] = useState(10); // How many questions per game
+  const [sessionData, setSessionData] = useState(null);
 
   // Use react-dom to nagivate to different url ie /home, /quiz etc.
   const navigate = useNavigate();
@@ -33,6 +62,8 @@ function App() {
     const res = await fetch(`http://localhost:8080/sessions/start?id=${user.id}&limit=${questionLimit}`, { method: 'POST' });
     if (res.ok) {
       const data = await res.json();
+      setSessionData(data);
+      console.log(data.duration);
       setLoading(false);
       setSessionId(data.id);
       setFiftyFiftyUsed(data.fiftyFiftyUsed);
@@ -170,6 +201,12 @@ function App() {
             <Route path="/quiz" element={
               currentQuestion ? (
                 <>
+                  {sessionData && sessionData.duration ?
+                    (<SessionTimer
+                      key={sessionData.duration}
+                      duration={sessionData.duration} />)
+                    : (<div></div>)
+                  }
                   <div className='currentQuestionCount'>Question: {currentIndex + 1} / {questionLimit}</div>
                   <div className="quizPage">
                     <QuizCard
