@@ -1,8 +1,14 @@
 import React from 'react';
 import ShopItem from './ShopItem';
 import { useNavigate } from 'react-router-dom';
+import type { PowerUpType, User } from '../types';
 
-const ShopModal = ({ user, onPurchase }) => {
+interface ShopModalProps {
+  user: User;
+  onPurchase: (item: PowerUpType) => {};
+}
+
+const ShopModal: React.FC<ShopModalProps> = ({ user, onPurchase }) => {
   const navigate = useNavigate();
   
   if (!user) return null;

@@ -8,52 +8,23 @@ import SummaryPage from './features/SummaryPage/SummaryPage';
 import Home from './components/Home';
 import TopBar from './components/Topbar';
 import ShopModal from './components/ShopModal';
+import SessionTimer from './features/Quiz/SessionTimer';
 
 // UI buttons
 
 import { useNavigate } from 'react-router-dom';
-
-const SessionTimer = ({ duration }) => {
-
-  const [timeRemaining, setTimeRemaining] = useState(duration || 0);
-  
-  useEffect(() => {
-    if (duration !== undefined && duration !== null) {
-      console.log('Fetch delivered data! Setting timer to:', duration);
-      setTimeRemaining(duration);
-    }
-  }, [duration]); // Only runs when the 'duration' prop changes
-
-  useEffect(() => {
-    if (timeRemaining <= 0) return;
-
-    const timerId = setInterval(() => {
-      setTimeRemaining((prev) => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(timerId);
-
-  }, [timeRemaining]);
-
-  return (
-    <div> { timeRemaining > 0 ? timeRemaining : "..."}
-    </div>
-  );
-};
+import type { AnswerResponse, GameSession, Question, User, PowerUpType, PowerUpEffect } from './types';
 
 
-function App() {
+const App: React.FC = () => {
   const [typedUsername, setTypedUsername] = useState("");
-  const [user, setUser] = useState(null);
-  const [currentQuestion, setCurrentQuestion] = useState(null);
-  const [sessionId, setSessionId] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(false);
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [isShopOpen, setIsShopOpen] = useState(false);
-  const [questionLimit, setQuestionLimit] = useState(10); // How many questions per game
-  const [sessionData, setSessionData] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
+  const [sessionData, setSessionData] = useState<GameSession | null >(null);
 
   // Use react-dom to nagivate to different url ie /home, /quiz etc.
   const navigate = useNavigate();
@@ -66,7 +37,6 @@ function App() {
       console.log(data.duration);
       setLoading(false);
       setSessionId(data.id);
-      setFiftyFiftyUsed(data.fiftyFiftyUsed);
       navigate('/quiz');
       // Pass the data.id (sessionId) in here because
       // it is yet to be updated from setSessionId(data.id);
@@ -83,9 +53,9 @@ function App() {
   };
 
 
-  const getNextQuestion = async (newSessionID) => {
+  const getNextQuestion = async (currentSessionId: string) => {
     try {
-      const response = await fetch(`http://localhost:8080/sessions/${newSessionID}/questions/next`);
+      const response = await fetch(`http://localhost:8080/sessions/${currentSessionId}/questions/next`);
 
       if (response.ok) {
         const questionData = await response.json();
@@ -103,19 +73,19 @@ function App() {
     setCurrentIndex(0);
   };
 
-  const handleAnswer = (answerResponse) => {
+  const handleAnswer = (answerResponse: AnswerResponse) => {
     // Progress to the next question
     // if (isCorrect) {
-    if (!answerResponse.isGameOver) {
+    if (!answerResponse.isGameOver && sessionData?.id) {
 
       setCurrentIndex(prev => prev + 1);
-      getNextQuestion(sessionId);
+      getNextQuestion(sessionData.id);
     } else {
       handleGameOver();
     }
   };
 
-  const handlePurchase = async (itemType) => {
+  const handlePurchase = async (itemType: PowerUpType) => {
     try {
       const url = `http://localhost:8080/shop/buy?userId=${user.id}&type=${itemType}`;
 
@@ -130,7 +100,10 @@ function App() {
         // or modify the controller to return the UserDTO.
         // refreshUserData();
         const newData = await response.json();
-        setUser(previous => ({ ...previous, inventory: newData.inventory }));
+        setUser(previous => {
+          if (!previous) return null;
+          return ({ ...previous, inventory: newData.inventory })}
+        );
       } else {
         alert("Purchase failed. Check your gold balance!");
       }
@@ -139,11 +112,13 @@ function App() {
     }
   };
 
-  const handleBalanceUpdate = (newBalance) => {
-    setUser(previous => ({ ...previous, balance: newBalance }));
+  const handleBalanceUpdate = (newBalance: number) => {
+    setUser(previous => {
+      if (!previous) return null;
+      return ({ ...previous, balance: newBalance })});
   };
 
-  const handleUsePowerUp = async (type) => {
+  const handleUsePowerUp = async (type: PowerUpType): Promise<PowerUpEffect | null> => {
     try {
       const response = await fetch(`http://localhost:8080/api/powerups/use?type=${type}&userId=${user.id}&sessionId=${sessionId}`, { method: 'POST' });
 
@@ -152,6 +127,7 @@ function App() {
         setUser(data.updatedUser); // This triggers a re-render of QuizCard with the new count
         return data.powerUpEffect;
       }
+      return null;
     } catch (error) {
       console.error("Failed to use power-up", error);
       return null;
@@ -193,7 +169,7 @@ function App() {
             <Route path="/shop" element={
               <ShopModal
                 user={user}
-                onPurchase={(item) => handlePurchase(item)}
+                onPurchase={(item: PowerUpType) => handlePurchase(item)}
               />
             } />
 
@@ -209,18 +185,19 @@ function App() {
                   }
                   <div className='currentQuestionCount'>Question: {currentIndex + 1} / {questionLimit}</div>
                   <div className="quizPage">
+                    { sessionData ? 
                     <QuizCard
                       key={currentQuestion.id}
                       question={currentQuestion}
                       onResult={handleAnswer}
-                      sessionId={sessionId}
-                      inventory={user.inventory || {}}
+                      sessionId={sessionData.id}
+                      inventory={user.inventory}
                       onUsePowerUp={handleUsePowerUp}
-                      onBalanceUpdated={handleBalanceUpdate}
-                    />
+                      onBalanceUpdated={handleBalanceUpdate}/>
+                 :"Loading neq quiz card" }
                   </div>
                 </>
-              ) : <navigate to="/" />
+              ) : "No question fetched"
             } />
 
             <Route path="/summary" element={<SummaryPage />} />

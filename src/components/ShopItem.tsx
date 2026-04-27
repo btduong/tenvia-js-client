@@ -1,5 +1,11 @@
-// ShopItem.jsx
-export default function ShopItem({ name, price, count, onBuy }) {
+interface ShopItemProps {
+    name: string;
+    price: number;
+    count: number;
+    onBuy: () => {};
+}
+
+const ShopItem: React.FC<ShopItemProps> = ({ name, price, count, onBuy }) => {
     return (
         <div className="shop-item">
             <div className="item-info">
@@ -15,3 +21,5 @@ export default function ShopItem({ name, price, count, onBuy }) {
         </div>
     );
 };
+
+export default ShopItem;

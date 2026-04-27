@@ -1,8 +1,14 @@
 import React from 'react';
+import type {User} from '../types.js'
 import styles from './TopBar.module.css';
 
+interface TopBarProps {
+    user: User;
+    sessionId: string;
+}
+
 // TopBar.jsx
-const TopBar = ({ user, sessionId }) => {
+const TopBar: React.FC<TopBarProps> =  ({ user, sessionId }) => {
     if (!user || !sessionId) return null; // Don't show if not logged in
 
     return (

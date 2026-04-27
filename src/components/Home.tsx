@@ -5,7 +5,12 @@ import LeaderboardButton from './ui/LeaderboardButton';
 import ShopButton from './ui/ShopButton';
 import { playQuestionStart } from '../utils/sounds';
 
-export default function Home({ hasActivateSession, onStartNewGame }) {
+interface HomeProps {
+  hasActivateSession: boolean;
+  onStartNewGame: () => {};
+}
+
+const Home: React.FC<HomeProps> = ({ hasActivateSession, onStartNewGame }) => {
   const navigate = useNavigate();
 
   return (
@@ -21,8 +26,8 @@ export default function Home({ hasActivateSession, onStartNewGame }) {
       <LeaderboardButton/>
       <ShopButton/>
       
-      {/* <button onClick={() => navigate('/leaderboard')}>View Leaderboard</button> */}
-      {/* <button onClick={() => navigate('/leaderboard')}>View Leaderboard</button> */}
     </div>
   );
-}
+};
+
+export default Home;
