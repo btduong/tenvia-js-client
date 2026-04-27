@@ -1,12 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router';
 import { useState, useEffect } from 'react';
-import './App.css'
+import appStyles from './App.module.css';
 
 import QuizCard from './components/QuizCard';
 import Leaderboard from './components/Leaderboard';
 import SummaryPage from './features/SummaryPage/SummaryPage';
 import Home from './components/Home';
-import TopBar from './components/Topbar';
 import ShopModal from './components/ShopModal';
 import SessionTimer from './features/Quiz/SessionTimer';
 
@@ -30,6 +29,8 @@ const App: React.FC = () => {
   const navigate = useNavigate();
 
   const startNewGame = async () => {
+    if (!user) return;
+
     const res = await fetch(`http://localhost:8080/sessions/start?id=${user.id}&limit=${questionLimit}`, { method: 'POST' });
     if (res.ok) {
       const data = await res.json();
@@ -86,6 +87,7 @@ const App: React.FC = () => {
   };
 
   const handlePurchase = async (itemType: PowerUpType) => {
+    if (!user) return;
     try {
       const url = `http://localhost:8080/shop/buy?userId=${user.id}&type=${itemType}`;
 
@@ -119,6 +121,7 @@ const App: React.FC = () => {
   };
 
   const handleUsePowerUp = async (type: PowerUpType): Promise<PowerUpEffect | null> => {
+    if (!user) return null;
     try {
       const response = await fetch(`http://localhost:8080/api/powerups/use?type=${type}&userId=${user.id}&sessionId=${sessionId}`, { method: 'POST' });
 

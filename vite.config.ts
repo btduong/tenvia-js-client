@@ -6,5 +6,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: true
-  }
-})
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom', // required for JS component testing
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+  },
+});
