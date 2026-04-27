@@ -1,9 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import styles from './Home.module.css';
 
-import LeaderboardButton from './ui/LeaderboardButton';
-import ShopButton from './ui/ShopButton';
 import { playQuestionStart } from '../utils/sounds';
+import NavButton from './common/NavButton';
 
 interface HomeProps {
   hasActivateSession: boolean;
@@ -23,8 +22,8 @@ const Home: React.FC<HomeProps> = ({ hasActivateSession, onStartNewGame }) => {
           playQuestionStart();
         }}>New Game</button>}
 
-      <LeaderboardButton/>
-      <ShopButton/>
+      <NavButton to='/leaderboard' label='Leaderboard'/>
+      <NavButton to='/shop' label='Shop'/>
       
     </div>
   );
