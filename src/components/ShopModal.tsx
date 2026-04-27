@@ -5,7 +5,7 @@ import type { PowerUpType, User } from '../types';
 
 interface ShopModalProps {
   user: User;
-  onPurchase: (item: PowerUpType) => void;
+  onPurchase: (item: PowerUpType) => {};
 }
 
 const ShopModal: React.FC<ShopModalProps> = ({ user, onPurchase }) => {
