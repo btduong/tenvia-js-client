@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styles from './Leaderboard.module.css';
-import HomeButton from './ui/HomeButton';
+import NavButton from './common/NavButton';
+import HomeIcon from './ui/HomeIcon';
+import homeStyles from './ui/HomeIcon.module.css';
 
 interface LederboardDTO {
     userName: string;
@@ -39,7 +40,7 @@ export default function Leaderboard({ }) {
                     ))}
                 </tbody>
             </table>
-            <HomeButton/>
+            <NavButton to='/' label='Home' icon={<HomeIcon className={homeStyles.homeSvg}/>}/>
         </div>
     );
 }
