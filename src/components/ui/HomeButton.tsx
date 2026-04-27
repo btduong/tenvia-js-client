@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import homeStyles from './HomeIcon.module.css';
-import { HomeIcon } from './HomeIcon';
+import  HomeIcon  from './HomeIcon';
 
 
-const HomeButton = () => {
+const HomeButton: React.FC = () => {
     const navigate = useNavigate();
 
     return (

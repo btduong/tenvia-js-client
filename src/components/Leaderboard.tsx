@@ -3,10 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import styles from './Leaderboard.module.css';
 import HomeButton from './ui/HomeButton';
 
-export default function Leaderboard({ }) {
-    const [scores, setScores] = useState([]);
+interface LederboardDTO {
+    userName: string;
+    score: number;
+}
 
-    const navigate = useNavigate();
+
+export default function Leaderboard({ }) {
+    const [scores, setScores] = useState<LederboardDTO[]>([]);
 
     useEffect(() => {
         fetch('http://localhost:8081/leaderboard')

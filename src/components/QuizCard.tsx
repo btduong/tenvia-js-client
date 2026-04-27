@@ -4,26 +4,34 @@ import styles from './QuizCard.module.css';
 
 import { playClick, playCorrect, playIncorrectAnswer, playQuestionStart } from '../utils/sounds';
 import HomeButton from './ui/HomeButton';
+import type { AnswerResponse, Inventory, PowerUpEffect, PowerUpType, QuestionOption, Question } from '../types';
 
-const NextButton = () => {
-
+interface QuizCardProps {
+  question: Question;
+  onResult: (result: AnswerResponse) => void;
+  sessionId: string;
+  inventory: Inventory;
+  onUsePowerUp: (powerUpType: PowerUpType) => Promise<PowerUpEffect | null>;
+  onBalanceUpdated: (newBalance: number) => void;
 }
 
-export default function QuizCard({ question, onResult, sessionId, inventory, onUsePowerUp, onBalanceUpdated }) {
-  const [selectedOptionId, setSelectedOptionId] = useState(null);
-  const [result, setResult] = useState(null);
-  const [hiddenOptionIds, setHiddenOptionIds] = useState([]);
+
+
+const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inventory, onUsePowerUp, onBalanceUpdated }) => {
+  const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
+  const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
+  const [hiddenOptionIds, setHiddenOptionIds] = useState<number[]>([]);
   const [isCorrect, setIsCorrect] = useState(false);
   const [goldReward, setGoldReward] = useState(0);
 
   const isDisabled = question.powerUpDisabled;
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === 'Space' && selectedOptionId !== null && result === null) {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Space' && selectedOptionId !== null && answerResponse === null) {
         handleVerify(selectedOptionId);
-      } else if (result !== null) {
-        onResult(result);
+      } else if (answerResponse !== null) {
+        onResult(answerResponse);
       }
     }
 
@@ -33,12 +41,12 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [selectedOptionId, result]);
+  }, [selectedOptionId, answerResponse]);
 
   // Use nagivator to different path ie /leaderboard, /home
   const navigate = useNavigate();
 
-  const handlePowerUpClick = async (type) => {
+  const handlePowerUpClick = async (type: PowerUpType) => {
 
     const effect = await onUsePowerUp(type);
     if (effect && type === 'FIFTY_FIFTY') {
@@ -51,7 +59,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
 
   };
 
-  const handleVerify = async (optionId) => {
+  const handleVerify = async (optionId: number) => {
     try {
       const response = await fetch(`http://localhost:8080/sessions/${sessionId}/answer`, {
         method: 'POST',
@@ -66,7 +74,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
       } else {
         playIncorrectAnswer();
       }
-      setResult(data);
+      setAnswerResponse(data);
       onBalanceUpdated(data.newBalance);
       if (data.isGameOver) {
         onResult(data);
@@ -84,7 +92,7 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
 
       {/* 2. Options List */}
       <div className={styles.optionsContainer}>
-        {question.options.map((option) => {
+        {question.options.map((option: QuestionOption) => {
           // CHECK: Should we skip rendering this specific option?
           // if (hiddenOptionIds.includes(option.id)) {
           //   return null; // This option disappears, but the loop continues
@@ -93,26 +101,24 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
           if (hiddenOptionIds.includes(option.id)) {
             optionButtonStyle = `${styles.optionDisabled}`;
           }
-          else if (result !== null && option.letter === result.correctLetter) {
+          else if (answerResponse !== null && option.letter === answerResponse.correctLetter) {
             optionButtonStyle = `${styles.optionCorrectBtn}`;
           }
-          else if (result === null && selectedOptionId !== null && selectedOptionId === option.id) {
+          else if (answerResponse === null && selectedOptionId !== null && selectedOptionId === option.id) {
             optionButtonStyle = `${styles.optionSelected}`;
           }
-          else if (result !== null && option.letter !== result.correctLetter && selectedOptionId === option.id) {
+          else if (answerResponse !== null && option.letter !== answerResponse.correctLetter && selectedOptionId === option.id) {
             optionButtonStyle = `${styles.optionIncorrectBtn}`;
           }
 
           return (
             <div className={styles.container} key={option.id}>
               <button className={`${optionButtonStyle} `}
-                disabled={result !== null || hiddenOptionIds.includes(option.id)}
+                disabled={answerResponse !== null || hiddenOptionIds.includes(option.id)}
                 onClick={() => {
                   setSelectedOptionId(option.id);
                   handleVerify(option.id);
-                }
-                }
-              >
+                }}>
                 {/* <span className={styles.optionCircle}>{option.letter}</span> */}
                 <span className={styles.optionText}>{option.content}</span>
               </button>
@@ -122,20 +128,18 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
       </div>
       {/* 3. Buttons Section */}
       <div style={{ marginTop: '10px' }}>
-        {!result && (
+        {!answerResponse && (
           <>
             {Object.keys(inventory).length > 0 ?
               <div className="inventory-bar">
                 <h4>Your Power-Ups:</h4>
-                {Object.entries(inventory).map(([type, count]) => (
-                  <button
-                    key={type}
-                    className="powerup-btn"
-                    disabled={count <= 0 || isDisabled}
-                    onClick={() => handlePowerUpClick(type)}
-                  >
-                    {type}: {count}
-                  </button>
+                {(Object.entries(inventory) as [PowerUpType, number][]).map(([type, count]) => (
+                <button
+                  key={type}
+                  className="powerup-btn"
+                  disabled={count <= 0 || isDisabled}
+                  onClick={() => handlePowerUpClick(type)}>{type}: {count}
+                </button>
                 ))}
               </div>
               : <></>
@@ -162,16 +166,20 @@ export default function QuizCard({ question, onResult, sessionId, inventory, onU
 
           <button
             className={styles.nextBtn}
-            disabled={!result}
+            disabled={!answerResponse}
             onClick={() => {
-              onResult(result);
+              if (answerResponse) {
+                onResult(answerResponse);
+              }
               playQuestionStart();
             }}>Next</button>
         </div>
 
       </nav>
-      
+
 
     </div>
   );
 }
+
+export default QuizCard;
