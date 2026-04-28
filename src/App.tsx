@@ -1,4 +1,4 @@
-import { BrowserRouter as Routes, Route } from 'react-router';
+import { Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import appStyles from './App.module.css';
 
@@ -23,7 +23,7 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
-  const [sessionData, setSessionData] = useState<GameSession | null >(null);
+  const [sessionData, setSessionData] = useState<GameSession | null>(null);
 
   // Use react-dom to nagivate to different url ie /home, /quiz etc.
 
@@ -102,7 +102,8 @@ const App: React.FC = () => {
         const newData = await response.json();
         setUser(previous => {
           if (!previous) return null;
-          return ({ ...previous, inventory: newData.inventory })}
+          return ({ ...previous, inventory: newData.inventory })
+        }
         );
       } else {
         alert("Purchase failed. Check your gold balance!");
@@ -115,7 +116,8 @@ const App: React.FC = () => {
   const handleBalanceUpdate = (newBalance: number) => {
     setUser(previous => {
       if (!previous) return null;
-      return ({ ...previous, balance: newBalance })});
+      return ({ ...previous, balance: newBalance })
+    });
   };
 
   const handleUsePowerUp = async (type: PowerUpType): Promise<PowerUpEffect | null> => {
@@ -136,57 +138,39 @@ const App: React.FC = () => {
   };
 
   return (
-    <div>
-      {!user ? (
-        /* 1. LOGIN GUARD */
-        <div className="loginContainer">
-          <h2>Enter a name to play</h2>
-          <input type='text' placeholder='Name' onChange={(e) => setTypedUsername(e.target.value)} />
-          <button onClick={handleLogin} disabled={!typedUsername.trim()}>Play</button>
-        </div>
-      ) : (
-        /* 2. AUTHENTICATED APP */
-        <div className='mobileAppWrapper'>
-          {/* <TopBar user={user} sessionId={sessionId} /> */}
-          {/* TODO: pay off Architectural Deb
-            - move rout content into Page components
-            - move repetitive logic into Custom Hooks
-            - use React Router Outlets for shared UI ie TopBar
-           */}
-          <Routes>
-            {/* HOME / LOBBY */}
-            <Route path="/" element={
-              <div>
-                {!sessionId ? (
-                  <Home hasActivateSession={false} onStartNewGame={startNewGame} />
-                ) : (
-                  <Home hasActivateSession={true} onStartNewGame={startNewGame} />
-                )}
+    <Routes>
+      <Route path="/" element={
+        !user ?
+          (<div className="loginContainer">
+            <h2>Enter a name to play</h2>
+            <input type='text' placeholder='Name' onChange={(e) => setTypedUsername(e.target.value)} />
+            <button onClick={handleLogin} disabled={!typedUsername.trim()}>Play</button>
+          </div>
+          ) : (
+            <Home hasActivateSession={!!sessionId} onStartNewGame={startNewGame} />
+          )
+      } />
 
-              </div>
-            } />
+      {user && (
+        <>
+          <Route path="/shop" element={
+            <ShopModal
+              user={user}
+              onPurchase={(item: PowerUpType) => handlePurchase(item)}/>
+          } />
 
-            {/* SHOP ROUTE */}
-            <Route path="/shop" element={
-              <ShopModal
-                user={user}
-                onPurchase={(item: PowerUpType) => handlePurchase(item)}
-              />
-            } />
-
-            {/* QUIZ ROUTE (Protected by sessionId) */}
-            <Route path="/quiz" element={
-              currentQuestion ? (
-                <>
-                  {sessionData && sessionData.duration ?
-                    (<SessionTimer
-                      key={sessionData.duration}
-                      duration={sessionData.duration} />)
-                    : (<div></div>)
-                  }
-                  <div className='currentQuestionCount'>Question: {currentIndex + 1} / {questionLimit}</div>
-                  <div className="quizPage">
-                    { sessionData ? 
+          <Route path="/quiz" element={
+            currentQuestion ? (
+              <>
+                {sessionData && sessionData.duration ?
+                  (<SessionTimer
+                    key={sessionData.duration}
+                    duration={sessionData.duration} />)
+                  : (<div></div>)
+                }
+                <div className='currentQuestionCount'>Question: {currentIndex + 1} / {questionLimit}</div>
+                <div className="quizPage">
+                  {sessionData ?
                     <QuizCard
                       key={currentQuestion.id}
                       question={currentQuestion}
@@ -194,20 +178,19 @@ const App: React.FC = () => {
                       sessionId={sessionData.id}
                       inventory={user.inventory}
                       onUsePowerUp={handleUsePowerUp}
-                      onBalanceUpdated={handleBalanceUpdate}/>
-                 :"Loading neq quiz card" }
-                  </div>
-                </>
-              ) : "No question fetched"
-            } />
+                      onBalanceUpdated={handleBalanceUpdate} />
+                    : "Loading neq quiz card"}
+                </div>
+              </>
+            ) : "No question fetched"
+          } />
 
-            <Route path="/summary" element={<SummaryPage />} />
-
-            <Route path="/leaderboard" element={<Leaderboard />} />
-          </Routes>
-        </div>
+          <Route path="/summary" element={<SummaryPage />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+        </>
       )}
-    </div>
+    </Routes>
+
   );
 }
 export default App
