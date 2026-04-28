@@ -15,9 +15,9 @@ const Home: React.FC<HomeProps> = ({ hasActivateSession, onStartNewGame }) => {
   return (
     <div className={styles.homeContainer}>
       <h1>Quiz Game</h1>
-      {hasActivateSession ?
-        <button onClick={() => navigate('/quiz')}>Resume Game</button> :
-        <button onClick={() => {
+      {hasActivateSession 
+      ? <button onClick={() => navigate('/quiz')}>Resume Game</button> 
+      : <button onClick={() => {
           onStartNewGame();
           playQuestionStart();
         }}>New Game</button>}

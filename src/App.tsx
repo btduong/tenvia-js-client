@@ -9,7 +9,6 @@ import Home from './components/Home';
 import ShopModal from './components/ShopModal';
 import SessionTimer from './features/Quiz/SessionTimer';
 
-// UI buttons
 
 import { useNavigate } from 'react-router-dom';
 import type { AnswerResponse, GameSession, Question, User, PowerUpType, PowerUpEffect } from './types';
@@ -25,7 +24,7 @@ const App: React.FC = () => {
   const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
   const [sessionData, setSessionData] = useState<GameSession | null>(null);
 
-  // Use react-dom to nagivate to different url ie /home, /quiz etc.
+  const navigate = useNavigate();
 
   const startNewGame = async () => {
     if (!user) return;
@@ -40,6 +39,7 @@ const App: React.FC = () => {
       // Pass the data.id (sessionId) in here because
       // it is yet to be updated from setSessionId(data.id);
       getNextQuestion(data.id);
+      navigate('/quiz');
     }
 
   };
@@ -137,6 +137,14 @@ const App: React.FC = () => {
     }
   };
 
+  let hasSession = false;
+  if (sessionData?.id) {
+    hasSession = true;
+  } else {
+    hasSession = false;
+  }
+
+
   return (
     <Routes>
       <Route path="/" element={
@@ -147,7 +155,7 @@ const App: React.FC = () => {
             <button onClick={handleLogin} disabled={!typedUsername.trim()}>Play</button>
           </div>
           ) : (
-            <Home hasActivateSession={!!sessionId} onStartNewGame={startNewGame} />
+            <Home hasActivateSession={hasSession} onStartNewGame={startNewGame} />
           )
       } />
 
@@ -156,7 +164,7 @@ const App: React.FC = () => {
           <Route path="/shop" element={
             <ShopModal
               user={user}
-              onPurchase={(item: PowerUpType) => handlePurchase(item)}/>
+              onPurchase={(item: PowerUpType) => handlePurchase(item)} />
           } />
 
           <Route path="/quiz" element={
