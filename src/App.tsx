@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router';
+import { BrowserRouter as Routes, Route } from 'react-router';
 import { useState, useEffect } from 'react';
 import appStyles from './App.module.css';
 
@@ -26,7 +26,6 @@ const App: React.FC = () => {
   const [sessionData, setSessionData] = useState<GameSession | null >(null);
 
   // Use react-dom to nagivate to different url ie /home, /quiz etc.
-  const navigate = useNavigate();
 
   const startNewGame = async () => {
     if (!user) return;
@@ -38,7 +37,6 @@ const App: React.FC = () => {
       console.log(data.duration);
       setLoading(false);
       setSessionId(data.id);
-      navigate('/quiz');
       // Pass the data.id (sessionId) in here because
       // it is yet to be updated from setSessionId(data.id);
       getNextQuestion(data.id);
