@@ -33,7 +33,6 @@ const App: React.FC = () => {
     if (res.ok) {
       const data = await res.json();
       setSessionData(data);
-      console.log(data.duration);
       setLoading(false);
       setSessionId(data.id);
       // Pass the data.id (sessionId) in here because
@@ -48,7 +47,6 @@ const App: React.FC = () => {
 
     const res = await fetch(`http://localhost:8080/users/login?username=${typedUsername}`, { method: 'POST' });
     const data = await res.json();
-    console.log(data);
     setUser(data);
   };
 

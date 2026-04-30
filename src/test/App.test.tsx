@@ -14,7 +14,6 @@ const restHandlers = [
     http.post('*/users/login', ({ request }) => {
         const url = new URL(request.url);
         const username = url.searchParams.get('username');
-        console.log('MSW intercepted login for: ', username);
         return HttpResponse.json(validUser);
     })
 ]
