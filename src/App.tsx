@@ -143,12 +143,12 @@ const App: React.FC = () => {
     hasSession = false;
   }
 
-
   return (
+     <div className={appStyles.mobileAppWrapper}>
     <Routes>
       <Route path="/" element={
         !user ?
-          (<div className="loginContainer">
+          (<div className={appStyles.loginContainer}>
             <h2>Enter a name to play</h2>
             <input type='text' placeholder='Name' onChange={(e) => setTypedUsername(e.target.value)} />
             <button onClick={handleLogin} disabled={!typedUsername.trim()}>Play</button>
@@ -160,6 +160,7 @@ const App: React.FC = () => {
 
       {user && (
         <>
+
           <Route path="/shop" element={
             <ShopModal
               user={user}
@@ -167,7 +168,9 @@ const App: React.FC = () => {
           } />
 
           <Route path="/quiz" element={
-            currentQuestion ? (
+            
+
+              currentQuestion ? (
               <>
                 {sessionData && sessionData.duration ?
                   (<SessionTimer
@@ -175,8 +178,8 @@ const App: React.FC = () => {
                     duration={sessionData.duration} />)
                   : (<div></div>)
                 }
-                <div className='currentQuestionCount'>Question: {currentIndex + 1} / {questionLimit}</div>
-                <div className="quizPage">
+                <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
+                <div className={appStyles.quizPage}>
                   {sessionData ?
                     <QuizCard
                       key={currentQuestion.id}
@@ -189,15 +192,18 @@ const App: React.FC = () => {
                     : "Loading neq quiz card"}
                 </div>
               </>
-            ) : "No question fetched"
+              ) : "No question fetched"
+
           } />
 
           <Route path="/summary" element={<SummaryPage />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
+
         </>
       )}
-    </Routes>
 
+    </Routes>
+    </div>
   );
 }
 export default App
