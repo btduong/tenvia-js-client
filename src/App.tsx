@@ -142,65 +142,65 @@ const App: React.FC = () => {
   }
 
   return (
-     <div className={appStyles.mobileAppWrapper}>
-    <Routes>
-      <Route path="/" element={
-        !user ?
-          (<div className={appStyles.loginContainer}>
-            <h2>Enter a name to play</h2>
-            <input type='text' placeholder='Name' onChange={(e) => setTypedUsername(e.target.value)} />
-            <button onClick={handleLogin} disabled={!typedUsername.trim()}>Play</button>
-          </div>
-          ) : (
-            <Home hasActivateSession={hasSession} onStartNewGame={startNewGame} />
-          )
-      } />
+    <div className={appStyles.mobileAppWrapper}>
+      <Routes>
+        <Route path="/" element={
+          !user ?
+            (<div className={appStyles.loginContainer}>
+              <h2>Enter a name to play</h2>
+              <input type='text' placeholder='Name' onChange={(e) => setTypedUsername(e.target.value)} />
+              <button onClick={handleLogin} disabled={!typedUsername.trim()}>Play</button>
+            </div>
+            ) : (
+              <Home hasActivateSession={hasSession} onStartNewGame={startNewGame} />
+            )
+        } />
 
-      {user && (
-        <>
+        {user && (
+          <>
 
-          <Route path="/shop" element={
-            <ShopModal
-              user={user}
-              onPurchase={(item: PowerUpType) => handlePurchase(item)} />
-          } />
+            <Route path="/shop" element={
+              <ShopModal
+                user={user}
+                onPurchase={(item: PowerUpType) => handlePurchase(item)} />
+            } />
 
-          <Route path="/quiz" element={
-            
+            <Route path="/quiz" element={
+
 
               currentQuestion ? (
-              <>
-                {sessionData && sessionData.duration ?
-                  (<SessionTimer
-                    key={sessionData.duration}
-                    duration={sessionData.duration} />)
-                  : (<div></div>)
-                }
-                <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
-                <div className={appStyles.quizPage}>
-                  {sessionData && sessionData.id ?
-                    <QuizCard
-                      key={currentQuestion.id}
-                      question={currentQuestion}
-                      onResult={handleAnswer}
-                      sessionId={sessionData.id}
-                      inventory={user.inventory}
-                      onUsePowerUp={handleUsePowerUp}
-                      onBalanceUpdated={handleBalanceUpdate} />
-                    : "Loading neq quiz card"}
-                </div>
-              </>
+                <>
+                  {sessionData && sessionData.duration ?
+                    (<SessionTimer
+                      key={sessionData.duration}
+                      duration={sessionData.duration} />)
+                    : (<div></div>)
+                  }
+                  <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
+                  <div className={appStyles.quizPage}>
+                    {sessionData && sessionData.id ?
+                      <QuizCard
+                        key={currentQuestion.id}
+                        question={currentQuestion}
+                        onResult={handleAnswer}
+                        sessionId={sessionData.id}
+                        inventory={user.inventory}
+                        onUsePowerUp={handleUsePowerUp}
+                        onBalanceUpdated={handleBalanceUpdate} />
+                      : "Loading neq quiz card"}
+                  </div>
+                </>
               ) : "No question fetched"
 
-          } />
+            } />
 
-          <Route path="/summary" element={<SummaryPage />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/summary" element={<SummaryPage />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
 
-        </>
-      )}
+          </>
+        )}
 
-    </Routes>
+      </Routes>
     </div>
   );
 }
