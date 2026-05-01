@@ -18,7 +18,6 @@ const App: React.FC = () => {
   const [typedUsername, setTypedUsername] = useState("");
   const [user, setUser] = useState<User | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [sessionId, setSessionId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
@@ -34,7 +33,6 @@ const App: React.FC = () => {
       const data = await res.json();
       setSessionData(data);
       setLoading(false);
-      setSessionId(data.id);
       // Pass the data.id (sessionId) in here because
       // it is yet to be updated from setSessionId(data.id);
       getNextQuestion(data.id);
@@ -66,9 +64,9 @@ const App: React.FC = () => {
   };
 
   const handleGameOver = () => {
-    setSessionId(null);
     setCurrentQuestion(null);
     setCurrentIndex(0);
+    setSessionData(null);
   };
 
   const handleAnswer = (answerResponse: AnswerResponse) => {
@@ -180,7 +178,7 @@ const App: React.FC = () => {
                 }
                 <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
                 <div className={appStyles.quizPage}>
-                  {sessionData ?
+                  {sessionData && sessionData.id ?
                     <QuizCard
                       key={currentQuestion.id}
                       question={currentQuestion}
