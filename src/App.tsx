@@ -170,13 +170,13 @@ const App: React.FC = () => {
 
               currentQuestion ? (
                 <>
+                  <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
                   {sessionData && sessionData.duration ?
                     (<SessionTimer
                       key={sessionData.duration}
                       duration={sessionData.duration} />)
                     : (<div></div>)
                   }
-                  <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
                   <div className={appStyles.quizPage}>
                     {sessionData && sessionData.id ?
                       <QuizCard
