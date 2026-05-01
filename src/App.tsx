@@ -1,16 +1,14 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router';
+import { Routes, Route } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import './App.css'
+import appStyles from './App.module.css';
 
 import QuizCard from './components/QuizCard';
 import Leaderboard from './components/Leaderboard';
 import SummaryPage from './features/SummaryPage/SummaryPage';
 import Home from './components/Home';
-import TopBar from './components/Topbar';
 import ShopModal from './components/ShopModal';
 import SessionTimer from './features/Quiz/SessionTimer';
 
-// UI buttons
 
 import { useNavigate } from 'react-router-dom';
 import type { AnswerResponse, GameSession, Question, User, PowerUpType, PowerUpEffect } from './types';
@@ -20,27 +18,25 @@ const App: React.FC = () => {
   const [typedUsername, setTypedUsername] = useState("");
   const [user, setUser] = useState<User | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [sessionId, setSessionId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
-  const [sessionData, setSessionData] = useState<GameSession | null >(null);
+  const [sessionData, setSessionData] = useState<GameSession | null>(null);
 
-  // Use react-dom to nagivate to different url ie /home, /quiz etc.
   const navigate = useNavigate();
 
   const startNewGame = async () => {
+    if (!user) return;
+
     const res = await fetch(`http://localhost:8080/sessions/start?id=${user.id}&limit=${questionLimit}`, { method: 'POST' });
     if (res.ok) {
       const data = await res.json();
       setSessionData(data);
-      console.log(data.duration);
       setLoading(false);
-      setSessionId(data.id);
-      navigate('/quiz');
       // Pass the data.id (sessionId) in here because
       // it is yet to be updated from setSessionId(data.id);
       getNextQuestion(data.id);
+      navigate('/quiz');
     }
 
   };
@@ -68,9 +64,9 @@ const App: React.FC = () => {
   };
 
   const handleGameOver = () => {
-    setSessionId(null);
     setCurrentQuestion(null);
     setCurrentIndex(0);
+    setSessionData(null);
   };
 
   const handleAnswer = (answerResponse: AnswerResponse) => {
@@ -86,6 +82,7 @@ const App: React.FC = () => {
   };
 
   const handlePurchase = async (itemType: PowerUpType) => {
+    if (!user) return;
     try {
       const url = `http://localhost:8080/shop/buy?userId=${user.id}&type=${itemType}`;
 
@@ -102,7 +99,8 @@ const App: React.FC = () => {
         const newData = await response.json();
         setUser(previous => {
           if (!previous) return null;
-          return ({ ...previous, inventory: newData.inventory })}
+          return ({ ...previous, inventory: newData.inventory })
+        }
         );
       } else {
         alert("Purchase failed. Check your gold balance!");
@@ -115,10 +113,12 @@ const App: React.FC = () => {
   const handleBalanceUpdate = (newBalance: number) => {
     setUser(previous => {
       if (!previous) return null;
-      return ({ ...previous, balance: newBalance })});
+      return ({ ...previous, balance: newBalance })
+    });
   };
 
   const handleUsePowerUp = async (type: PowerUpType): Promise<PowerUpEffect | null> => {
+    if (!user) return null;
     try {
       const response = await fetch(`http://localhost:8080/api/powerups/use?type=${type}&userId=${user.id}&sessionId=${sessionId}`, { method: 'POST' });
 
@@ -134,58 +134,51 @@ const App: React.FC = () => {
     }
   };
 
+  let hasSession = false;
+  if (sessionData?.id) {
+    hasSession = true;
+  } else {
+    hasSession = false;
+  }
+
   return (
-    <div>
-      {!user ? (
-        /* 1. LOGIN GUARD */
-        <div className="loginContainer">
-          <h2>Enter a name to play</h2>
-          <input type='text' placeholder='Name' onChange={(e) => setTypedUsername(e.target.value)} />
-          <button onClick={handleLogin} disabled={!typedUsername.trim()}>Play</button>
-        </div>
-      ) : (
-        /* 2. AUTHENTICATED APP */
-        <div className='mobileAppWrapper'>
-          {/* <TopBar user={user} sessionId={sessionId} /> */}
-          {/* TODO: pay off Architectural Deb
-            - move rout content into Page components
-            - move repetitive logic into Custom Hooks
-            - use React Router Outlets for shared UI ie TopBar
-           */}
-          <Routes>
-            {/* HOME / LOBBY */}
-            <Route path="/" element={
-              <div>
-                {!sessionId ? (
-                  <Home hasActivateSession={false} onStartNewGame={startNewGame} />
-                ) : (
-                  <Home hasActivateSession={true} onStartNewGame={startNewGame} />
-                )}
+     <div className={appStyles.mobileAppWrapper}>
+    <Routes>
+      <Route path="/" element={
+        !user ?
+          (<div className={appStyles.loginContainer}>
+            <h2>Enter a name to play</h2>
+            <input type='text' placeholder='Name' onChange={(e) => setTypedUsername(e.target.value)} />
+            <button onClick={handleLogin} disabled={!typedUsername.trim()}>Play</button>
+          </div>
+          ) : (
+            <Home hasActivateSession={hasSession} onStartNewGame={startNewGame} />
+          )
+      } />
 
-              </div>
-            } />
+      {user && (
+        <>
 
-            {/* SHOP ROUTE */}
-            <Route path="/shop" element={
-              <ShopModal
-                user={user}
-                onPurchase={(item: PowerUpType) => handlePurchase(item)}
-              />
-            } />
+          <Route path="/shop" element={
+            <ShopModal
+              user={user}
+              onPurchase={(item: PowerUpType) => handlePurchase(item)} />
+          } />
 
-            {/* QUIZ ROUTE (Protected by sessionId) */}
-            <Route path="/quiz" element={
+          <Route path="/quiz" element={
+            
+
               currentQuestion ? (
-                <>
-                  {sessionData && sessionData.duration ?
-                    (<SessionTimer
-                      key={sessionData.duration}
-                      duration={sessionData.duration} />)
-                    : (<div></div>)
-                  }
-                  <div className='currentQuestionCount'>Question: {currentIndex + 1} / {questionLimit}</div>
-                  <div className="quizPage">
-                    { sessionData ? 
+              <>
+                {sessionData && sessionData.duration ?
+                  (<SessionTimer
+                    key={sessionData.duration}
+                    duration={sessionData.duration} />)
+                  : (<div></div>)
+                }
+                <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
+                <div className={appStyles.quizPage}>
+                  {sessionData && sessionData.id ?
                     <QuizCard
                       key={currentQuestion.id}
                       question={currentQuestion}
@@ -193,19 +186,21 @@ const App: React.FC = () => {
                       sessionId={sessionData.id}
                       inventory={user.inventory}
                       onUsePowerUp={handleUsePowerUp}
-                      onBalanceUpdated={handleBalanceUpdate}/>
-                 :"Loading neq quiz card" }
-                  </div>
-                </>
+                      onBalanceUpdated={handleBalanceUpdate} />
+                    : "Loading neq quiz card"}
+                </div>
+              </>
               ) : "No question fetched"
-            } />
 
-            <Route path="/summary" element={<SummaryPage />} />
+          } />
 
-            <Route path="/leaderboard" element={<Leaderboard />} />
-          </Routes>
-        </div>
+          <Route path="/summary" element={<SummaryPage />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+
+        </>
       )}
+
+    </Routes>
     </div>
   );
 }

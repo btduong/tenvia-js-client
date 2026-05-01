@@ -18,7 +18,7 @@ export interface GameSession {
     fiftyFiftyUsed: boolean;
     currentQuestionIndex: number;
     score: number;
-    id: string;
+    id: string | null;
     user: User;
     duration: number;
     endTime: string;
