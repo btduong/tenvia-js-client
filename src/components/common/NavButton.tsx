@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { playClick } from "../../utils/sounds";
 
 
 interface NavButtonProps {
@@ -13,7 +14,10 @@ const NavButton: React.FC<NavButtonProps> = ({ to, label, icon, iconClassName })
 
     return (
         <button
-            onClick={() => navigate(to)}
+            onClick={() => {
+                navigate(to);
+                playClick();
+            }}
             className={`{className}`}>
             {icon && <span className={`${iconClassName}`}>{icon}</span>}
             {!icon && label}

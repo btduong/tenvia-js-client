@@ -3,6 +3,8 @@ import timelineStyle from './SessionTimer.module.css';
 
 interface SessionTimerProps {
     duration: number;
+    isPause: boolean;
+    onComplete: () => void;
 }
 
 const TimeLine = ({ percentage }: { percentage: number }) => {
@@ -20,27 +22,34 @@ const TimeLine = ({ percentage }: { percentage: number }) => {
     );
 };
 
-const SessionTimer: React.FC<SessionTimerProps> = ({ duration }) => {
+const SessionTimer: React.FC<SessionTimerProps> = ({ duration, isPause, onComplete }) => {
 
     const [timeLeft, setTimeLeft] = useState(duration);
 
     useEffect(() => {
+        let timerId = 0;
+
         if (timeLeft <= 0) {
+            onComplete();
             return;
         }
 
-        const timerId = setInterval(() => {
-            setTimeLeft(x => x - 0.1);
-        }, 100);
+        if (!isPause) {
+            timerId = setInterval(() => {
+                setTimeLeft(x => x - 0.1);
+            }, 100);
+        } else {
+            clearInterval(timerId);
+        }
 
         return () => clearInterval(timerId);
 
-    }, [timeLeft]);
+    }, [timeLeft, isPause]);
 
     const percentage = (timeLeft / duration) * 100;
 
     return (
-        <TimeLine percentage={percentage}/>
+        <TimeLine percentage={percentage} />
     );
 };
 

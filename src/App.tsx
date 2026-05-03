@@ -12,16 +12,22 @@ import SessionTimer from './features/Quiz/SessionTimer';
 
 import { useNavigate } from 'react-router-dom';
 import type { AnswerResponse, GameSession, Question, User, PowerUpType, PowerUpEffect } from './types';
+import { waitFor } from './utils/timer';
+import { useTickingSound } from './hooks/useTickingSound';
 
 
 const App: React.FC = () => {
   const [typedUsername, setTypedUsername] = useState("");
   const [user, setUser] = useState<User | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
   const [sessionData, setSessionData] = useState<GameSession | null>(null);
+  const [answerSent, setAnswerSent] = useState<boolean>(false);
+
+  // Sound hook
+  const [isTicking, setIsTicking] = useState(false);
+  useTickingSound(isTicking);
 
   const navigate = useNavigate();
 
@@ -32,7 +38,6 @@ const App: React.FC = () => {
     if (res.ok) {
       const data = await res.json();
       setSessionData(data);
-      setLoading(false);
       // Pass the data.id (sessionId) in here because
       // it is yet to be updated from setSessionId(data.id);
       getNextQuestion(data.id);
@@ -48,15 +53,28 @@ const App: React.FC = () => {
     setUser(data);
   };
 
+  const onAnswerSent = () => {
+    setAnswerSent(true);
+    setIsTicking(false);
+  }
+
 
   const getNextQuestion = async (currentSessionId: string) => {
     try {
       const response = await fetch(`http://localhost:8080/sessions/${currentSessionId}/questions/next`);
 
-      if (response.ok) {
-        const questionData = await response.json();
-        setCurrentQuestion(questionData);
+      if (response.status == 410) {
+        handleGameOver();
+        return navigate('/'); //back to home
       }
+
+      if (!response.ok) throw new Error('Failed to get next question');
+
+      const questionData = await response.json();
+      await waitFor(500);
+      setCurrentQuestion(questionData);
+      setAnswerSent(false);
+      setIsTicking(true);
 
     } catch (error) {
       console.log("Fail to get next question");
@@ -67,6 +85,7 @@ const App: React.FC = () => {
     setCurrentQuestion(null);
     setCurrentIndex(0);
     setSessionData(null);
+    setIsTicking(false);
   };
 
   const handleAnswer = (answerResponse: AnswerResponse) => {
@@ -117,6 +136,14 @@ const App: React.FC = () => {
     });
   };
 
+  const onQuestionTimedout = async () => {
+    setIsTicking(false);
+
+    if (sessionData?.id) {
+      getNextQuestion(sessionData.id);
+    }
+  };
+
   const handleUsePowerUp = async (type: PowerUpType): Promise<PowerUpEffect | null> => {
     if (!user) return null;
     try {
@@ -134,12 +161,7 @@ const App: React.FC = () => {
     }
   };
 
-  let hasSession = false;
-  if (sessionData?.id) {
-    hasSession = true;
-  } else {
-    hasSession = false;
-  }
+  const hasSession = Boolean(sessionData?.id);
 
   return (
     <div className={appStyles.mobileAppWrapper}>
@@ -173,8 +195,10 @@ const App: React.FC = () => {
                   <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
                   {sessionData && sessionData.duration ?
                     (<SessionTimer
-                      key={sessionData.duration}
-                      duration={sessionData.duration} />)
+                      key={currentQuestion.id}
+                      duration={currentQuestion.expiresInSecond}
+                      isPause={answerSent}
+                      onComplete={onQuestionTimedout} />)
                     : (<div></div>)
                   }
                   <div className={appStyles.quizPage}>
@@ -186,7 +210,8 @@ const App: React.FC = () => {
                         sessionId={sessionData.id}
                         inventory={user.inventory}
                         onUsePowerUp={handleUsePowerUp}
-                        onBalanceUpdated={handleBalanceUpdate} />
+                        onBalanceUpdated={handleBalanceUpdate}
+                        onAnswerSent={onAnswerSent} />
                       : "Loading neq quiz card"}
                   </div>
                 </>
