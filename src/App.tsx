@@ -15,11 +15,12 @@ import type { AnswerResponse, GameSession, Question, User, PowerUpType, PowerUpE
 import { waitFor } from './utils/timer';
 import { useTickingSound } from './hooks/useTickingSound';
 import ShopPage from './pages/ShopPage';
+import { useUser } from './hooks/useUser';
 
 
 const App: React.FC = () => {
   const [typedUsername, setTypedUsername] = useState("");
-  const [user, setUser] = useState<User | null>(null);
+  const { user, loading, login, purchaseItem, updateBalance, isAuthenticated} = useUser();
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
@@ -44,21 +45,12 @@ const App: React.FC = () => {
       getNextQuestion(data.id);
       navigate('/quiz');
     }
-
-  };
-
-  const handleLogin = async () => {
-
-    const res = await fetch(`http://localhost:8080/users/login?username=${typedUsername}`, { method: 'POST' });
-    const data = await res.json();
-    setUser(data);
   };
 
   const onAnswerSent = () => {
     setAnswerSent(true);
     setIsTicking(false);
   }
-
 
   const getNextQuestion = async (currentSessionId: string) => {
     try {
@@ -101,42 +93,6 @@ const App: React.FC = () => {
     }
   };
 
-  const handlePurchase = async (itemType: PowerUpType) => {
-    if (!user) return;
-    try {
-      const url = `http://localhost:8080/shop/buy?userId=${user.id}&type=${itemType}`;
-
-      const response = await fetch(url, {
-        method: 'POST'
-        // No 'body' or 'headers' needed because we are using @RequestParam
-      });
-
-      if (response.ok) {
-        // 2. Fetch the updated user data to refresh the balance and inventory
-        // Since the controller returns 'Void', we have to do a separate fetch 
-        // or modify the controller to return the UserDTO.
-        // refreshUserData();
-        const newData = await response.json();
-        setUser(previous => {
-          if (!previous) return null;
-          return ({ ...previous, inventory: newData.inventory })
-        }
-        );
-      } else {
-        alert("Purchase failed. Check your gold balance!");
-      }
-    } catch (err) {
-      console.error("Connection error:", err);
-    }
-  };
-
-  const handleBalanceUpdate = (newBalance: number) => {
-    setUser(previous => {
-      if (!previous) return null;
-      return ({ ...previous, balance: newBalance })
-    });
-  };
-
   const onQuestionTimedout = async () => {
     setIsTicking(false);
 
@@ -148,11 +104,11 @@ const App: React.FC = () => {
   const handleUsePowerUp = async (type: PowerUpType): Promise<PowerUpEffect | null> => {
     if (!user) return null;
     try {
-      const response = await fetch(`http://localhost:8080/api/powerups/use?type=${type}&userId=${user.id}&sessionId=${sessionId}`, { method: 'POST' });
+      const response = await fetch(`http://localhost:8080/api/powerups/use?type=${type}&userId=${user.id}&sessionId=${sessionData.id}`, { method: 'POST' });
 
       if (response.ok) {
         const data = await response.json();
-        setUser(data.updatedUser); // This triggers a re-render of QuizCard with the new count
+       // setUser(data.updatedUser); // This triggers a re-render of QuizCard with the new count
         return data.powerUpEffect;
       }
       return null;
@@ -172,7 +128,7 @@ const App: React.FC = () => {
             (<div className={appStyles.loginContainer}>
               <h2>Enter a name to play</h2>
               <input type='text' placeholder='Name' onChange={(e) => setTypedUsername(e.target.value)} />
-              <button onClick={handleLogin} disabled={!typedUsername.trim()}>Play</button>
+              <button onClick={() => login(typedUsername)} disabled={!typedUsername.trim()}>Play</button>
             </div>
             ) : (
               <Home hasActivateSession={hasSession} onStartNewGame={startNewGame} />
@@ -183,7 +139,7 @@ const App: React.FC = () => {
           <>
 
             <Route path="/shop" element={
-              <ShopPage user={user} onPurchase={handlePurchase}/>
+              <ShopPage user={user} onPurchase={purchaseItem}/>
             } />
 
             <Route path="/quiz" element={
@@ -207,7 +163,7 @@ const App: React.FC = () => {
                         sessionId={sessionData.id}
                         inventory={user.inventory}
                         onUsePowerUp={handleUsePowerUp}
-                        onBalanceUpdated={handleBalanceUpdate}
+                        onBalanceUpdated={updateBalance}
                         onAnswerSent={onAnswerSent} />
                       : "Loading neq quiz card"}
                   </div>

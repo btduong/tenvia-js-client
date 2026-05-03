@@ -28,7 +28,7 @@ export const useUser = () => {
      * Purchase a PowerUpType.
      */
     const purchaseItem = useCallback(async (itemType: PowerUpType) => {
-        if (!user) return;
+        if (!user) return false;
         const url = `http://localhost:8080/shop/buy?userId=${user.id}&type=${itemType}`;
 
         const res = await fetch(url, { method: 'POST' });

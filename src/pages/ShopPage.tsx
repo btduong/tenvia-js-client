@@ -3,7 +3,7 @@ import ShopModal from '../components/ShopModal';
 
 interface ShopPageProps {
     user: User;
-    onPurchase: (item: PowerUpType) => Promise<void>;
+    onPurchase: (item: PowerUpType) => Promise<boolean>;
 }
 
 const ShopPage = ({user, onPurchase}: ShopPageProps)=> {
