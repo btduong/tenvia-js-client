@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import appStyles from './App.module.css';
 
@@ -16,11 +16,12 @@ import { waitFor } from './utils/timer';
 import { useTickingSound } from './hooks/useTickingSound';
 import ShopPage from './pages/ShopPage';
 import { useUser } from './hooks/useUser';
+import QuizCardPage from './pages/QuizCardPage';
 
 
 const App: React.FC = () => {
   const [typedUsername, setTypedUsername] = useState("");
-  const { user, loading, login, purchaseItem, updateBalance, updateInventory, isAuthenticated} = useUser();
+  const { user, loading, login, purchaseItem, updateBalance, updateInventory, isAuthenticated } = useUser();
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
@@ -139,36 +140,14 @@ const App: React.FC = () => {
           <>
 
             <Route path="/shop" element={
-              <ShopPage user={user} onPurchase={purchaseItem}/>
+              <ShopPage user={user} onPurchase={purchaseItem} />
             } />
 
             <Route path="/quiz" element={
               currentQuestion ? (
-                <>
-                  <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
-                  {sessionData && sessionData.duration ?
-                    (<SessionTimer
-                      key={currentQuestion.id}
-                      duration={currentQuestion.expiresInSecond}
-                      isPause={answerSent}
-                      onComplete={onQuestionTimedout} />)
-                    : (<div></div>)
-                  }
-                  <div className={appStyles.quizPage}>
-                    {sessionData && sessionData.id ?
-                      <QuizCard
-                        key={currentQuestion.id}
-                        question={currentQuestion}
-                        onResult={handleAnswer}
-                        sessionId={sessionData.id}
-                        inventory={user.inventory}
-                        onUsePowerUp={handleUsePowerUp}
-                        onBalanceUpdated={updateBalance}
-                        onAnswerSent={onAnswerSent} />
-                      : "Loading neq quiz card"}
-                  </div>
-                </>
-              ) : "No question fetched"
+                <QuizCardPage currentQuestion={currentQuestion} currentIndex={currentIndex} questionLimit={questionLimit} sessionData={sessionData} answerSent={answerSent}
+                  onQuestionTimedout={onQuestionTimedout} handleAnswer={handleAnswer} inventory={user.inventory} handleUsePowerUp={handleUsePowerUp} updateBalance={updateBalance} onAnswerSent={onAnswerSent} />
+              ) : "should show a loading screen if the question is being fetched from server"
 
             } />
 
