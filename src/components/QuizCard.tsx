@@ -4,14 +4,14 @@ import styles from './QuizCard.module.css';
 
 import { playClick, playCorrect, playIncorrectAnswer, playQuestionStart } from '../utils/sounds';
 import HomeButton from './ui/HomeButton';
-import type { AnswerResponse, Inventory, PowerUpEffect, PowerUpType, QuestionOption, Question } from '../types';
+import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, UsePowerUpResponse } from '../types';
 
 interface QuizCardProps {
   question: Question;
   onResult: (result: AnswerResponse) => void;
   sessionId: string;
   inventory: Inventory;
-  onUsePowerUp: (powerUpType: PowerUpType) => Promise<PowerUpEffect | null>;
+  onUsePowerUp: (powerUpType: PowerUpType) => Promise<UsePowerUpResponse | null>;
   onBalanceUpdated: (newBalance: number) => void;
   onAnswerSent: () => void;
 }
@@ -47,10 +47,10 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
 
     const effect = await onUsePowerUp(type);
     if (effect && type === 'FIFTY_FIFTY') {
-      const toHideIds = effect.hiddenSelectionsIds;
+      const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
       setHiddenOptionIds(toHideIds);
     } else if (effect && type === 'HAMMER') {
-      const toHideIds = effect.hiddenSelectionsIds;
+      const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
       setHiddenOptionIds(toHideIds);
     }
 

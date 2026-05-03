@@ -2,7 +2,7 @@ import QuizCard from '../components/QuizCard';
 import appStyles from '../App.module.css';
 import QuestionTimer from '../features/Quiz/QuestionTimer';
 
-import type { AnswerResponse, GameSession, Inventory, PowerUpEffect, PowerUpType, Question } from "../types";
+import type { AnswerResponse, GameSession, Inventory, PowerUpType, Question, UsePowerUpResponse } from "../types";
 
 interface QuizCardPageProps {
     currentQuestion: Question;
@@ -13,7 +13,7 @@ interface QuizCardPageProps {
     onQuestionTimedout: () => Promise<void>;
     handleAnswer: (answerResponse: AnswerResponse) => void;
     inventory: Inventory;
-    handleUsePowerUp: (type: PowerUpType) => Promise<PowerUpEffect | null>;
+    handleUsePowerUp: (type: PowerUpType) => Promise<UsePowerUpResponse | null>;
     updateBalance: (balance: number) => void;
     onAnswerSent: () => void;
 }

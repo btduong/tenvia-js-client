@@ -54,8 +54,11 @@ export interface Question {
 
 }
 
-export interface PowerUpEffect {
-    hiddenSelectionsIds: number[];
+export interface UsePowerUpResponse {
+    updatedUser : User;
+    powerUpEffect: {
+        hiddenSelectionsIds: number[];
+    }
 }
 
 export type PowerUpType = "FIFTY_FIFTY" | "HAMMER";

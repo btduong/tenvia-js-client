@@ -11,7 +11,7 @@ import QuestionTimer from './features/Quiz/QuestionTimer';
 
 
 import { useNavigate } from 'react-router-dom';
-import type { AnswerResponse, GameSession, Question, User, PowerUpType, PowerUpEffect } from './types';
+import type { AnswerResponse, GameSession, Question, User, PowerUpType, UsePowerUpResponse } from './types';
 import { waitFor } from './utils/timer';
 import { useTickingSound } from './hooks/useTickingSound';
 import ShopPage from './pages/ShopPage';
@@ -38,18 +38,18 @@ const App: React.FC = () => {
   const startNewGame = async () => {
     if (!user) return;
 
-    try {
-      const gameSession = await serviceApi.getNewSession(user.id, questionLimit);
+    // Rename 'data' to 'gameSession' during destructuring 
+    const { data: gameSession, error } = await serviceApi.getNewSession(user.id, questionLimit);
+    if (gameSession) {
       setSessionData(gameSession);
       if (gameSession?.id) {
         getNextQuestion(gameSession.id);
         navigate('/quiz');
       }
-    } catch (error) {
+    } else {
       // Display error message on the UI to inform the player.
-    } finally {
-
     }
+
   };
 
   const onAnswerSent = () => {
@@ -58,16 +58,14 @@ const App: React.FC = () => {
   }
 
   const getNextQuestion = async (currentSessionId: string) => {
-    try {
-      const question = await serviceApi.getQuestion(currentSessionId);
+    const { data: question, error } = await serviceApi.getQuestion(currentSessionId);
+    if (question) {
       await waitFor(500);
       setCurrentQuestion(question);
       setAnswerSent(false);
       setIsTicking(true);
-    } catch (err) {
+    } else {
       // Display error message on the UI to inform the player.
-    } finally {
-
     }
   };
 
@@ -96,21 +94,19 @@ const App: React.FC = () => {
     }
   };
 
-  const handleUsePowerUp = async (type: PowerUpType): Promise<PowerUpEffect | null> => {
-    if (!user || !sessionData) return null;
-    try {
-      const response = await fetch(`http://localhost:8080/api/powerups/use?type=${type}&userId=${user.id}&sessionId=${sessionData.id}`, { method: 'POST' });
+  const handleUsePowerUp = async (type: PowerUpType): Promise<UsePowerUpResponse | null> => {
+    if (!user || !sessionData || !sessionData.id) return null;
 
-      if (response.ok) {
-        const data = await response.json();
-        updateInventory(data.updatedUser.inventory); // This triggers a re-render of QuizCard with the new count
-        return data.powerUpEffect;
-      }
-      return null;
-    } catch (error) {
-      console.error("Failed to use power-up", error);
-      return null;
+    const { data: powerUpResponse, error } = await serviceApi.usePowerUp(type, user.id, sessionData.id);
+
+    if (powerUpResponse) {
+
+      updateInventory(powerUpResponse.updatedUser.inventory); // This triggers a re-render of QuizCard with the new count
     }
+    else {
+      // Display error message on the UI to inform the player.
+    }
+    return powerUpResponse;
   };
 
   const hasSession = Boolean(sessionData?.id);
