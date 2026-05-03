@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import appStyles from './App.module.css';
 
 import QuizCard from './components/QuizCard';
-import Leaderboard from './components/Leaderboard';
+import Leaderboard from './pages/LeaderboardPage';
 import SummaryPage from './features/SummaryPage/SummaryPage';
 import Home from './components/Home';
 import ShopModal from './components/ShopModal';

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Leaderboard.module.css';
-import NavButton from './common/NavButton';
-import HomeIcon from './ui/HomeIcon';
-import homeStyles from './ui/HomeIcon.module.css';
+import NavButton from '../components/common/NavButton';
+import HomeIcon from '../components/ui/HomeIcon';
+import homeStyles from '../components/ui/HomeIcon.module.css';
 
 interface LederboardDTO {
     userName: string;
