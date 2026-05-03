@@ -20,7 +20,7 @@ import { useUser } from './hooks/useUser';
 
 const App: React.FC = () => {
   const [typedUsername, setTypedUsername] = useState("");
-  const { user, loading, login, purchaseItem, updateBalance, isAuthenticated} = useUser();
+  const { user, loading, login, purchaseItem, updateBalance, updateInventory, isAuthenticated} = useUser();
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
@@ -102,13 +102,13 @@ const App: React.FC = () => {
   };
 
   const handleUsePowerUp = async (type: PowerUpType): Promise<PowerUpEffect | null> => {
-    if (!user) return null;
+    if (!user || !sessionData) return null;
     try {
       const response = await fetch(`http://localhost:8080/api/powerups/use?type=${type}&userId=${user.id}&sessionId=${sessionData.id}`, { method: 'POST' });
 
       if (response.ok) {
         const data = await response.json();
-       // setUser(data.updatedUser); // This triggers a re-render of QuizCard with the new count
+        updateInventory(data.updatedUser.inventory); // This triggers a re-render of QuizCard with the new count
         return data.powerUpEffect;
       }
       return null;

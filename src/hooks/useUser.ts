@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import type { PowerUpType, User } from "../types";
+import type { Inventory, PowerUpType, User } from "../types";
 
 export const useUser = () => {
 
@@ -53,6 +53,12 @@ export const useUser = () => {
         setUser(prev => prev ? { ...prev, balance: newBalance } : null);
     }, []);
 
-    return { user, loading, login, purchaseItem, updateBalance, isAuthenticated: !user };
+    const updateInventory = useCallback((updatedInventory: Inventory) => {
+        if (updatedInventory) {
+            setUser(prev => prev ? { ...prev, inventory: updatedInventory } : null);
+        }
+    }, []);
+
+    return { user, loading, login, purchaseItem, updateBalance, updateInventory, isAuthenticated: !user };
 
 };
