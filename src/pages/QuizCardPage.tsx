@@ -1,6 +1,6 @@
 import QuizCard from '../components/QuizCard';
 import appStyles from '../App.module.css';
-import SessionTimer from '../features/Quiz/SessionTimer';
+import QuestionTimer from '../features/Quiz/QuestionTimer';
 
 import type { AnswerResponse, GameSession, Inventory, PowerUpEffect, PowerUpType, Question } from "../types";
 
@@ -34,7 +34,7 @@ const QuizCardPage: React.FC<QuizCardPageProps> = ({
         <>
             <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
             {sessionData && sessionData.duration ?
-                (<SessionTimer
+                (<QuestionTimer
                     key={currentQuestion.id}
                     duration={currentQuestion.expiresInSecond}
                     isPause={answerSent}

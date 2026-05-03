@@ -7,7 +7,7 @@ import Leaderboard from './pages/LeaderboardPage';
 import SummaryPage from './features/SummaryPage/SummaryPage';
 import Home from './components/Home';
 import ShopModal from './components/ShopModal';
-import SessionTimer from './features/Quiz/SessionTimer';
+import QuestionTimer from './features/Quiz/QuestionTimer';
 
 
 import { useNavigate } from 'react-router-dom';
