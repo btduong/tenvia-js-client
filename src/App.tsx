@@ -17,6 +17,7 @@ import { useTickingSound } from './hooks/useTickingSound';
 import ShopPage from './pages/ShopPage';
 import { useUser } from './hooks/useUser';
 import QuizCardPage from './pages/QuizCardPage';
+import { serviceApi } from './api/serviceApi';
 
 
 const App: React.FC = () => {
@@ -37,14 +38,17 @@ const App: React.FC = () => {
   const startNewGame = async () => {
     if (!user) return;
 
-    const res = await fetch(`http://localhost:8080/sessions/start?id=${user.id}&limit=${questionLimit}`, { method: 'POST' });
-    if (res.ok) {
-      const data = await res.json();
-      setSessionData(data);
-      // Pass the data.id (sessionId) in here because
-      // it is yet to be updated from setSessionId(data.id);
-      getNextQuestion(data.id);
-      navigate('/quiz');
+    try {
+      const gameSession = await serviceApi.getNewSession(user.id, questionLimit);
+      setSessionData(gameSession);
+      if (gameSession?.id) {
+        getNextQuestion(gameSession.id);
+        navigate('/quiz');
+      }
+    } catch (error) {
+      // Display error message on the UI to inform the player.
+    } finally {
+
     }
   };
 
@@ -55,23 +59,15 @@ const App: React.FC = () => {
 
   const getNextQuestion = async (currentSessionId: string) => {
     try {
-      const response = await fetch(`http://localhost:8080/sessions/${currentSessionId}/questions/next`);
-
-      if (response.status == 410) {
-        handleGameOver();
-        return navigate('/'); //back to home
-      }
-
-      if (!response.ok) throw new Error('Failed to get next question');
-
-      const questionData = await response.json();
+      const question = await serviceApi.getQuestion(currentSessionId);
       await waitFor(500);
-      setCurrentQuestion(questionData);
+      setCurrentQuestion(question);
       setAnswerSent(false);
       setIsTicking(true);
+    } catch (err) {
+      // Display error message on the UI to inform the player.
+    } finally {
 
-    } catch (error) {
-      console.log("Fail to get next question");
     }
   };
 
@@ -83,8 +79,6 @@ const App: React.FC = () => {
   };
 
   const handleAnswer = (answerResponse: AnswerResponse) => {
-    // Progress to the next question
-    // if (isCorrect) {
     if (!answerResponse.isGameOver && sessionData?.id) {
 
       setCurrentIndex(prev => prev + 1);
