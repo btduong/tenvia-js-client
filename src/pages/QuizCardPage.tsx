@@ -1,5 +1,5 @@
 import QuizCard from '../components/QuizCard';
-import appStyles from '../components/QuizCard.module.css';
+import appStyles from '../App.module.css';
 import SessionTimer from '../features/Quiz/SessionTimer';
 
 import type { AnswerResponse, GameSession, Inventory, PowerUpEffect, PowerUpType, Question } from "../types";
