@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import type { AnswerResponse, GameSession, Question, User, PowerUpType, PowerUpEffect } from './types';
 import { waitFor } from './utils/timer';
 import { useTickingSound } from './hooks/useTickingSound';
+import ShopPage from './pages/ShopPage';
 
 
 const App: React.FC = () => {
@@ -182,14 +183,10 @@ const App: React.FC = () => {
           <>
 
             <Route path="/shop" element={
-              <ShopModal
-                user={user}
-                onPurchase={(item: PowerUpType) => handlePurchase(item)} />
+              <ShopPage user={user} onPurchase={handlePurchase}/>
             } />
 
             <Route path="/quiz" element={
-
-
               currentQuestion ? (
                 <>
                   <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
