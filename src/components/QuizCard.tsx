@@ -13,16 +13,13 @@ interface QuizCardProps {
   inventory: Inventory;
   onUsePowerUp: (powerUpType: PowerUpType) => Promise<PowerUpEffect | null>;
   onBalanceUpdated: (newBalance: number) => void;
+  onAnswerSent: () => void;
 }
 
-
-
-const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inventory, onUsePowerUp, onBalanceUpdated }) => {
+const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inventory, onUsePowerUp, onBalanceUpdated, onAnswerSent }) => {
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
   const [hiddenOptionIds, setHiddenOptionIds] = useState<number[]>([]);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [goldReward, setGoldReward] = useState(0);
 
   const isDisabled = question.powerUpDisabled;
 
@@ -61,6 +58,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
 
   const handleVerify = async (optionId: number) => {
     try {
+      onAnswerSent();
       const response = await fetch(`http://localhost:8080/sessions/${sessionId}/answer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -93,10 +91,6 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
       {/* 2. Options List */}
       <div className={styles.optionsContainer}>
         {question.options.map((option: QuestionOption) => {
-          // CHECK: Should we skip rendering this specific option?
-          // if (hiddenOptionIds.includes(option.id)) {
-          //   return null; // This option disappears, but the loop continues
-          // }
           let optionButtonStyle = styles.optionBtn;
           if (hiddenOptionIds.includes(option.id)) {
             optionButtonStyle = `${styles.optionDisabled}`;
@@ -134,12 +128,12 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
               <div className="inventory-bar">
                 <h4>Your Power-Ups:</h4>
                 {(Object.entries(inventory) as [PowerUpType, number][]).map(([type, count]) => (
-                <button
-                  key={type}
-                  className="powerup-btn"
-                  disabled={count <= 0 || isDisabled}
-                  onClick={() => handlePowerUpClick(type)}>{type}: {count}
-                </button>
+                  <button
+                    key={type}
+                    className="powerup-btn"
+                    disabled={count <= 0 || isDisabled}
+                    onClick={() => handlePowerUpClick(type)}>{type}: {count}
+                  </button>
                 ))}
               </div>
               : <></>
@@ -150,8 +144,6 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
       </div>
 
       {/* 4. Result Section stays at the bottom and next question button */}
-
-
       <nav className={styles.controlBar}>
         <hr />
         {/* left space */}
@@ -174,10 +166,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
               playQuestionStart();
             }}>Next</button>
         </div>
-
       </nav>
-
-
     </div>
   );
 }
