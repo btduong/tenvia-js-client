@@ -16,8 +16,11 @@ import { useUser } from './hooks/useUser';
 import QuizCardPage from './pages/QuizCardPage';
 import { serviceApi } from './api/serviceApi';
 
+type GameStatus = 'IDLE' | 'UNAUTHENTICATED' | 'LOGGING_IN' | 'STARTING_SESSION' | 'LOADING' | 'PLAYING' | 'VALIDATING_ANSWER' | 'SUMMARY';
+
 
 const App: React.FC = () => {
+  const [gameStatus, setGameStatus] = useState<GameStatus>('IDLE');
   const [typedUsername, setTypedUsername] = useState("");
   const { user, loading, login, purchaseItem, updateBalance, updateInventory, isAuthenticated } = useUser();
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
@@ -63,6 +66,16 @@ const App: React.FC = () => {
       setIsTicking(true);
     } else {
       // Display error message on the UI to inform the player.
+    }
+  };
+
+  const handleLogin = async (name: string) => {
+    setGameStatus('LOGGING_IN');
+    const { data: user, error } = await login(name);
+    if (user) {
+      setGameStatus('IDLE');
+    } else {
+      setGameStatus('UNAUTHENTICATED');
     }
   };
 
@@ -116,7 +129,7 @@ const App: React.FC = () => {
             (<div className={appStyles.loginContainer}>
               <h2>Enter a name to play</h2>
               <input type='text' placeholder='Name' onChange={(e) => setTypedUsername(e.target.value)} />
-              <button onClick={() => login(typedUsername)} disabled={!typedUsername.trim()}>Play</button>
+              <button onClick={() => handleLogin(typedUsername)} disabled={!typedUsername.trim()}>Play</button>
             </div>
             ) : (
               <Home hasActivateSession={hasSession} onStartNewGame={startNewGame} />
