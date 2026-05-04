@@ -77,6 +77,28 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
     }
   };
 
+  /**
+   * Decide a button style based on what selected answer option.
+   * @param option
+   * @returns 
+   */
+  const getOptionStyle = (option: QuestionOption) => {
+    if (hiddenOptionIds.includes(option.id)) {
+      return styles.optionDisabled;
+    }
+    if (!answerResponse) { // selected an answer option but hasn't submitted yet
+      return selectedOptionId === option.id ? styles.optionSelected : styles.optionBtn;
+    }
+    if (option.letter === answerResponse.correctLetter) // selected and submitted answer option is the correct one
+    {
+      return styles.optionCorrectBtn;
+    }
+    if (option.letter !== answerResponse.correctLetter && selectedOptionId === option.id) {
+      return styles.optionIncorrectBtn;
+    }
+    return styles.optionBtn;
+  }
+
   return (
     <div className={styles.mainQuestionContainer}>
       {/* 1. Question Text stays visible */}
@@ -85,19 +107,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
       {/* 2. Options List */}
       <div className={styles.optionsContainer}>
         {question.options.map((option: QuestionOption) => {
-          let optionButtonStyle = styles.optionBtn;
-          if (hiddenOptionIds.includes(option.id)) {
-            optionButtonStyle = `${styles.optionDisabled}`;
-          }
-          else if (answerResponse !== null && option.letter === answerResponse.correctLetter) {
-            optionButtonStyle = `${styles.optionCorrectBtn}`;
-          }
-          else if (answerResponse === null && selectedOptionId !== null && selectedOptionId === option.id) {
-            optionButtonStyle = `${styles.optionSelected}`;
-          }
-          else if (answerResponse !== null && option.letter !== answerResponse.correctLetter && selectedOptionId === option.id) {
-            optionButtonStyle = `${styles.optionIncorrectBtn}`;
-          }
+          const optionButtonStyle = getOptionStyle(option);
 
           return (
             <div className={styles.container} key={option.id}>
