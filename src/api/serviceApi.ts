@@ -1,4 +1,4 @@
-import type { AnswerResponse, GameSession, PowerUpType, Question, UsePowerUpResponse } from "../types";
+import type { AnswerResponse, GameSession, PowerUpType, Question, UsePowerUpResponse, User } from "../types";
 import type { ServiceResponseResult } from "./serviceApiResult";
 
 const SESSION_BASE_URL = 'http://localhost:8080';
@@ -79,4 +79,24 @@ export const serviceApi = {
             };
         }
     },
+
+    async login(username: string): Promise<ServiceResponseResult<User>> {
+        try {
+          const res = await fetch(`${SESSION_BASE_URL}/users/login?username=${username}`, { 
+            method: 'POST' 
+          });
+          
+          if (!res.ok) {
+            return { data: null, error: new Error(`Login failed: ${res.statusText}`) };
+          }
+    
+          const data = await res.json();
+          return { data, error: null };
+        } catch (err) {
+          return { 
+            data: null, 
+            error: err instanceof Error ? err : new Error("Failed to login") 
+          };
+        }
+      }
 }

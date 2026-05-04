@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import type { Inventory, PowerUpType, User } from "../types";
+import { serviceApi } from "../api/serviceApi";
 
 export const useUser = () => {
 
@@ -13,15 +14,15 @@ export const useUser = () => {
      */
     const login = useCallback(async (username: string) => {
         setLoading(true);
-        try {
-            const res = await fetch(`http://localhost:8080/users/login?username=${username}`, { method: 'POST' });
-            const data = await res.json();
-            setUser(data);
-        } catch (err) {
-            console.log("Login failed", err);
-        } finally {
+
+        const result = await serviceApi.login(username);
+        const authenticatedUser = result.data;
+        if (authenticatedUser) {
+            setUser(authenticatedUser);
             setLoading(false);
         }
+        return result;
+        
     }, []);
 
     /**
