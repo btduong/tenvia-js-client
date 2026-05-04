@@ -58,7 +58,8 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
   };
 
   const handleVerify = async (optionId: number) => {
-
+    // Stop the count down sound as soon as the answer is submitted.
+    onAnswerSent();
     const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(sessionId, optionId);
     if (answerResponse) {
       if (answerResponse.correct) {
