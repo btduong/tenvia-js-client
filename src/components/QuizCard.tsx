@@ -6,6 +6,7 @@ import { playClick, playCorrect, playIncorrectAnswer, playQuestionStart } from '
 import HomeButton from './ui/HomeButton';
 import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, UsePowerUpResponse } from '../types';
 import { serviceApi } from '../api/serviceApi';
+import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 
 interface QuizCardProps {
   question: Question;
@@ -24,28 +25,21 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
 
   const isDisabled = question.powerUpDisabled;
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Space' && selectedOptionId !== null && answerResponse === null) {
-        handleVerify(selectedOptionId);
-      } else if (answerResponse !== null) {
-        onResult(answerResponse);
-      }
-    }
-
-    // Listener to the window
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [selectedOptionId, answerResponse]);
 
   // Use nagivator to different path ie /leaderboard, /home
   const navigate = useNavigate();
 
-  const handlePowerUpClick = async (type: PowerUpType) => {
+  const handleSpaceKeyPressed = () => {
+    if (answerResponse) {
+      onResult(answerResponse);
+    } else if (selectedOptionId < 0) { // all answer option ids are positive
+      handleVerify(selectedOptionId);
+    }
+  }
 
+  useKeyboardShortcut(handleSpaceKeyPressed);
+
+  const handlePowerUpClick = async (type: PowerUpType) => {
     const effect = await onUsePowerUp(type);
     if (effect && type === 'FIFTY_FIFTY') {
       const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
@@ -54,7 +48,6 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
       const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
       setHiddenOptionIds(toHideIds);
     }
-
   };
 
   const handleVerify = async (optionId: number) => {
