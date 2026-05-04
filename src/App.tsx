@@ -2,12 +2,9 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import appStyles from './App.module.css';
 
-import QuizCard from './components/QuizCard';
 import Leaderboard from './pages/LeaderboardPage';
 import SummaryPage from './features/SummaryPage/SummaryPage';
 import Home from './components/Home';
-import ShopModal from './components/ShopModal';
-import QuestionTimer from './features/Quiz/QuestionTimer';
 
 
 import { useNavigate } from 'react-router-dom';

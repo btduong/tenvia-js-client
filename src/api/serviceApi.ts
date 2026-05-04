@@ -1,4 +1,4 @@
-import type { GameSession, PowerUpType, Question, UsePowerUpResponse } from "../types";
+import type { AnswerResponse, GameSession, PowerUpType, Question, UsePowerUpResponse } from "../types";
 import type { ServiceResponseResult } from "./serviceApiResult";
 
 const SESSION_BASE_URL = 'http://localhost:8080';
@@ -16,7 +16,6 @@ export const serviceApi = {
             return { data: null, error: new Error(response.statusText) };
         }
         catch (error) {
-            console.log("Fail to start new game session");
             return {
                 data: null,
                 error: error instanceof Error ? error : new Error("Failed to get new session")
@@ -34,10 +33,9 @@ export const serviceApi = {
             return { data: null, error: new Error(response.statusText) };
 
         } catch (error) {
-            console.log('Failed to fetch question', error);
             return {
                 data: null,
-                error: error instanceof Error ? error : new Error("Failed to get new session")
+                error: error instanceof Error ? error : new Error("Failed to get new question")
             };
         }
 
@@ -45,7 +43,7 @@ export const serviceApi = {
 
     async usePowerUp(type: PowerUpType, userId: number, sessionId: string): Promise<ServiceResponseResult<UsePowerUpResponse>> {
         try {
-            const response = await fetch(`http://localhost:8080/api/powerups/use?type=${type}&userId=${userId}&sessionId=${sessionId}`, { method: 'POST' });
+            const response = await fetch(`${SESSION_BASE_URL}/api/powerups/use?type=${type}&userId=${userId}&sessionId=${sessionId}`, { method: 'POST' });
 
             if (response.ok) {
                 const data = await response.json();
@@ -53,11 +51,32 @@ export const serviceApi = {
             }
             return {data: null, error: new Error(response.statusText)};
         } catch (error) {
-            console.error("Failed to use power-up", error);
             return {
                 data: null,
-                error: error instanceof Error ? error : new Error("Failed to get new session")
+                error: error instanceof Error ? error : new Error("Failed to use power up")
             };
         }
-    }
+    },
+
+    async validateSelectedAnswer(sessionId: string, optionId: number): Promise<ServiceResponseResult<AnswerResponse>> {
+        try {
+            const response = await fetch(`${SESSION_BASE_URL}/sessions/${sessionId}/answer`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  selectedOptionId: optionId
+                })
+              });
+            if (response.ok) {
+                const data = await response.json();
+                return { data, error: null };
+            }
+            return {data: null, error: new Error(response.statusText)};
+        } catch (error) {
+            return {
+                data: null,
+                error: error instanceof Error ? error : new Error("Failed to validate answer")
+            };
+        }
+    },
 }

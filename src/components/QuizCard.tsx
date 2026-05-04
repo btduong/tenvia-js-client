@@ -5,6 +5,7 @@ import styles from './QuizCard.module.css';
 import { playClick, playCorrect, playIncorrectAnswer, playQuestionStart } from '../utils/sounds';
 import HomeButton from './ui/HomeButton';
 import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, UsePowerUpResponse } from '../types';
+import { serviceApi } from '../api/serviceApi';
 
 interface QuizCardProps {
   question: Question;
@@ -57,29 +58,22 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
   };
 
   const handleVerify = async (optionId: number) => {
-    try {
-      onAnswerSent();
-      const response = await fetch(`http://localhost:8080/sessions/${sessionId}/answer`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          selectedOptionId: optionId
-        })
-      });
-      const data = await response.json();
-      if (data.correct) {
+
+    const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(sessionId, optionId);
+    if (answerResponse) {
+      if (answerResponse.correct) {
         playCorrect();
       } else {
         playIncorrectAnswer();
       }
-      setAnswerResponse(data);
-      onBalanceUpdated(data.newBalance);
-      if (data.isGameOver) {
-        onResult(data);
-        navigate('/summary', { state: { sessionSummary: data.summary } });
+      setAnswerResponse(answerResponse);
+      onBalanceUpdated(answerResponse.newBalance);
+      if (answerResponse.isGameOver) {
+        onResult(answerResponse);
+        navigate('/summary', { state: { sessionSummary: answerResponse.summary } });
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } else if (error) {
+      // Display error message on the UI to inform the player.
     }
   };
 
