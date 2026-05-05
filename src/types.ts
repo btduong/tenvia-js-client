@@ -55,10 +55,24 @@ export interface Question {
 }
 
 export interface UsePowerUpResponse {
-    updatedUser : User;
+    updatedUser: User;
     powerUpEffect: {
         hiddenSelectionsIds: number[];
     }
 }
+
+export type GameStatus = 'IDLE'
+    | 'UNAUTHENTICATED'
+    | 'LOGGING_IN'
+    | 'STARTING_SESSION'
+    | 'FETCHING_QUESTION'
+    | 'LOADING'
+    | 'PLAYING'
+    | 'VALIDATING_ANSWER'
+    | 'ERROR'
+    | 'GAME_OVER'
+    | 'SUMMARY';
+
+
 
 export type PowerUpType = "FIFTY_FIFTY" | "HAMMER";

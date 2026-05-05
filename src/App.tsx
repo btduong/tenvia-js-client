@@ -8,16 +8,14 @@ import Home from './components/Home';
 
 
 import { useNavigate } from 'react-router-dom';
-import type { AnswerResponse, GameSession, Question, User, PowerUpType, UsePowerUpResponse } from './types';
+import type { AnswerResponse, GameSession, Question, User, PowerUpType, UsePowerUpResponse, GameStatus } from './types';
 import { waitFor } from './utils/timer';
 import { useTickingSound } from './hooks/useTickingSound';
 import ShopPage from './pages/ShopPage';
 import { useUser } from './hooks/useUser';
 import QuizCardPage from './pages/QuizCardPage';
 import { serviceApi } from './api/serviceApi';
-
-type GameStatus = 'IDLE' | 'UNAUTHENTICATED' | 'LOGGING_IN' | 'STARTING_SESSION' | 'LOADING' | 'PLAYING' | 'VALIDATING_ANSWER' | 'SUMMARY';
-
+import { StatusMessage } from './components/common/StatusMessage';
 
 const App: React.FC = () => {
   const [gameStatus, setGameStatus] = useState<GameStatus>('IDLE');
@@ -43,11 +41,12 @@ const App: React.FC = () => {
     if (gameSession) {
       setSessionData(gameSession);
       if (gameSession?.id) {
+        setGameStatus("PLAYING");
         getNextQuestion(gameSession.id);
         navigate('/quiz');
       }
     } else {
-      // Display error message on the UI to inform the player.
+      setGameStatus('ERROR');
     }
 
   };
@@ -65,7 +64,7 @@ const App: React.FC = () => {
       setAnswerSent(false);
       setIsTicking(true);
     } else {
-      // Display error message on the UI to inform the player.
+      setGameStatus('ERROR');
     }
   };
 
@@ -80,6 +79,7 @@ const App: React.FC = () => {
   };
 
   const handleGameOver = () => {
+    setGameStatus('GAME_OVER');
     setCurrentQuestion(null);
     setCurrentIndex(0);
     setSessionData(null);
@@ -110,19 +110,33 @@ const App: React.FC = () => {
     const { data: powerUpResponse, error } = await serviceApi.usePowerUp(type, user.id, sessionData.id);
 
     if (powerUpResponse) {
-
       updateInventory(powerUpResponse.updatedUser.inventory); // This triggers a re-render of QuizCard with the new count
     }
     else {
-      // Display error message on the UI to inform the player.
+      setGameStatus('ERROR')
     }
     return powerUpResponse;
   };
+
+  /**
+   * Displaying a message on UI in case of an event failure ie fail to get a question from the server.
+   * @returns a message
+   */
+  const UIMessage = () => {
+    if (gameStatus == 'LOGGING_IN') return { message: "Logging in ...." };
+    if (gameStatus == 'UNAUTHENTICATED') return { message: "Login failed ...." };
+    // Placeholder error. Need to propagate the error message up from the ApiService layer to here.
+    if (gameStatus == 'ERROR') return { message: 'Error..' };
+    return null;
+  }
+
+  const statusMessageUI = UIMessage();
 
   const hasSession = Boolean(sessionData?.id);
 
   return (
     <div className={appStyles.mobileAppWrapper}>
+      {statusMessageUI && (<StatusMessage status={gameStatus} message={statusMessageUI?.message ?? ''} />)}
       <Routes>
         <Route path="/" element={
           !user ?
@@ -138,17 +152,15 @@ const App: React.FC = () => {
 
         {user && (
           <>
-
             <Route path="/shop" element={
               <ShopPage user={user} onPurchase={purchaseItem} />
             } />
 
             <Route path="/quiz" element={
-              currentQuestion ? (
-                <QuizCardPage currentQuestion={currentQuestion} currentIndex={currentIndex} questionLimit={questionLimit} sessionData={sessionData} answerSent={answerSent}
+             currentQuestion ?
+                <QuizCardPage currentQuestion={currentQuestion!} currentIndex={currentIndex} questionLimit={questionLimit} sessionData={sessionData} answerSent={answerSent}
                   onQuestionTimedout={onQuestionTimedout} handleAnswer={handleAnswer} inventory={user.inventory} handleUsePowerUp={handleUsePowerUp} updateBalance={updateBalance} onAnswerSent={onAnswerSent} />
-              ) : "should show a loading screen if the question is being fetched from server"
-
+              : <StatusMessage status={'LOGGING_IN'} message={'Fetching question...'}/>
             } />
 
             <Route path="/summary" element={<SummaryPage />} />
