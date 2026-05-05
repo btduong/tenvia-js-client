@@ -54,8 +54,31 @@ export interface Question {
 
 }
 
-export interface PowerUpEffect {
-    hiddenSelectionsIds: number[];
+export interface UsePowerUpResponse {
+    updatedUser: User;
+    powerUpEffect: {
+        hiddenSelectionsIds: number[];
+    }
 }
+
+export interface LederboardDTO {
+    userName: string;
+    score: number;
+}
+
+
+export type GameStatus = 'IDLE'
+    | 'UNAUTHENTICATED'
+    | 'LOGGING_IN'
+    | 'STARTING_SESSION'
+    | 'FETCHING_QUESTION'
+    | 'LOADING'
+    | 'PLAYING'
+    | 'VALIDATING_ANSWER'
+    | 'ERROR'
+    | 'GAME_OVER'
+    | 'SUMMARY';
+
+
 
 export type PowerUpType = "FIFTY_FIFTY" | "HAMMER";

@@ -4,14 +4,16 @@ import styles from './QuizCard.module.css';
 
 import { playClick, playCorrect, playIncorrectAnswer, playQuestionStart } from '../utils/sounds';
 import HomeButton from './ui/HomeButton';
-import type { AnswerResponse, Inventory, PowerUpEffect, PowerUpType, QuestionOption, Question } from '../types';
+import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, UsePowerUpResponse } from '../types';
+import { serviceApi } from '../api/serviceApi';
+import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 
 interface QuizCardProps {
   question: Question;
   onResult: (result: AnswerResponse) => void;
   sessionId: string;
   inventory: Inventory;
-  onUsePowerUp: (powerUpType: PowerUpType) => Promise<PowerUpEffect | null>;
+  onUsePowerUp: (powerUpType: PowerUpType) => Promise<UsePowerUpResponse | null>;
   onBalanceUpdated: (newBalance: number) => void;
   onAnswerSent: () => void;
 }
@@ -23,65 +25,73 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
 
   const isDisabled = question.powerUpDisabled;
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Space' && selectedOptionId !== null && answerResponse === null) {
-        handleVerify(selectedOptionId);
-      } else if (answerResponse !== null) {
-        onResult(answerResponse);
-      }
-    }
-
-    // Listener to the window
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [selectedOptionId, answerResponse]);
 
   // Use nagivator to different path ie /leaderboard, /home
   const navigate = useNavigate();
 
-  const handlePowerUpClick = async (type: PowerUpType) => {
+  const handleSpaceKeyPressed = () => {
+    if (answerResponse) {
+      onResult(answerResponse);
+    } else if (selectedOptionId < 0) { // all answer option ids are positive
+      handleVerify(selectedOptionId);
+    }
+  }
 
+  useKeyboardShortcut(handleSpaceKeyPressed);
+
+  const handlePowerUpClick = async (type: PowerUpType) => {
     const effect = await onUsePowerUp(type);
     if (effect && type === 'FIFTY_FIFTY') {
-      const toHideIds = effect.hiddenSelectionsIds;
+      const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
       setHiddenOptionIds(toHideIds);
     } else if (effect && type === 'HAMMER') {
-      const toHideIds = effect.hiddenSelectionsIds;
+      const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
       setHiddenOptionIds(toHideIds);
     }
-
   };
 
   const handleVerify = async (optionId: number) => {
-    try {
-      onAnswerSent();
-      const response = await fetch(`http://localhost:8080/sessions/${sessionId}/answer`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          selectedOptionId: optionId
-        })
-      });
-      const data = await response.json();
-      if (data.correct) {
+    // Stop the count down sound as soon as the answer is submitted.
+    onAnswerSent();
+    const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(sessionId, optionId);
+    if (answerResponse) {
+      if (answerResponse.correct) {
         playCorrect();
       } else {
         playIncorrectAnswer();
       }
-      setAnswerResponse(data);
-      onBalanceUpdated(data.newBalance);
-      if (data.isGameOver) {
-        onResult(data);
-        navigate('/summary', { state: { sessionSummary: data.summary } });
+      setAnswerResponse(answerResponse);
+      onBalanceUpdated(answerResponse.newBalance);
+      if (answerResponse.isGameOver) {
+        onResult(answerResponse);
+        navigate('/summary', { state: { sessionSummary: answerResponse.summary } });
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } else if (error) {
+      // Display error message on the UI to inform the player.
     }
   };
+
+  /**
+   * Decide a button style based on what selected answer option.
+   * @param option
+   * @returns 
+   */
+  const getOptionStyle = (option: QuestionOption) => {
+    if (hiddenOptionIds.includes(option.id)) {
+      return styles.optionDisabled;
+    }
+    if (!answerResponse) { // selected an answer option but hasn't submitted yet
+      return selectedOptionId === option.id ? styles.optionSelected : styles.optionBtn;
+    }
+    if (option.letter === answerResponse.correctLetter) // selected and submitted answer option is the correct one
+    {
+      return styles.optionCorrectBtn;
+    }
+    if (option.letter !== answerResponse.correctLetter && selectedOptionId === option.id) {
+      return styles.optionIncorrectBtn;
+    }
+    return styles.optionBtn;
+  }
 
   return (
     <div className={styles.mainQuestionContainer}>
@@ -91,19 +101,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
       {/* 2. Options List */}
       <div className={styles.optionsContainer}>
         {question.options.map((option: QuestionOption) => {
-          let optionButtonStyle = styles.optionBtn;
-          if (hiddenOptionIds.includes(option.id)) {
-            optionButtonStyle = `${styles.optionDisabled}`;
-          }
-          else if (answerResponse !== null && option.letter === answerResponse.correctLetter) {
-            optionButtonStyle = `${styles.optionCorrectBtn}`;
-          }
-          else if (answerResponse === null && selectedOptionId !== null && selectedOptionId === option.id) {
-            optionButtonStyle = `${styles.optionSelected}`;
-          }
-          else if (answerResponse !== null && option.letter !== answerResponse.correctLetter && selectedOptionId === option.id) {
-            optionButtonStyle = `${styles.optionIncorrectBtn}`;
-          }
+          const optionButtonStyle = getOptionStyle(option);
 
           return (
             <div className={styles.container} key={option.id}>

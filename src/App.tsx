@@ -1,24 +1,26 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import appStyles from './App.module.css';
 
-import QuizCard from './components/QuizCard';
-import Leaderboard from './components/Leaderboard';
+import Leaderboard from './pages/LeaderboardPage';
 import SummaryPage from './features/SummaryPage/SummaryPage';
 import Home from './components/Home';
-import ShopModal from './components/ShopModal';
-import SessionTimer from './features/Quiz/SessionTimer';
 
 
 import { useNavigate } from 'react-router-dom';
-import type { AnswerResponse, GameSession, Question, User, PowerUpType, PowerUpEffect } from './types';
+import type { AnswerResponse, GameSession, Question, User, PowerUpType, UsePowerUpResponse, GameStatus } from './types';
 import { waitFor } from './utils/timer';
 import { useTickingSound } from './hooks/useTickingSound';
-
+import ShopPage from './pages/ShopPage';
+import { useUser } from './hooks/useUser';
+import QuizCardPage from './pages/QuizCardPage';
+import { serviceApi } from './api/serviceApi';
+import { StatusMessage } from './components/common/StatusMessage';
 
 const App: React.FC = () => {
+  const [gameStatus, setGameStatus] = useState<GameStatus>('IDLE');
   const [typedUsername, setTypedUsername] = useState("");
-  const [user, setUser] = useState<User | null>(null);
+  const { user, loading, login, purchaseItem, updateBalance, updateInventory, isAuthenticated } = useUser();
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
@@ -34,23 +36,19 @@ const App: React.FC = () => {
   const startNewGame = async () => {
     if (!user) return;
 
-    const res = await fetch(`http://localhost:8080/sessions/start?id=${user.id}&limit=${questionLimit}`, { method: 'POST' });
-    if (res.ok) {
-      const data = await res.json();
-      setSessionData(data);
-      // Pass the data.id (sessionId) in here because
-      // it is yet to be updated from setSessionId(data.id);
-      getNextQuestion(data.id);
-      navigate('/quiz');
+    // Rename 'data' to 'gameSession' during destructuring 
+    const { data: gameSession, error } = await serviceApi.getNewSession(user.id, questionLimit);
+    if (gameSession) {
+      setSessionData(gameSession);
+      if (gameSession?.id) {
+        setGameStatus("PLAYING");
+        getNextQuestion(gameSession.id);
+        navigate('/quiz');
+      }
+    } else {
+      setGameStatus('ERROR');
     }
 
-  };
-
-  const handleLogin = async () => {
-
-    const res = await fetch(`http://localhost:8080/users/login?username=${typedUsername}`, { method: 'POST' });
-    const data = await res.json();
-    setUser(data);
   };
 
   const onAnswerSent = () => {
@@ -58,30 +56,30 @@ const App: React.FC = () => {
     setIsTicking(false);
   }
 
-
   const getNextQuestion = async (currentSessionId: string) => {
-    try {
-      const response = await fetch(`http://localhost:8080/sessions/${currentSessionId}/questions/next`);
-
-      if (response.status == 410) {
-        handleGameOver();
-        return navigate('/'); //back to home
-      }
-
-      if (!response.ok) throw new Error('Failed to get next question');
-
-      const questionData = await response.json();
+    const { data: question, error } = await serviceApi.getQuestion(currentSessionId);
+    if (question) {
       await waitFor(500);
-      setCurrentQuestion(questionData);
+      setCurrentQuestion(question);
       setAnswerSent(false);
       setIsTicking(true);
+    } else {
+      setGameStatus('ERROR');
+    }
+  };
 
-    } catch (error) {
-      console.log("Fail to get next question");
+  const handleLogin = async (name: string) => {
+    setGameStatus('LOGGING_IN');
+    const { data: user, error } = await login(name);
+    if (user) {
+      setGameStatus('IDLE');
+    } else {
+      setGameStatus('UNAUTHENTICATED');
     }
   };
 
   const handleGameOver = () => {
+    setGameStatus('GAME_OVER');
     setCurrentQuestion(null);
     setCurrentIndex(0);
     setSessionData(null);
@@ -89,8 +87,6 @@ const App: React.FC = () => {
   };
 
   const handleAnswer = (answerResponse: AnswerResponse) => {
-    // Progress to the next question
-    // if (isCorrect) {
     if (!answerResponse.isGameOver && sessionData?.id) {
 
       setCurrentIndex(prev => prev + 1);
@@ -98,42 +94,6 @@ const App: React.FC = () => {
     } else {
       handleGameOver();
     }
-  };
-
-  const handlePurchase = async (itemType: PowerUpType) => {
-    if (!user) return;
-    try {
-      const url = `http://localhost:8080/shop/buy?userId=${user.id}&type=${itemType}`;
-
-      const response = await fetch(url, {
-        method: 'POST'
-        // No 'body' or 'headers' needed because we are using @RequestParam
-      });
-
-      if (response.ok) {
-        // 2. Fetch the updated user data to refresh the balance and inventory
-        // Since the controller returns 'Void', we have to do a separate fetch 
-        // or modify the controller to return the UserDTO.
-        // refreshUserData();
-        const newData = await response.json();
-        setUser(previous => {
-          if (!previous) return null;
-          return ({ ...previous, inventory: newData.inventory })
-        }
-        );
-      } else {
-        alert("Purchase failed. Check your gold balance!");
-      }
-    } catch (err) {
-      console.error("Connection error:", err);
-    }
-  };
-
-  const handleBalanceUpdate = (newBalance: number) => {
-    setUser(previous => {
-      if (!previous) return null;
-      return ({ ...previous, balance: newBalance })
-    });
   };
 
   const onQuestionTimedout = async () => {
@@ -144,34 +104,46 @@ const App: React.FC = () => {
     }
   };
 
-  const handleUsePowerUp = async (type: PowerUpType): Promise<PowerUpEffect | null> => {
-    if (!user) return null;
-    try {
-      const response = await fetch(`http://localhost:8080/api/powerups/use?type=${type}&userId=${user.id}&sessionId=${sessionId}`, { method: 'POST' });
+  const handleUsePowerUp = async (type: PowerUpType): Promise<UsePowerUpResponse | null> => {
+    if (!user || !sessionData || !sessionData.id) return null;
 
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data.updatedUser); // This triggers a re-render of QuizCard with the new count
-        return data.powerUpEffect;
-      }
-      return null;
-    } catch (error) {
-      console.error("Failed to use power-up", error);
-      return null;
+    const { data: powerUpResponse, error } = await serviceApi.usePowerUp(type, user.id, sessionData.id);
+
+    if (powerUpResponse) {
+      updateInventory(powerUpResponse.updatedUser.inventory); // This triggers a re-render of QuizCard with the new count
     }
+    else {
+      setGameStatus('ERROR')
+    }
+    return powerUpResponse;
   };
+
+  /**
+   * Displaying a message on UI in case of an event failure ie fail to get a question from the server.
+   * @returns a message
+   */
+  const UIMessage = () => {
+    if (gameStatus == 'LOGGING_IN') return { message: "Logging in ...." };
+    if (gameStatus == 'UNAUTHENTICATED') return { message: "Login failed ...." };
+    // Placeholder error. Need to propagate the error message up from the ApiService layer to here.
+    if (gameStatus == 'ERROR') return { message: 'Error..' };
+    return null;
+  }
+
+  const statusMessageUI = UIMessage();
 
   const hasSession = Boolean(sessionData?.id);
 
   return (
     <div className={appStyles.mobileAppWrapper}>
+      {statusMessageUI && (<StatusMessage status={gameStatus} message={statusMessageUI?.message ?? ''} />)}
       <Routes>
         <Route path="/" element={
           !user ?
             (<div className={appStyles.loginContainer}>
               <h2>Enter a name to play</h2>
               <input type='text' placeholder='Name' onChange={(e) => setTypedUsername(e.target.value)} />
-              <button onClick={handleLogin} disabled={!typedUsername.trim()}>Play</button>
+              <button onClick={() => handleLogin(typedUsername)} disabled={!typedUsername.trim()}>Play</button>
             </div>
             ) : (
               <Home hasActivateSession={hasSession} onStartNewGame={startNewGame} />
@@ -180,43 +152,15 @@ const App: React.FC = () => {
 
         {user && (
           <>
-
             <Route path="/shop" element={
-              <ShopModal
-                user={user}
-                onPurchase={(item: PowerUpType) => handlePurchase(item)} />
+              <ShopPage user={user} onPurchase={purchaseItem} />
             } />
 
             <Route path="/quiz" element={
-
-
-              currentQuestion ? (
-                <>
-                  <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
-                  {sessionData && sessionData.duration ?
-                    (<SessionTimer
-                      key={currentQuestion.id}
-                      duration={currentQuestion.expiresInSecond}
-                      isPause={answerSent}
-                      onComplete={onQuestionTimedout} />)
-                    : (<div></div>)
-                  }
-                  <div className={appStyles.quizPage}>
-                    {sessionData && sessionData.id ?
-                      <QuizCard
-                        key={currentQuestion.id}
-                        question={currentQuestion}
-                        onResult={handleAnswer}
-                        sessionId={sessionData.id}
-                        inventory={user.inventory}
-                        onUsePowerUp={handleUsePowerUp}
-                        onBalanceUpdated={handleBalanceUpdate}
-                        onAnswerSent={onAnswerSent} />
-                      : "Loading neq quiz card"}
-                  </div>
-                </>
-              ) : "No question fetched"
-
+             currentQuestion ?
+                <QuizCardPage currentQuestion={currentQuestion!} currentIndex={currentIndex} questionLimit={questionLimit} sessionData={sessionData} answerSent={answerSent}
+                  onQuestionTimedout={onQuestionTimedout} handleAnswer={handleAnswer} inventory={user.inventory} handleUsePowerUp={handleUsePowerUp} updateBalance={updateBalance} onAnswerSent={onAnswerSent} />
+              : <StatusMessage status={'LOGGING_IN'} message={'Fetching question...'}/>
             } />
 
             <Route path="/summary" element={<SummaryPage />} />

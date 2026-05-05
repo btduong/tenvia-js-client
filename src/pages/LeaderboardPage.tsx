@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Leaderboard.module.css';
-import NavButton from './common/NavButton';
-import HomeIcon from './ui/HomeIcon';
-import homeStyles from './ui/HomeIcon.module.css';
-
-interface LederboardDTO {
-    userName: string;
-    score: number;
-}
-
+import NavButton from '../components/common/NavButton';
+import HomeIcon from '../components/ui/HomeIcon';
+import homeStyles from '../components/ui/HomeIcon.module.css';
+import type { LederboardDTO } from '../types';
+import { serviceApi } from '../api/serviceApi';
 
 export default function Leaderboard({ }) {
     const [scores, setScores] = useState<LederboardDTO[]>([]);
 
     useEffect(() => {
-        fetch('http://localhost:8081/leaderboard')
-            .then(res => res.json())
-            .then(data => setScores(data));
+        // Cannot use await directly inside useEffect.
+        // Has to wrap await inside an async function.
+        const getLeaderboard = async () => {
+            const { data, error } = await serviceApi.leaderboardPage();
+            if (data) {
+                setScores(data);
+            }
+        };
+
+        getLeaderboard();
     }, []);
 
     return (
@@ -40,7 +43,7 @@ export default function Leaderboard({ }) {
                     ))}
                 </tbody>
             </table>
-            <NavButton to='/' label='Home' icon={<HomeIcon className={homeStyles.homeSvg}/>}/>
+            <NavButton to='/' label='Home' icon={<HomeIcon className={homeStyles.homeSvg} />} />
         </div>
     );
 }

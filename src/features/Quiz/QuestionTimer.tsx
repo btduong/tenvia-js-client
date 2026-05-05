@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import timelineStyle from './SessionTimer.module.css';
+import timelineStyle from './QuestionTimer.module.css';
 
 interface SessionTimerProps {
     duration: number;
@@ -22,7 +22,7 @@ const TimeLine = ({ percentage }: { percentage: number }) => {
     );
 };
 
-const SessionTimer: React.FC<SessionTimerProps> = ({ duration, isPause, onComplete }) => {
+const QuestionTimer: React.FC<SessionTimerProps> = ({ duration, isPause, onComplete }) => {
 
     const [timeLeft, setTimeLeft] = useState(duration);
 
@@ -53,4 +53,4 @@ const SessionTimer: React.FC<SessionTimerProps> = ({ duration, isPause, onComple
     );
 };
 
-export default SessionTimer;
+export default QuestionTimer;
