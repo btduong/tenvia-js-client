@@ -61,6 +61,12 @@ export interface UsePowerUpResponse {
     }
 }
 
+export interface LederboardDTO {
+    userName: string;
+    score: number;
+}
+
+
 export type GameStatus = 'IDLE'
     | 'UNAUTHENTICATED'
     | 'LOGGING_IN'

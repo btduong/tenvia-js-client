@@ -1,4 +1,4 @@
-import type { AnswerResponse, GameSession, PowerUpType, Question, UsePowerUpResponse, User } from "../types";
+import type { AnswerResponse, GameSession, LederboardDTO, PowerUpType, Question, UsePowerUpResponse, User } from "../types";
 import type { ServiceResponseResult } from "./serviceApiResult";
 
 const SESSION_BASE_URL = 'http://localhost:8080';
@@ -25,7 +25,7 @@ export const serviceApi = {
 
     async getQuestion(sessionId: string): Promise<ServiceResponseResult<Question>> {
         try {
-            const response = await fetch(`${SESSION_BASE_URL}/sessions/${sessionId}/questions/next`);
+            const response = await fetch(`${SESSION_BASE_URL}/sessions/${sessionId}/questions/next`, { method: 'GET' });
             if (response.ok) {
                 const data = await response.json() as Question;
                 return { data, error: null };
@@ -49,7 +49,7 @@ export const serviceApi = {
                 const data = await response.json();
                 return { data, error: null };
             }
-            return {data: null, error: new Error(response.statusText)};
+            return { data: null, error: new Error(response.statusText) };
         } catch (error) {
             return {
                 data: null,
@@ -64,14 +64,14 @@ export const serviceApi = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                  selectedOptionId: optionId
+                    selectedOptionId: optionId
                 })
-              });
+            });
             if (response.ok) {
                 const data = await response.json();
                 return { data, error: null };
             }
-            return {data: null, error: new Error(response.statusText)};
+            return { data: null, error: new Error(response.statusText) };
         } catch (error) {
             return {
                 data: null,
@@ -82,21 +82,41 @@ export const serviceApi = {
 
     async login(username: string): Promise<ServiceResponseResult<User>> {
         try {
-          const res = await fetch(`${SESSION_BASE_URL}/users/login?username=${username}`, { 
-            method: 'POST' 
-          });
-          
-          if (!res.ok) {
-            return { data: null, error: new Error(`Login failed: ${res.statusText}`) };
-          }
-    
-          const data = await res.json();
-          return { data, error: null };
+            const response = await fetch(`${SESSION_BASE_URL}/users/login?username=${username}`, {
+                method: 'POST'
+            });
+
+            if (!response.ok) {
+                return { data: null, error: new Error(`Login failed: ${response.statusText}`) };
+            }
+
+            const data = await response.json();
+            return { data, error: null };
         } catch (err) {
-          return { 
-            data: null, 
-            error: err instanceof Error ? err : new Error("Failed to login") 
-          };
+            return {
+                data: null,
+                error: err instanceof Error ? err : new Error("Failed to login")
+            };
         }
-      }
+    },
+
+    async leaderboardPage(): Promise<ServiceResponseResult<LederboardDTO[]>> {
+        try {
+            const response = await fetch(`${LEADERBOARD_BASE_URL}/leaderboard`, {
+                method: 'GET'
+            });
+
+            if (!response.ok) {
+                return { data: null, error: new Error(`Failed to retrieve /leaderbard ${response.statusText}`) };
+            }
+
+            const data = await response.json();
+            return { data, error: null };
+        } catch (err) {
+            return {
+                data: null,
+                error: err instanceof Error ? err : new Error("Failed to retrieve /leaderboard")
+            };
+        }
+    },
 }
