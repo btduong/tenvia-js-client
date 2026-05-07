@@ -1,3 +1,4 @@
+import { playClick } from '../utils/sounds';
 import styles from './ShopItem.module.css';
 
 interface ShopItemProps {
@@ -20,7 +21,10 @@ const ShopItem: React.FC<ShopItemProps> = ({ name, price, count, icon, onBuy }) 
             </div>
             <button
                 className={styles.buyButton}
-                onClick={onBuy}
+                onClick={() => {
+                    onBuy();
+                    playClick()
+                }}
             >
                 Buy ({price})
             </button>
