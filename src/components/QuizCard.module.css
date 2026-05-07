@@ -281,3 +281,10 @@
   border: none;
   font-weight: bold;
 }
+
+.powerUpBtnIcon {
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+
