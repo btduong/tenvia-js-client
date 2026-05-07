@@ -143,9 +143,9 @@ describe('can render /shop', () => {
             </MemoryRouter>
         );
     
-        const buyButtons = screen.getAllByRole('button', { name: /Buy for/i});
+        const buyButtons = screen.getAllByRole('button', { name: /Buy/i});
     
-        expect(screen.getByText(/Your Balance/i)).toBeInTheDocument();
+        expect(screen.getByText(/Balance/i)).toBeInTheDocument();
         expect(buyButtons).toHaveLength(2);
     
         // Buy Hammer button
