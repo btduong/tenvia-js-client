@@ -11,11 +11,6 @@ interface QuizCardPageProps {
     sessionData: GameSession | null;
     answerSent: boolean;
     onQuestionTimedout: () => Promise<void>;
-    handleAnswer: (answerResponse: AnswerResponse) => void;
-    inventory: Inventory;
-    handleUsePowerUp: (type: PowerUpType) => Promise<UsePowerUpResponse | null>;
-    updateBalance: (balance: number) => void;
-    onAnswerSent: () => void;
 }
 
 const QuizCardPage: React.FC<QuizCardPageProps> = ({
@@ -25,11 +20,7 @@ const QuizCardPage: React.FC<QuizCardPageProps> = ({
     sessionData,
     answerSent,
     onQuestionTimedout,
-    handleAnswer,
-    inventory,
-    handleUsePowerUp,
-    updateBalance,
-    onAnswerSent, }) => {
+}) => {
     return (
         <>
             <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
@@ -42,17 +33,7 @@ const QuizCardPage: React.FC<QuizCardPageProps> = ({
                 : (<div></div>)
             }
             <div className={appStyles.quizPage}>
-                {sessionData && sessionData.id ?
-                    <QuizCard
-                        key={currentQuestion.id}
-                        question={currentQuestion}
-                        onResult={handleAnswer}
-                        sessionId={sessionData.id}
-                        inventory={inventory}
-                        onUsePowerUp={handleUsePowerUp}
-                        onBalanceUpdated={updateBalance}
-                        onAnswerSent={onAnswerSent} />
-                    : "Loading neq quiz card"}
+                <QuizCard key={currentQuestion.id} />
             </div>
         </>
     );
