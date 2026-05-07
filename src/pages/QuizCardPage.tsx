@@ -19,11 +19,10 @@ const QuizCardPage: React.FC<QuizCardPageProps> = ({
     questionLimit,
     sessionData,
     answerSent,
-    onQuestionTimedout,
-}) => {
+    onQuestionTimedout }) => {
     return (
         <>
-            <div className={appStyles.currentQuestionCount}>Question: {currentIndex + 1} / {questionLimit}</div>
+            <div className={appStyles.currentQuestionCount}>{`Question: ${currentIndex + 1}/${questionLimit}`}</div>
             {sessionData && sessionData.duration ?
                 (<QuestionTimer
                     key={currentQuestion.id}
