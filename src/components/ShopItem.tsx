@@ -1,4 +1,3 @@
-import { ItemIcon } from './common/ItemIcon';
 import styles from './ShopItem.module.css';
 
 interface ShopItemProps {
@@ -12,12 +11,13 @@ interface ShopItemProps {
 const ShopItem: React.FC<ShopItemProps> = ({ name, price, count, icon, onBuy }) => {
     return (
         <div className={styles.shopItem}>
-                {/* <img src={icon} alt={name} className={styles.itemIcon} /> */}
-                <ItemIcon name={name} icon={icon} count={count}/>
-            {/* <div className={styles.itemInfo}>
+            <div className={styles.iconWell}>
+                <img src={icon} alt={name} className={styles.itemIcon} />
+            </div>
+            <div className={styles.itemInfo}>
                 <h3>{name}</h3>
                 <p>Owned: {count}</p>
-            </div> */}
+            </div>
             <button
                 className={styles.buyButton}
                 onClick={onBuy}
