@@ -170,8 +170,6 @@ const App: React.FC = () => {
               }}>
                 <QuizCardPage answerSent={answerSent} sessionData={sessionData} currentQuestion={currentQuestion} currentIndex={currentIndex} questionLimit={questionLimit} onQuestionTimedout={onQuestionTimedout}/>
               </GameProvider>)
-                // <QuizCardPage currentQuestion={currentQuestion!} currentIndex={currentIndex} questionLimit={questionLimit} sessionData={sessionData} answerSent={answerSent}
-                //   onQuestionTimedout={onQuestionTimedout} handleAnswer={handleAnswer} inventory={user.inventory} handleUsePowerUp={handleUsePowerUp} updateBalance={updateBalance} onAnswerSent={onAnswerSent} />
                 : <StatusMessage status={'LOGGING_IN'} message={'Fetching question...'} />
             } />
 

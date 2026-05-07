@@ -17,11 +17,16 @@ interface GameContextType {
     handleAnswer: (response: AnswerResponse) => void;
 }
 
-// https://react.dev/learn/passing-data-deeply-with-context
-// Create the context with a default value.
+
+/**
+ * Create the context with a default value.
+ * Ref: https://react.dev/learn/passing-data-deeply-with-context
+ */
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
-// GameProvider
+/**
+ * GameProvider - children should be provided from a parent.
+ */
 export const GameProvider: React.FC<{ value: GameContextType, children: React.ReactNode }> = ({ value, children }) => {
     return (
         <GameContext.Provider value={value}> { children } </GameContext.Provider>
@@ -29,7 +34,9 @@ export const GameProvider: React.FC<{ value: GameContextType, children: React.Re
 };
 
 /**
- * useGame hook.
+ * GameContext hook.
+ * 
+ * This hook should be used in a component that needs access to the GameContext.
  */
 export const useGame = () => {
     const context = useContext(GameContext);

@@ -11,20 +11,13 @@ import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 import hammerIcon from '../assets/icons/suit_diamonds.png';
 import { useGame } from '../context/GameContext';
 
-// A map to look up PowerUpType -> Icon of that type
+// A lookup map PowerUpType -> Icon of that type
 const POWER_UP_TYPE_ICON_MAP: Record<PowerUpType, string> = {
   HAMMER: hammerIcon,
   FIFTY_FIFTY: hammerIcon,
 };
 
 interface QuizCardProps {
-  // question: Question;
-  // onResult: (result: AnswerResponse) => void;
-  // sessionId: string;
-  // inventory: Inventory;
-  // onUsePowerUp: (powerUpType: PowerUpType) => Promise<UsePowerUpResponse | null>;
-  // onBalanceUpdated: (newBalance: number) => void;
-  // onAnswerSent: () => void;
 }
 
 const QuizCard: React.FC<QuizCardProps> = () => {
@@ -34,7 +27,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
   const [hiddenOptionIds, setHiddenOptionIds] = useState<number[]>([]);
 
-  // Guard check.
+  // Guard check to stop TS strict null check.
   if (!currentQuestion || !sessionId) return null;
 
   const isDisabled = currentQuestion.powerUpDisabled;
