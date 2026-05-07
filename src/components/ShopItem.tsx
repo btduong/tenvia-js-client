@@ -1,22 +1,32 @@
+import { playClick } from '../utils/sounds';
+import styles from './ShopItem.module.css';
+
 interface ShopItemProps {
     name: string;
     price: number;
     count: number;
+    icon: string;
     onBuy: () => {};
 }
 
-const ShopItem: React.FC<ShopItemProps> = ({ name, price, count, onBuy }) => {
+const ShopItem: React.FC<ShopItemProps> = ({ name, price, count, icon, onBuy }) => {
     return (
-        <div className="shop-item">
-            <div className="item-info">
+        <div className={styles.shopItem}>
+            <div className={styles.iconWell}>
+                <img src={icon} alt={name} className={styles.itemIcon} />
+            </div>
+            <div className={styles.itemInfo}>
                 <h3>{name}</h3>
                 <p>Owned: {count}</p>
             </div>
             <button
-                className="buy-button"
-                onClick={onBuy}
+                className={styles.buyButton}
+                onClick={() => {
+                    onBuy();
+                    playClick()
+                }}
             >
-                Buy for {price} 💰
+                Buy ({price})
             </button>
         </div>
     );

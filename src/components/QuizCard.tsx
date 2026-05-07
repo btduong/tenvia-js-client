@@ -8,6 +8,14 @@ import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, 
 import { serviceApi } from '../api/serviceApi';
 import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 
+import hammerIcon from '../assets/icons/suit_diamonds.png';
+
+// A map to look up PowerUpType -> Icon of that type
+const POWER_UP_TYPE_ICON_MAP: Record<PowerUpType, string> = {
+  HAMMER: hammerIcon,
+  FIFTY_FIFTY: hammerIcon,
+};
+
 interface QuizCardProps {
   question: Question;
   onResult: (result: AnswerResponse) => void;
@@ -41,6 +49,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
 
   const handlePowerUpClick = async (type: PowerUpType) => {
     const effect = await onUsePowerUp(type);
+    if (effect?.updatedUser.inventory)
     if (effect && type === 'FIFTY_FIFTY') {
       const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
       setHiddenOptionIds(toHideIds);
@@ -93,6 +102,8 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
     return styles.optionBtn;
   }
 
+  const hasPowerUps = Object.values(inventory).some(count => count > 0);
+
   return (
     <div className={styles.mainQuestionContainer}>
       {/* 1. Question Text stays visible */}
@@ -124,15 +135,22 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
           <>
             {Object.keys(inventory).length > 0 ?
               <div className="inventory-bar">
-                <h4>Your Power-Ups:</h4>
-                {(Object.entries(inventory) as [PowerUpType, number][]).map(([type, count]) => (
-                  <button
-                    key={type}
-                    className="powerup-btn"
-                    disabled={count <= 0 || isDisabled}
-                    onClick={() => handlePowerUpClick(type)}>{type}: {count}
-                  </button>
-                ))}
+                {hasPowerUps &&<h4>Your Power-Ups:</h4>}
+                {(Object.entries(inventory) as [PowerUpType, number][])
+                  .filter(([_, count]) => count > 0)
+                  .map(([type, count]) => (
+                    <button
+                      key={type}
+                      className={styles.powerUpBtn}
+                      data-tooltip={type}
+                      disabled={count <= 0 || isDisabled}
+                      onClick={() => {
+                        handlePowerUpClick(type);
+                        playClick();
+                        }}>
+                      <img src={POWER_UP_TYPE_ICON_MAP[type]} className={styles.powerUpBtnIcon} />
+                    </button>
+                  ))}
               </div>
               : <></>
             }

@@ -281,3 +281,30 @@
   border: none;
   font-weight: bold;
 }
+
+.powerUpBtnIcon {
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+
+.powerUpBtn {
+  position: relative;
+}
+
+.powerUpBtn:hover::after {
+  content: attr(data-tooltip); /* Pulls text from the attribute */
+  position: absolute;
+  bottom: 120%; /* Position above the button */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 100;
+  pointer-events: none; /* Prevents tooltip from blocking clicks */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
