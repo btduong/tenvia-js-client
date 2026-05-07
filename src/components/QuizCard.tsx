@@ -143,7 +143,10 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
                       key={type}
                       className={styles.powerUpBtn}
                       disabled={count <= 0 || isDisabled}
-                      onClick={() => handlePowerUpClick(type)}>
+                      onClick={() => {
+                        handlePowerUpClick(type);
+                        playClick();
+                        }}>
                       <img src={POWER_UP_TYPE_ICON_MAP[type]} className={styles.powerUpBtnIcon} />
                     </button>
                   ))}
