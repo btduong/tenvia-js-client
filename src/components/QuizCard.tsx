@@ -142,6 +142,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
                     <button
                       key={type}
                       className={styles.powerUpBtn}
+                      data-tooltip={type}
                       disabled={count <= 0 || isDisabled}
                       onClick={() => {
                         handlePowerUpClick(type);
