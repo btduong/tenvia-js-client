@@ -40,7 +40,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
   const handleSpaceKeyPressed = () => {
     if (answerResponse) {
       onResult(answerResponse);
-    } else if (selectedOptionId < 0) { // all answer option ids are positive
+    } else if (selectedOptionId > 0) { // all answer option ids are positive
       handleVerify(selectedOptionId);
     }
   }
