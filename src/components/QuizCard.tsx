@@ -50,13 +50,13 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
   const handlePowerUpClick = async (type: PowerUpType) => {
     const effect = await onUsePowerUp(type);
     if (effect?.updatedUser.inventory)
-    if (effect && type === 'FIFTY_FIFTY') {
-      const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
-      setHiddenOptionIds(toHideIds);
-    } else if (effect && type === 'HAMMER') {
-      const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
-      setHiddenOptionIds(toHideIds);
-    }
+      if (effect && type === 'FIFTY_FIFTY') {
+        const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
+        setHiddenOptionIds(toHideIds);
+      } else if (effect && type === 'HAMMER') {
+        const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
+        setHiddenOptionIds(toHideIds);
+      }
   };
 
   const handleVerify = async (optionId: number) => {
@@ -133,26 +133,24 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
       <div style={{ marginTop: '10px' }}>
         {!answerResponse && (
           <>
-            {Object.keys(inventory).length > 0 ?
-              <div className="inventory-bar">
-                {hasPowerUps &&<h4>Your Power-Ups:</h4>}
-                {(Object.entries(inventory) as [PowerUpType, number][])
-                  .filter(([_, count]) => count > 0)
-                  .map(([type, count]) => (
-                    <button
-                      key={type}
-                      className={styles.powerUpBtn}
-                      data-tooltip={type}
-                      disabled={count <= 0 || isDisabled}
-                      onClick={() => {
-                        handlePowerUpClick(type);
-                        playClick();
-                        }}>
-                      <img src={POWER_UP_TYPE_ICON_MAP[type]} className={styles.powerUpBtnIcon} />
-                    </button>
-                  ))}
-              </div>
-              : <></>
+            {<div className="inventory-bar">
+              {hasPowerUps && <h4>Your Power-Ups:</h4>}
+              {(Object.entries(inventory) as [PowerUpType, number][])
+                .filter(([_, count]) => count > 0)
+                .map(([type, count]) => (
+                  <button
+                    key={type}
+                    className={styles.powerUpBtn}
+                    data-tooltip={type}
+                    disabled={count <= 0 || isDisabled}
+                    onClick={() => {
+                      handlePowerUpClick(type);
+                      playClick();
+                    }}>
+                    <img src={POWER_UP_TYPE_ICON_MAP[type]} className={styles.powerUpBtnIcon} />
+                  </button>
+                ))}
+            </div>
             }
 
           </>
