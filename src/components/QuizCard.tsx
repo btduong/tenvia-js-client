@@ -9,29 +9,28 @@ import { serviceApi } from '../api/serviceApi';
 import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 
 import hammerIcon from '../assets/icons/suit_diamonds.png';
+import { useGame } from '../context/GameContext';
 
-// A map to look up PowerUpType -> Icon of that type
+// A lookup map PowerUpType -> Icon of that type
 const POWER_UP_TYPE_ICON_MAP: Record<PowerUpType, string> = {
   HAMMER: hammerIcon,
   FIFTY_FIFTY: hammerIcon,
 };
 
 interface QuizCardProps {
-  question: Question;
-  onResult: (result: AnswerResponse) => void;
-  sessionId: string;
-  inventory: Inventory;
-  onUsePowerUp: (powerUpType: PowerUpType) => Promise<UsePowerUpResponse | null>;
-  onBalanceUpdated: (newBalance: number) => void;
-  onAnswerSent: () => void;
 }
 
-const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inventory, onUsePowerUp, onBalanceUpdated, onAnswerSent }) => {
+const QuizCard: React.FC<QuizCardProps> = () => {
+  const {currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswer } = useGame();
+
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
   const [hiddenOptionIds, setHiddenOptionIds] = useState<number[]>([]);
 
-  const isDisabled = question.powerUpDisabled;
+  // Guard check to stop TS strict null check.
+  if (!currentQuestion || !sessionId) return null;
+
+  const isDisabled = currentQuestion.powerUpDisabled;
 
 
   // Use nagivator to different path ie /leaderboard, /home
@@ -39,7 +38,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
 
   const handleSpaceKeyPressed = () => {
     if (answerResponse) {
-      onResult(answerResponse);
+      handleAnswer(answerResponse);
     } else if (selectedOptionId > 0) { // all answer option ids are positive
       handleVerify(selectedOptionId);
     }
@@ -48,7 +47,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
   useKeyboardShortcut(handleSpaceKeyPressed);
 
   const handlePowerUpClick = async (type: PowerUpType) => {
-    const effect = await onUsePowerUp(type);
+    const effect = await handleUsePoweUp(type);
     if (effect?.updatedUser.inventory)
       if (effect && type === 'FIFTY_FIFTY') {
         const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
@@ -70,9 +69,9 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
         playIncorrectAnswer();
       }
       setAnswerResponse(answerResponse);
-      onBalanceUpdated(answerResponse.newBalance);
+      updateBalance(answerResponse.newBalance);
       if (answerResponse.isGameOver) {
-        onResult(answerResponse);
+        handleAnswer(answerResponse);
         navigate('/summary', { state: { sessionSummary: answerResponse.summary } });
       }
     } else if (error) {
@@ -107,11 +106,11 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
   return (
     <div className={styles.mainQuestionContainer}>
       {/* 1. Question Text stays visible */}
-      <div className={styles.questionText}>{question.questionText}</div>
+      <div className={styles.questionText}>{currentQuestion.questionText}</div>
 
       {/* 2. Options List */}
       <div className={styles.optionsContainer}>
-        {question.options.map((option: QuestionOption) => {
+        {currentQuestion.options.map((option: QuestionOption) => {
           const optionButtonStyle = getOptionStyle(option);
 
           return (
@@ -175,7 +174,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ question, onResult, sessionId, inve
             disabled={!answerResponse}
             onClick={() => {
               if (answerResponse) {
-                onResult(answerResponse);
+                handleAnswer(answerResponse);
               }
               playQuestionStart();
             }}>Next</button>

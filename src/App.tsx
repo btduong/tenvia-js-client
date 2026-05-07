@@ -5,6 +5,7 @@ import appStyles from './App.module.css';
 import Leaderboard from './pages/LeaderboardPage';
 import SummaryPage from './features/SummaryPage/SummaryPage';
 import Home from './components/Home';
+import { GameProvider } from './context/GameContext';
 
 
 import { useNavigate } from 'react-router-dom';
@@ -157,10 +158,19 @@ const App: React.FC = () => {
             } />
 
             <Route path="/quiz" element={
-             currentQuestion ?
-                <QuizCardPage currentQuestion={currentQuestion!} currentIndex={currentIndex} questionLimit={questionLimit} sessionData={sessionData} answerSent={answerSent}
-                  onQuestionTimedout={onQuestionTimedout} handleAnswer={handleAnswer} inventory={user.inventory} handleUsePowerUp={handleUsePowerUp} updateBalance={updateBalance} onAnswerSent={onAnswerSent} />
-              : <StatusMessage status={'LOGGING_IN'} message={'Fetching question...'}/>
+              currentQuestion && sessionData?.id ?
+              (<GameProvider value={{
+                sessionId: sessionData.id,
+                inventory: user.inventory,
+                currentQuestion: currentQuestion,
+                handleUsePoweUp: handleUsePowerUp,
+                updateBalance: updateBalance,
+                onAnswerSent: onAnswerSent,
+                handleAnswer: handleAnswer
+              }}>
+                <QuizCardPage answerSent={answerSent} sessionData={sessionData} currentQuestion={currentQuestion} currentIndex={currentIndex} questionLimit={questionLimit} onQuestionTimedout={onQuestionTimedout}/>
+              </GameProvider>)
+                : <StatusMessage status={'LOGGING_IN'} message={'Fetching question...'} />
             } />
 
             <Route path="/summary" element={<SummaryPage />} />
