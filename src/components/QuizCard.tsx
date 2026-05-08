@@ -21,7 +21,7 @@ interface QuizCardProps {
 }
 
 const QuizCard: React.FC<QuizCardProps> = () => {
-  const {currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswer } = useGame();
+  const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswer, triggerGlobalError } = useGame();
 
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
@@ -48,14 +48,9 @@ const QuizCard: React.FC<QuizCardProps> = () => {
 
   const handlePowerUpClick = async (type: PowerUpType) => {
     const effect = await handleUsePoweUp(type);
-    if (effect?.updatedUser.inventory)
-      if (effect && type === 'FIFTY_FIFTY') {
-        const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
-        setHiddenOptionIds(toHideIds);
-      } else if (effect && type === 'HAMMER') {
-        const toHideIds = effect.powerUpEffect.hiddenSelectionsIds;
-        setHiddenOptionIds(toHideIds);
-      }
+    if (effect?.powerUpEffect?.hiddenSelectionsIds) {
+      setHiddenOptionIds(effect.powerUpEffect.hiddenSelectionsIds);
+    }
   };
 
   const handleVerify = async (optionId: number) => {
@@ -75,7 +70,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
         navigate('/summary', { state: { sessionSummary: answerResponse.summary } });
       }
     } else if (error) {
-      // Display error message on the UI to inform the player.
+      triggerGlobalError(error.message);
     }
   };
 
@@ -101,7 +96,9 @@ const QuizCard: React.FC<QuizCardProps> = () => {
     return styles.optionBtn;
   }
 
-  const hasPowerUps = Object.values(inventory).some(count => count > 0);
+  const activePowerUps = (Object.entries(inventory) as [PowerUpType, number][])
+    .filter(([_, count]) => count > 0);
+  const hasPowerUps = activePowerUps.length > 0;
 
   return (
     <div className={styles.mainQuestionContainer}>
@@ -130,25 +127,24 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       </div>
       {/* 3. Buttons Section */}
       <div style={{ marginTop: '10px' }}>
-        {!answerResponse && (
+        {!answerResponse && hasPowerUps && (
           <>
             {<div className="inventory-bar">
-              {hasPowerUps && <h4>Your Power-Ups:</h4>}
-              {(Object.entries(inventory) as [PowerUpType, number][])
-                .filter(([_, count]) => count > 0)
-                .map(([type, count]) => (
-                  <button
-                    key={type}
-                    className={styles.powerUpBtn}
-                    data-tooltip={type}
-                    disabled={count <= 0 || isDisabled}
-                    onClick={() => {
-                      handlePowerUpClick(type);
-                      playClick();
-                    }}>
-                    <img src={POWER_UP_TYPE_ICON_MAP[type]} className={styles.powerUpBtnIcon} />
-                  </button>
-                ))}
+              <h4>Your Power-Ups:</h4>
+              {activePowerUps.map(([type, count]) => (
+                <button
+                  key={type}
+                  className={styles.powerUpBtn}
+                  data-tooltip={type}
+                  disabled={isDisabled}
+                  onClick={() => {
+                    handlePowerUpClick(type);
+                    playClick();
+                  }}
+                >
+                  <img src={POWER_UP_TYPE_ICON_MAP[type]} className={styles.powerUpBtnIcon} alt={type} />
+                </button>
+              ))}
             </div>
             }
 

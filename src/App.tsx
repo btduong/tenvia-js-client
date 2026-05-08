@@ -27,6 +27,7 @@ const App: React.FC = () => {
   const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
   const [sessionData, setSessionData] = useState<GameSession | null>(null);
   const [answerSent, setAnswerSent] = useState<boolean>(false);
+  const [globalErrorMessage, setGlobalUserMessage] = useState<string>('');
 
   // Sound hook
   const [isTicking, setIsTicking] = useState(false);
@@ -39,6 +40,7 @@ const App: React.FC = () => {
 
     // Rename 'data' to 'gameSession' during destructuring 
     const { data: gameSession, error } = await serviceApi.getNewSession(user.id, questionLimit);
+
     if (gameSession) {
       setSessionData(gameSession);
       if (gameSession?.id) {
@@ -48,6 +50,7 @@ const App: React.FC = () => {
       }
     } else {
       setGameStatus('ERROR');
+      triggerGlobalError(error.message);
     }
 
   };
@@ -75,6 +78,7 @@ const App: React.FC = () => {
     if (user) {
       setGameStatus('IDLE');
     } else {
+      triggerGlobalError(error.message);
       setGameStatus('UNAUTHENTICATED');
     }
   };
@@ -131,13 +135,26 @@ const App: React.FC = () => {
     return null;
   }
 
+  const triggerGlobalError = (message: string) => {
+    setGameStatus('ERROR');
+    setGlobalUserMessage(message);
+  };
+
+  const handleClearError = () => {
+    setGameStatus('IDLE');
+    setCurrentQuestion(null);
+    setSessionData(null);
+    setGlobalUserMessage('');
+    navigate('/');
+  }
+
   const statusMessageUI = UIMessage();
 
   const hasSession = Boolean(sessionData?.id);
 
   return (
     <div className={appStyles.mobileAppWrapper}>
-      {statusMessageUI && (<StatusMessage status={gameStatus} message={statusMessageUI?.message ?? ''} />)}
+      {statusMessageUI && (<StatusMessage status={gameStatus} message={globalErrorMessage} onClose={handleClearError} />)}
       <Routes>
         <Route path="/" element={
           !user ?
@@ -159,18 +176,19 @@ const App: React.FC = () => {
 
             <Route path="/quiz" element={
               currentQuestion && sessionData?.id ?
-              (<GameProvider value={{
-                sessionId: sessionData.id,
-                inventory: user.inventory,
-                currentQuestion: currentQuestion,
-                handleUsePoweUp: handleUsePowerUp,
-                updateBalance: updateBalance,
-                onAnswerSent: onAnswerSent,
-                handleAnswer: handleAnswer
-              }}>
-                <QuizCardPage answerSent={answerSent} sessionData={sessionData} currentQuestion={currentQuestion} currentIndex={currentIndex} questionLimit={questionLimit} onQuestionTimedout={onQuestionTimedout}/>
-              </GameProvider>)
-                : <StatusMessage status={'LOGGING_IN'} message={'Fetching question...'} />
+                (<GameProvider value={{
+                  sessionId: sessionData.id,
+                  inventory: user.inventory,
+                  currentQuestion: currentQuestion,
+                  handleUsePoweUp: handleUsePowerUp,
+                  updateBalance: updateBalance,
+                  onAnswerSent: onAnswerSent,
+                  handleAnswer: handleAnswer,
+                  triggerGlobalError: triggerGlobalError,
+                }}>
+                  <QuizCardPage answerSent={answerSent} sessionData={sessionData} currentQuestion={currentQuestion} currentIndex={currentIndex} questionLimit={questionLimit} onQuestionTimedout={onQuestionTimedout} />
+                </GameProvider>)
+                : <StatusMessage status={'LOGGING_IN'} message={'Fetching question...'} onClose={handleClearError} />
             } />
 
             <Route path="/summary" element={<SummaryPage />} />
