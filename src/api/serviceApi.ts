@@ -8,12 +8,15 @@ export const serviceApi = {
     async getNewSession(userId: number, questionLimit: number): Promise<ServiceResponseResult<GameSession>> {
         try {
 
+            // In the case of a non 200 response such as 404, the errorCode and errorMessage is in the body of the response.
             const response = await fetch(`${SESSION_BASE_URL}/sessions/start?id=${userId}&limit=${questionLimit}`, { method: 'POST' });
             if (response.ok) {
                 const data = await response.json();
                 return { data, error: null };
+            } else {
+                const data = await response.json();
+                return { data: null, error: new Error(data.errorMessage) };
             }
-            return { data: null, error: new Error(response.statusText) };
         }
         catch (error) {
             return {
@@ -90,7 +93,7 @@ export const serviceApi = {
                 return { data: null, error: new Error(`Login failed: ${response.statusText}`) };
             }
 
-            const data = await response.json();
+            const data = await response.json() as User;
             return { data, error: null };
         } catch (err) {
             return {

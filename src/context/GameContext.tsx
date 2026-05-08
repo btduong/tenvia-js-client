@@ -15,6 +15,7 @@ interface GameContextType {
     updateBalance: (newBalance: number) => void;
     onAnswerSent: () => void;
     handleAnswer: (response: AnswerResponse) => void;
+    triggerGlobalError: (message: string) => void;
 }
 
 
@@ -29,7 +30,7 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
  */
 export const GameProvider: React.FC<{ value: GameContextType, children: React.ReactNode }> = ({ value, children }) => {
     return (
-        <GameContext.Provider value={value}> { children } </GameContext.Provider>
+        <GameContext.Provider value={value}> {children} </GameContext.Provider>
     );
 };
 
