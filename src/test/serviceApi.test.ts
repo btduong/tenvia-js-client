@@ -32,12 +32,16 @@ describe('serviceApi getNewSession', () => {
 
         vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
             ok: false,
-            statusText: '410',
+            statusText: '404',
+            json: vi.fn().mockResolvedValue({
+                errorCode: 'user-id not found',
+                errorMessage: 'userId: 1 not found'
+            }),
         }));
 
         const { data, error } = await serviceApi.getNewSession(userId, questionLimit);
         expect(data).toBeNull();
-        expect(error?.message).toBe('410');
+        expect(error?.message).toBe('userId: 1 not found');
     });
 });
 
