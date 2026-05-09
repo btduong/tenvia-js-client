@@ -20,6 +20,9 @@ const POWER_UP_TYPE_ICON_MAP: Record<PowerUpType, string> = {
 interface QuizCardProps {
 }
 
+/**
+ * Reander the quiz which includes question text and options for answers
+ */
 const QuizCard: React.FC<QuizCardProps> = () => {
   // Use nagivator to different path ie /leaderboard, /home
   const navigate = useNavigate();
@@ -39,6 +42,11 @@ const QuizCard: React.FC<QuizCardProps> = () => {
 
   useKeyboardShortcut(handleSpaceKeyPressed);
 
+  /**
+   * Activate a power-up item.
+   * 
+   * @param type - the power up type ie hammer or 50-50
+   */
   const handlePowerUpClick = async (type: PowerUpType) => {
     const effect = await handleUsePoweUp(type);
     if (effect?.powerUpEffect?.hiddenSelectionsIds) {
@@ -46,6 +54,10 @@ const QuizCard: React.FC<QuizCardProps> = () => {
     }
   };
 
+  /**
+   * Send a verification request with the selected option's id the server.
+   * @param optionId - the id of the selected option
+   */
   const handleVerify = async (optionId: number) => {
     // Stop the count down sound as soon as the answer is submitted.
     onAnswerSent();
@@ -53,7 +65,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       triggerGlobalError("Cannot verify answer because sessionId is not valid");
       return;
     }
-    
+
     const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(sessionId, optionId);
     if (answerResponse) {
       if (answerResponse.correct) {
