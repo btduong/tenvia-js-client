@@ -35,6 +35,25 @@ const App: React.FC = () => {
 
   const navigate = useNavigate();
 
+  /**
+   * Logging in the game with a username.
+   * @param name - name to display in the game
+   */
+  const handleLogin = async (name: string) => {
+    setGameStatus('LOGGING_IN');
+    const { data: user, error } = await login(name);
+    if (user) {
+      setGameStatus('IDLE');
+    } else {
+      triggerGlobalError(error.message);
+      setGameStatus('UNAUTHENTICATED');
+    }
+  };
+
+  /**
+   * Start a new game session for a logged in user
+   * @returns a new GameSession
+   */
   const startNewGame = async () => {
     if (!user) return;
 
@@ -55,13 +74,21 @@ const App: React.FC = () => {
 
   };
 
+  /**
+   * Called when an answer is submitted.
+   * This also stops any looping sounds.
+   */
   const onAnswerSent = () => {
     setAnswerSent(true);
     setIsTicking(false);
-  }
+  };
 
-  const getNextQuestion = async (currentSessionId: string) => {
-    const { data: question, error } = await serviceApi.getQuestion(currentSessionId);
+  /**
+   * Get the next question.
+   * @param sessionId 
+   */
+  const getNextQuestion = async (sessionId: string) => {
+    const { data: question, error } = await serviceApi.getQuestion(sessionId);
     if (question) {
       await waitFor(500);
       setCurrentQuestion(question);
@@ -72,17 +99,9 @@ const App: React.FC = () => {
     }
   };
 
-  const handleLogin = async (name: string) => {
-    setGameStatus('LOGGING_IN');
-    const { data: user, error } = await login(name);
-    if (user) {
-      setGameStatus('IDLE');
-    } else {
-      triggerGlobalError(error.message);
-      setGameStatus('UNAUTHENTICATED');
-    }
-  };
-
+  /**
+   * Reset the game state when the current game session is finished.
+   */
   const handleGameOver = () => {
     setGameStatus('GAME_OVER');
     setCurrentQuestion(null);
@@ -140,13 +159,18 @@ const App: React.FC = () => {
     setGlobalUserMessage(message);
   };
 
+  /**
+   * Handles any unrecoverable errors that force the game session to finish.
+   * This automtically reset the game state and move the player back to the main page.
+   */
   const handleClearError = () => {
     setGameStatus('IDLE');
     setCurrentQuestion(null);
     setSessionData(null);
     setGlobalUserMessage('');
+    setCurrentIndex(0);
     navigate('/');
-  }
+  };
 
   const statusMessageUI = UIMessage();
 
