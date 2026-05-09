@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './QuizCard.module.css';
 
-import { playClick, playCorrect, playIncorrectAnswer, playQuestionStart } from '../utils/sounds';
+import { playClickSound, playCorrectAnswerSound, playIncorrectAnswerSound, playQuestionStartSound } from '../utils/sounds';
 import HomeButton from './ui/HomeButton';
 import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, UsePowerUpResponse } from '../types';
 import { serviceApi } from '../api/serviceApi';
@@ -21,20 +21,13 @@ interface QuizCardProps {
 }
 
 const QuizCard: React.FC<QuizCardProps> = () => {
-  const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswer, triggerGlobalError } = useGame();
+  // Use nagivator to different path ie /leaderboard, /home
+  const navigate = useNavigate();
 
+  const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswer, triggerGlobalError } = useGame();
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
   const [hiddenOptionIds, setHiddenOptionIds] = useState<number[]>([]);
-
-  // Guard check to stop TS strict null check.
-  if (!currentQuestion || !sessionId) return null;
-
-  const isDisabled = currentQuestion.powerUpDisabled;
-
-
-  // Use nagivator to different path ie /leaderboard, /home
-  const navigate = useNavigate();
 
   const handleSpaceKeyPressed = () => {
     if (answerResponse) {
@@ -42,7 +35,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
     } else if (selectedOptionId > 0) { // all answer option ids are positive
       handleVerify(selectedOptionId);
     }
-  }
+  };
 
   useKeyboardShortcut(handleSpaceKeyPressed);
 
@@ -56,12 +49,17 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   const handleVerify = async (optionId: number) => {
     // Stop the count down sound as soon as the answer is submitted.
     onAnswerSent();
+    if (!sessionId) {
+      triggerGlobalError("Cannot verify answer because sessionId is not valid");
+      return;
+    }
+    
     const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(sessionId, optionId);
     if (answerResponse) {
       if (answerResponse.correct) {
-        playCorrect();
+        playCorrectAnswerSound();
       } else {
-        playIncorrectAnswer();
+        playIncorrectAnswerSound();
       }
       setAnswerResponse(answerResponse);
       updateBalance(answerResponse.newBalance);
@@ -96,88 +94,147 @@ const QuizCard: React.FC<QuizCardProps> = () => {
     return styles.optionBtn;
   }
 
-  const activePowerUps = (Object.entries(inventory) as [PowerUpType, number][])
-    .filter(([_, count]) => count > 0);
+  const handleOptionSelect = (optionId: number) => {
+    setSelectedOptionId(optionId);
+    handleVerify(optionId);
+  };
+
+  const handlePowerUpActivate = (type: PowerUpType) => {
+    handlePowerUpClick(type);
+    playClickSound();
+  };
+
+  const handleNextQuestion = () => {
+    if (answerResponse) {
+      handleAnswer(answerResponse);
+      playQuestionStartSound();
+    }
+  };
+
+  // Guard check to stop TS strict null check.
+  if (!currentQuestion || !sessionId) return null;
+
+  const activePowerUps = (Object.entries(inventory) as [PowerUpType, number][]).filter(([_, count]) => count > 0);
   const hasPowerUps = activePowerUps.length > 0;
+  const isDisabled = currentQuestion.powerUpDisabled;
 
   return (
     <div className={styles.mainQuestionContainer}>
-      {/* 1. Question Text stays visible */}
+      {/* 1. Question Text*/}
       <div className={styles.questionText}>{currentQuestion.questionText}</div>
-
       {/* 2. Options List */}
-      <div className={styles.optionsContainer}>
-        {currentQuestion.options.map((option: QuestionOption) => {
-          const optionButtonStyle = getOptionStyle(option);
-
-          return (
-            <div className={styles.container} key={option.id}>
-              <button className={`${optionButtonStyle} `}
-                disabled={answerResponse !== null || hiddenOptionIds.includes(option.id)}
-                onClick={() => {
-                  setSelectedOptionId(option.id);
-                  handleVerify(option.id);
-                }}>
-                {/* <span className={styles.optionCircle}>{option.letter}</span> */}
-                <span className={styles.optionText}>{option.content}</span>
-              </button>
-            </div>
-          );
-        })}
-      </div>
-      {/* 3. Buttons Section */}
-      <div style={{ marginTop: '10px' }}>
-        {!answerResponse && hasPowerUps && (
-          <>
-            {<div className="inventory-bar">
-              <h4>Your Power-Ups:</h4>
-              {activePowerUps.map(([type, count]) => (
-                <button
-                  key={type}
-                  className={styles.powerUpBtn}
-                  data-tooltip={type}
-                  disabled={isDisabled}
-                  onClick={() => {
-                    handlePowerUpClick(type);
-                    playClick();
-                  }}
-                >
-                  <img src={POWER_UP_TYPE_ICON_MAP[type]} className={styles.powerUpBtnIcon} alt={type} />
-                </button>
-              ))}
-            </div>
-            }
-
-          </>
-        )}
-      </div>
-
-      {/* 4. Result Section stays at the bottom and next question button */}
-      <nav className={styles.controlBar}>
-        <hr />
-        {/* left space */}
-        <div className={styles.navSpacer}></div>
-        {/* center space*/}
-        <div className={styles.homeBtn}>
-
-          <HomeButton />
-        </div>
-        {/* rigth space */}
-        <div className={styles.navRight}>
-
-          <button
-            className={styles.nextBtn}
-            disabled={!answerResponse}
-            onClick={() => {
-              if (answerResponse) {
-                handleAnswer(answerResponse);
-              }
-              playQuestionStart();
-            }}>Next</button>
-        </div>
-      </nav>
+      <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} hiddenOptionIds={hiddenOptionIds} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
+      {/* 3. PowerUpItems Section */}
+      <PowerUpItemBar answerResponse={answerResponse} hasPowerUps={hasPowerUps} activePowerUps={activePowerUps} handlePowerUpActivate={handlePowerUpActivate} isDisabled={isDisabled} />
+      {/* 4. Area for nav buttons ie home, next */}
+      <ControlBar answerResponse={answerResponse} handleNextQuestion={handleNextQuestion} />
     </div>
   );
-}
+};
+
+/**
+ * Component at the bottm of the screen showing buttons like home or next button.
+ */
+const ControlBar = ({ answerResponse, handleNextQuestion }: { answerResponse: AnswerResponse | null, handleNextQuestion: () => void }) => {
+  return (
+    <nav className={styles.controlBar}>
+      <hr />
+      {/* left space */}
+      <div className={styles.navSpacer}></div>
+      {/* center space*/}
+      <div className={styles.homeBtn}>
+
+        <HomeButton />
+      </div>
+      {/* rigth space */}
+      <div className={styles.navRight}>
+
+        <button
+          className={styles.nextBtn}
+          disabled={!answerResponse}
+          onClick={() => {
+            if (answerResponse) {
+              handleNextQuestion();
+            }
+          }}>Next</button>
+      </div>
+    </nav>
+  );
+};
+
+/**
+ * The answer options of a question ie true/false or 4 options.
+ */
+const AnswerOptionList = ({
+  options,
+  answerResponse,
+  hiddenOptionIds,
+  handleOptionSelect,
+  getOptionStyle
+}: {
+  options: QuestionOption[],
+  answerResponse: AnswerResponse | null,
+  hiddenOptionIds: number[],
+  handleOptionSelect: (id: number) => void,
+  getOptionStyle: (option: QuestionOption) => string | undefined
+}) => {
+  return (
+    <div className={styles.optionsContainer}>
+      {options.map((option: QuestionOption) => {
+        const optionButtonStyle = getOptionStyle(option);
+        return (
+          <div className={styles.container} key={option.id}>
+            <button className={`${optionButtonStyle}`}
+              disabled={answerResponse !== null || hiddenOptionIds.includes(option.id)}
+              onClick={() => { handleOptionSelect(option.id); }}>
+              {/* <span className={styles.optionCircle}>{option.letter}</span> */}
+              <span className={styles.optionText}>{option.content}</span>
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+/**
+ * The component to display power-up items owned by the players, if any.
+ */
+const PowerUpItemBar = ({ answerResponse,
+  hasPowerUps,
+  activePowerUps,
+  handlePowerUpActivate,
+  isDisabled }:
+  {
+    answerResponse: AnswerResponse | null,
+    hasPowerUps: boolean,
+    activePowerUps: [PowerUpType, number][],
+    handlePowerUpActivate: (type: PowerUpType) => void,
+    isDisabled: boolean
+  }) => {
+  if (answerResponse || !hasPowerUps) return null;
+
+  return (
+    <div style={{ marginTop: '10px' }}>
+      <>
+        {<div className="inventory-bar">
+          <h4>Your Power-Ups:</h4>
+          {activePowerUps.map(([type, _]) => (
+            <button
+              key={type}
+              className={styles.powerUpBtn}
+              data-tooltip={type}
+              disabled={isDisabled}
+              onClick={() => { handlePowerUpActivate(type); }}
+            >
+              <img src={POWER_UP_TYPE_ICON_MAP[type]} className={styles.powerUpBtnIcon} alt={type} />
+            </button>
+          ))}
+        </div>
+        }
+      </>
+    </div>
+  );
+};
 
 export default QuizCard;

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styles from './Home.module.css';
 
-import { playQuestionStart } from '../utils/sounds';
+import { playQuestionStartSound } from '../utils/sounds';
 import NavButton from './common/NavButton';
 
 interface HomeProps {
@@ -19,7 +19,7 @@ const Home: React.FC<HomeProps> = ({ hasActivateSession, onStartNewGame }) => {
       ? <button onClick={() => navigate('/quiz')}>Resume Game</button> 
       : <button onClick={() => {
           onStartNewGame();
-          playQuestionStart();
+          playQuestionStartSound();
         }}>New Game</button>}
 
       <NavButton to='/leaderboard' label='Leaderboard'/>

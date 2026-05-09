@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import appStyles from './App.module.css';
 
-import Leaderboard from './pages/LeaderboardPage';
+import LeaderboardPage from './pages/LeaderboardPage';
 import SummaryPage from './features/SummaryPage/SummaryPage';
 import Home from './components/Home';
 import { GameProvider } from './context/GameContext';
@@ -192,7 +192,7 @@ const App: React.FC = () => {
             } />
 
             <Route path="/summary" element={<SummaryPage />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
 
           </>
         )}

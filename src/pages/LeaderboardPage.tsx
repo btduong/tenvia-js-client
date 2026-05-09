@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import styles from './Leaderboard.module.css';
+import styles from './LeaderboardPage.module.css';
 import NavButton from '../components/common/NavButton';
 import HomeIcon from '../components/ui/HomeIcon';
 import homeStyles from '../components/ui/HomeIcon.module.css';
 import type { LederboardDTO } from '../types';
 import { serviceApi } from '../api/serviceApi';
 
-export default function Leaderboard({ }) {
+export default function LeaderboardPage({ }) {
     const [scores, setScores] = useState<LederboardDTO[]>([]);
 
     useEffect(() => {
