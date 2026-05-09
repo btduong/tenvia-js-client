@@ -3,7 +3,7 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { MemoryRouter } from "react-router-dom";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Leaderboard from "../pages/LeaderboardPage";
+import LeaderboardPage from "../pages/LeaderboardPage";
 
 const mockData = [
     { userName: 'A', score: 1},
@@ -13,7 +13,6 @@ const mockData = [
 const server = setupServer(
 
     http.get('*/leaderboard', () => {
-        console.log("Enter me");
         return HttpResponse.json(mockData);
     })
 );
@@ -28,7 +27,7 @@ describe('leaderboard', () => {
 
         render(
             <MemoryRouter>
-                <Leaderboard/>
+                <LeaderboardPage/>
             </MemoryRouter>
         )
 

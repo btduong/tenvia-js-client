@@ -96,7 +96,7 @@
   /* Padding only the inside of the specified width */
   box-sizing: border-box;
   /* padding: 10px; */
-  padding-top: 20px;
+  padding-top: 10px;
   padding-bottom: 20px;
   background-color: #3d3a330b;
   /* Space between the box and the options */
@@ -148,6 +148,10 @@
 } */
 
 .optionDisabled {
+
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
   opacity: 0.3;
   /* Makes it look faded */
   cursor: not-allowed;
@@ -156,9 +160,9 @@
   /* Safety net: prevents clicks even if JS fails */
   filter: grayscale(80%);
   /* Removes the color pop */
-  border: 1px dashed #cbd5e0;
+  /* border: 1px dashed #cbd5e0; */
   /* Optional: change solid border to dashed */
-  box-shadow: none !important;
+  /* box-shadow: none !important; */
   /* Remove any "glow" or lift */
 }
 

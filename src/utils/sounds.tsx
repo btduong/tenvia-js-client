@@ -4,25 +4,25 @@ import questionSwooshSfx from '../assets/freesound-question-swoosh.mp3';
 import incorrectAnswerSfx from '../assets/freesound-incorrect-answer.mp3';
 
 
-export const playClick = () => {
+export const playClickSound = () => {
     const audio = new Audio(clickSfx);
     audio.volume = .5;
     audio.play();
 };
 
-export const playCorrect = () => {
+export const playCorrectAnswerSound = () => {
     const audio = new Audio(correctSfx);
     audio.volume = .5;
     audio.play();
-}
+};
 
-export const playQuestionStart = () => {
+export const playQuestionStartSound = () => {
     const audio = new Audio(questionSwooshSfx);
     audio.volume = .5;
     audio.play();
 };
 
-export const playIncorrectAnswer = () => {
+export const playIncorrectAnswerSound = () => {
     const audio = new Audio(incorrectAnswerSfx);
     audio.volume = .5;
     audio.play();

@@ -106,7 +106,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  background: linear-gradient(90deg, #5499cf 0%, #b63dce 100%);
+  background: linear-gradient(40deg, #54a6cf 0%, #989dd5 100%);
   overflow-x: hidden; /* Prevents annoying horizontal scrolling */
 }
 
