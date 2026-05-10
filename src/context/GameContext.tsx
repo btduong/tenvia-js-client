@@ -14,7 +14,7 @@ interface GameContextType {
     handleUsePoweUp: (type: PowerUpType) => Promise<UsePowerUpResponse | null>;
     updateBalance: (newBalance: number) => void;
     onAnswerSent: () => void;
-    handleAnswer: (response: AnswerResponse) => void;
+    handleAnswerResponse: (response: AnswerResponse) => void;
     triggerGlobalError: (message: string) => void;
 }
 

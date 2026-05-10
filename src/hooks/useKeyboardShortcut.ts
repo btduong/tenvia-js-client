@@ -21,11 +21,11 @@ export const useKeyboardShortcut = (callback: () => void) => {
             }
         }
         // Listener to the window
-        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyDown);
 
         // Clean up
         return () => {
-            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyDown);
         };
 
     }, []); // No dependency so this effect is run everytime caller is rendered

@@ -110,10 +110,15 @@ const App: React.FC = () => {
     setIsTicking(false);
   };
 
-  const handleAnswer = (answerResponse: AnswerResponse) => {
+  /**
+   * Handles a received response after submitted an answer.
+   * This needs to fetch the next question.
+   * @param answerResponse
+   */
+  const handleAnswerResponse = (answerResponse: AnswerResponse) => {
     if (!answerResponse.isGameOver && sessionData?.id) {
 
-      setCurrentIndex(prev => prev + 1);
+      setCurrentIndex(answerResponse.currentQuestionIndex + 1); // server's index start from 0
       getNextQuestion(sessionData.id);
     } else {
       handleGameOver();
@@ -207,7 +212,7 @@ const App: React.FC = () => {
                   handleUsePoweUp: handleUsePowerUp,
                   updateBalance: updateBalance,
                   onAnswerSent: onAnswerSent,
-                  handleAnswer: handleAnswer,
+                  handleAnswerResponse: handleAnswerResponse,
                   triggerGlobalError: triggerGlobalError,
                 }}>
                   <QuizCardPage answerSent={answerSent} sessionData={sessionData} currentQuestion={currentQuestion} currentIndex={currentIndex} questionLimit={questionLimit} onQuestionTimedout={onQuestionTimedout} />

@@ -37,6 +37,7 @@ export interface AnswerResponse {
     isGameOver: boolean;
     summary: QuizSummary;
     correct: boolean;
+    currentQuestionIndex: number;
 }
 
 export interface QuestionOption {

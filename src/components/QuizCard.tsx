@@ -11,7 +11,9 @@ import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 import hammerIcon from '../assets/icons/suit_diamonds.png';
 import { useGame } from '../context/GameContext';
 
-// A lookup map PowerUpType -> Icon of that type
+/**
+ * A map to find icon for a given PowerUpType.
+ */
 const POWER_UP_TYPE_ICON_MAP: Record<PowerUpType, string> = {
   HAMMER: hammerIcon,
   FIFTY_FIFTY: hammerIcon,
@@ -20,6 +22,8 @@ const POWER_UP_TYPE_ICON_MAP: Record<PowerUpType, string> = {
 interface QuizCardProps {
 }
 
+type QuizCardStatus = 'IDLE' | 'WAITING_VERIFY' | 'FETCH_NEXT_QUESTION';
+
 /**
  * Reander the quiz which includes question text and options for answers
  */
@@ -27,15 +31,22 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   // Use nagivator to different path ie /leaderboard, /home
   const navigate = useNavigate();
 
-  const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswer, triggerGlobalError } = useGame();
+  const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswerResponse: handleAnswerResponse, triggerGlobalError } = useGame();
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
   const [hiddenOptionIds, setHiddenOptionIds] = useState<number[]>([]);
+  const [status, setStatus] = useState<QuizCardStatus>('IDLE');
+
+  useEffect(() => {
+    setStatus('IDLE');
+  }, [currentQuestion]);
 
   const handleSpaceKeyPressed = () => {
     if (answerResponse) {
-      handleAnswer(answerResponse);
-    } else if (selectedOptionId > 0) { // all answer option ids are positive
+      handleAnswerResponse(answerResponse);
+    } else
+     if (selectedOptionId > 0 && status !== 'WAITING_VERIFY') { // all answer option ids are positive
+      setStatus('WAITING_VERIFY');
       handleVerify(selectedOptionId);
     }
   };
@@ -67,7 +78,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
     }
 
     const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(sessionId, optionId);
-    if (answerResponse) {
+    if (answerResponse) { 
       if (answerResponse.correct) {
         playCorrectAnswerSound();
       } else {
@@ -76,7 +87,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       setAnswerResponse(answerResponse);
       updateBalance(answerResponse.newBalance);
       if (answerResponse.isGameOver) {
-        handleAnswer(answerResponse);
+        handleAnswerResponse(answerResponse);
         navigate('/summary', { state: { sessionSummary: answerResponse.summary } });
       }
     } else if (error) {
@@ -86,8 +97,8 @@ const QuizCard: React.FC<QuizCardProps> = () => {
 
   /**
    * Decide a button style based on what selected answer option.
-   * @param option
-   * @returns 
+   * @param option - a question option button
+   * @returns the style of the option button
    */
   const getOptionStyle = (option: QuestionOption) => {
     if (hiddenOptionIds.includes(option.id)) {
@@ -118,7 +129,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
 
   const handleNextQuestion = () => {
     if (answerResponse) {
-      handleAnswer(answerResponse);
+      handleAnswerResponse(answerResponse);
       playQuestionStartSound();
     }
   };
