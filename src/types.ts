@@ -32,7 +32,6 @@ export interface QuizSummary {
 
 export interface AnswerResponse {
     correctLetter: string;
-    explanation: string;
     newBalance: number;
     isGameOver: boolean;
     summary: QuizSummary;
@@ -57,9 +56,11 @@ export interface Question {
 
 export interface UsePowerUpResponse {
     updatedUser: User;
-    powerUpEffect: {
-        hiddenSelectionsIds: number[];
-    }
+    effectResult: {
+        removeOptionIds: number[];
+        canUsePowerUps: boolean;
+        appliedPowerUp: PowerUpType;
+    };
 }
 
 export interface LederboardDTO {

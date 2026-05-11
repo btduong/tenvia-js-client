@@ -31,11 +31,12 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   // Use nagivator to different path ie /leaderboard, /home
   const navigate = useNavigate();
 
-  const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswerResponse: handleAnswerResponse, triggerGlobalError } = useGame();
+  const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswerResponse, triggerGlobalError } = useGame();
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
   const [hiddenOptionIds, setHiddenOptionIds] = useState<number[]>([]);
   const [status, setStatus] = useState<QuizCardStatus>('IDLE');
+  const [canUsePowerUp, setCanUsePowerUp] = useState<boolean>(true);
 
   useEffect(() => {
     setStatus('IDLE');
@@ -44,8 +45,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   const handleSpaceKeyPressed = () => {
     if (answerResponse) {
       handleAnswerResponse(answerResponse);
-    } else
-     if (selectedOptionId > 0 && status !== 'WAITING_VERIFY') { // all answer option ids are positive
+    } else if (selectedOptionId > 0 && status !== 'WAITING_VERIFY') { // all answer option ids are positive
       setStatus('WAITING_VERIFY');
       handleVerify(selectedOptionId);
     }
@@ -59,9 +59,10 @@ const QuizCard: React.FC<QuizCardProps> = () => {
    * @param type - the power up type ie hammer or 50-50
    */
   const handlePowerUpClick = async (type: PowerUpType) => {
-    const effect = await handleUsePoweUp(type);
-    if (effect?.powerUpEffect?.hiddenSelectionsIds) {
-      setHiddenOptionIds(effect.powerUpEffect.hiddenSelectionsIds);
+    const usePowerUpResponse = await handleUsePoweUp(type);
+    if (usePowerUpResponse?.effectResult?.removeOptionIds) {
+      setHiddenOptionIds(usePowerUpResponse.effectResult.removeOptionIds);
+      setCanUsePowerUp(usePowerUpResponse.effectResult.canUsePowerUps);
     }
   };
 
@@ -78,7 +79,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
     }
 
     const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(sessionId, optionId);
-    if (answerResponse) { 
+    if (answerResponse) {
       if (answerResponse.correct) {
         playCorrectAnswerSound();
       } else {
@@ -148,7 +149,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       {/* 2. Options List */}
       <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} hiddenOptionIds={hiddenOptionIds} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
       {/* 3. PowerUpItems Section */}
-      <PowerUpItemBar answerResponse={answerResponse} hasPowerUps={hasPowerUps} activePowerUps={activePowerUps} handlePowerUpActivate={handlePowerUpActivate} isDisabled={isDisabled} />
+      <PowerUpItemBar answerResponse={answerResponse} hasPowerUps={hasPowerUps} activePowerUps={activePowerUps} handlePowerUpActivate={handlePowerUpActivate} isDisabled={!canUsePowerUp} />
       {/* 4. Area for nav buttons ie home, next */}
       <ControlBar answerResponse={answerResponse} handleNextQuestion={handleNextQuestion} />
     </div>
@@ -235,7 +236,7 @@ const PowerUpItemBar = ({ answerResponse,
     handlePowerUpActivate: (type: PowerUpType) => void,
     isDisabled: boolean
   }) => {
-  if (answerResponse || !hasPowerUps) return null;
+  if (answerResponse || !hasPowerUps || isDisabled) return null;
 
   return (
     <div style={{ marginTop: '10px' }}>
@@ -247,7 +248,6 @@ const PowerUpItemBar = ({ answerResponse,
               key={type}
               className={styles.powerUpBtn}
               data-tooltip={type}
-              disabled={isDisabled}
               onClick={() => { handlePowerUpActivate(type); }}
             >
               <img src={POWER_UP_TYPE_ICON_MAP[type]} className={styles.powerUpBtnIcon} alt={type} />
