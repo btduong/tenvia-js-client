@@ -122,4 +122,25 @@ export const serviceApi = {
             };
         }
     },
+
+    /**
+     * Send a request to abandon the current game session.
+     * @param sessionId 
+     * @returns void
+     */
+    async abandon(sessionId: string): Promise<ServiceResponseResult<null>> {
+        try {
+            const response = await fetch(`${SESSION_BASE_URL}/sessions/${sessionId}/abandon`, { method: 'POST' });
+            if (!response.ok) {
+                return { data: null, error: new Error(`Failed to abandon session: ${response.statusText}`) };
+            }
+            return { data: null, error: null };
+        } catch (err) {
+            return {
+                data: null,
+                error: err instanceof Error ? err : new Error("Network error")
+            };
+
+        }
+    }
 }

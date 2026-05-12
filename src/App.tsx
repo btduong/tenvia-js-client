@@ -1,22 +1,22 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import appStyles from './App.module.css';
 
-import LeaderboardPage from './pages/LeaderboardPage';
-import SummaryPage from './features/SummaryPage/SummaryPage';
 import Home from './components/Home';
 import { GameProvider } from './context/GameContext';
+import SummaryPage from './features/SummaryPage/SummaryPage';
+import LeaderboardPage from './pages/LeaderboardPage';
 
 
 import { useNavigate } from 'react-router-dom';
-import type { AnswerResponse, GameSession, Question, User, PowerUpType, UsePowerUpResponse, GameStatus } from './types';
-import { waitFor } from './utils/timer';
-import { useTickingSound } from './hooks/useTickingSound';
-import ShopPage from './pages/ShopPage';
-import { useUser } from './hooks/useUser';
-import QuizCardPage from './pages/QuizCardPage';
 import { serviceApi } from './api/serviceApi';
 import { StatusMessage } from './components/common/StatusMessage';
+import { useTickingSound } from './hooks/useTickingSound';
+import { useUser } from './hooks/useUser';
+import QuizCardPage from './pages/QuizCardPage';
+import ShopPage from './pages/ShopPage';
+import type { AnswerResponse, GameSession, GameStatus, PowerUpType, Question, UsePowerUpResponse } from './types';
+import { waitFor } from './utils/timer';
 
 const App: React.FC = () => {
   const [gameStatus, setGameStatus] = useState<GameStatus>('IDLE');
@@ -157,7 +157,7 @@ const App: React.FC = () => {
     // Placeholder error. Need to propagate the error message up from the ApiService layer to here.
     if (gameStatus == 'ERROR') return { message: 'Error..' };
     return null;
-  }
+  };
 
   const triggerGlobalError = (message: string) => {
     setGameStatus('ERROR');
@@ -214,6 +214,7 @@ const App: React.FC = () => {
                   onAnswerSent: onAnswerSent,
                   handleAnswerResponse: handleAnswerResponse,
                   triggerGlobalError: triggerGlobalError,
+                  handleAbandonSession: handleGameOver,
                 }}>
                   <QuizCardPage answerSent={answerSent} sessionData={sessionData} currentQuestion={currentQuestion} currentIndex={currentIndex} questionLimit={questionLimit} onQuestionTimedout={onQuestionTimedout} />
                 </GameProvider>)

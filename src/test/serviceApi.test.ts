@@ -115,3 +115,17 @@ describe('serviceApi usePowerUp', () => {
         expect(error?.message).toBe('404');
     });
 });
+
+describe('serviceAPI abandon session', () => {
+
+    it('expect no data and error', async() => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+            ok: true,
+            statusTex: 200,
+        }));
+
+        const {data, error} = await serviceApi.abandon(sessionId);
+        expect(data).toBeNull();
+        expect(error).toBeNull();
+    });
+});
