@@ -22,8 +22,8 @@ const Home: React.FC<HomeProps> = ({ hasActivateSession, onStartNewGame }) => {
           playQuestionStartSound();
         }}>New Game</button>}
 
-      <NavButton to='/leaderboard' label='Leaderboard'/>
-      <NavButton to='/shop' label='Shop'/>
+      <NavButton to='/leaderboard' label='Leaderboard' ariaLabel='To Leaderboard'/>
+      <NavButton to='/shop' label='Shop' ariaLabel='To Shop'/>
       
     </div>
   );

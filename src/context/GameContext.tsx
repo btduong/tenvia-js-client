@@ -16,6 +16,7 @@ interface GameContextType {
     onAnswerSent: () => void;
     handleAnswerResponse: (response: AnswerResponse) => void;
     triggerGlobalError: (message: string) => void;
+    handleAbandonSession: () => void;
 }
 
 

@@ -36,6 +36,7 @@ const defaultGameContext = {
     onAnswerSent: vi.fn(),
     handleAnswerResponse: vi.fn(),
     triggerGlobalError: vi.fn(),
+    handleAbandonSession: vi.fn(),
 };
 
 vi.mock('../context/GameContext', () => ({

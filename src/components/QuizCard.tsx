@@ -31,7 +31,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   // Use nagivator to different path ie /leaderboard, /home
   const navigate = useNavigate();
 
-  const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswerResponse, triggerGlobalError } = useGame();
+  const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswerResponse, triggerGlobalError, handleAbandonSession } = useGame();
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
   const [hiddenOptionIds, setHiddenOptionIds] = useState<number[]>([]);
@@ -135,6 +135,20 @@ const QuizCard: React.FC<QuizCardProps> = () => {
     }
   };
 
+  const onAbandonSession = async () => {
+    if (sessionId) {
+      const confirmLeave = window.confirm('Do you want to abandon current session?');
+      if (!confirmLeave) {
+        return false;
+      }
+
+      await serviceApi.abandon(sessionId);
+    }
+
+    handleAbandonSession();
+    return true;
+  }
+
   // Guard check to stop TS strict null check.
   if (!currentQuestion || !sessionId) return null;
 
@@ -151,7 +165,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       {/* 3. PowerUpItems Section */}
       <PowerUpItemBar answerResponse={answerResponse} hasPowerUps={hasPowerUps} activePowerUps={activePowerUps} handlePowerUpActivate={handlePowerUpActivate} isDisabled={!canUsePowerUp} />
       {/* 4. Area for nav buttons ie home, next */}
-      <ControlBar answerResponse={answerResponse} handleNextQuestion={handleNextQuestion} />
+      <ControlBar answerResponse={answerResponse} handleNextQuestion={handleNextQuestion} handleAbandonSession={onAbandonSession} />
     </div>
   );
 };
@@ -159,7 +173,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
 /**
  * Component at the bottm of the screen showing buttons like home or next button.
  */
-const ControlBar = ({ answerResponse, handleNextQuestion }: { answerResponse: AnswerResponse | null, handleNextQuestion: () => void }) => {
+const ControlBar = ({ answerResponse, handleNextQuestion, handleAbandonSession }: { answerResponse: AnswerResponse | null, handleNextQuestion: () => void, handleAbandonSession: () => Promise<boolean> | boolean }) => {
   return (
     <nav className={styles.controlBar}>
       <hr />
@@ -167,8 +181,7 @@ const ControlBar = ({ answerResponse, handleNextQuestion }: { answerResponse: An
       <div className={styles.navSpacer}></div>
       {/* center space*/}
       <div className={styles.homeBtn}>
-
-        <HomeButton />
+        <HomeButton handleAbandonSession={handleAbandonSession} />
       </div>
       {/* rigth space */}
       <div className={styles.navRight}>

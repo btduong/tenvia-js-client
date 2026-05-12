@@ -1,15 +1,16 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import homeStyles from './HomeIcon.module.css';
-import  HomeIcon  from './HomeIcon';
+import HomeIcon from './HomeIcon';
+import NavButton from '../common/NavButton';
 
+interface HomeButtonProps {
+    handleAbandonSession?: () => Promise<boolean> | boolean;
+}
 
-const HomeButton: React.FC = () => {
-    const navigate = useNavigate();
+const HomeButton: React.FC<HomeButtonProps> = ({ handleAbandonSession }) => {
 
     return (
-        <button className={homeStyles.homeIconBtn}
-            onClick={() => navigate('/')}><HomeIcon className={homeStyles.homeSvg} /></button>
+        <NavButton to='/' label='Home' ariaLabel='To Home' icon={<HomeIcon className={homeStyles.homeSvg} />} onNavigate={handleAbandonSession} />
     );
 };
 

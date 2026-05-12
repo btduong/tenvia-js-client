@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './LeaderboardPage.module.css';
-import NavButton from '../components/common/NavButton';
-import HomeIcon from '../components/ui/HomeIcon';
-import homeStyles from '../components/ui/HomeIcon.module.css';
 import type { LederboardDTO } from '../types';
 import { serviceApi } from '../api/serviceApi';
+import HomeButton from '../components/ui/HomeButton';
 
 export default function LeaderboardPage({ }) {
     const [scores, setScores] = useState<LederboardDTO[]>([]);
@@ -43,7 +41,7 @@ export default function LeaderboardPage({ }) {
                     ))}
                 </tbody>
             </table>
-            <NavButton to='/' label='Home' icon={<HomeIcon className={homeStyles.homeSvg} />} />
+            <HomeButton/>
         </div>
     );
 }
