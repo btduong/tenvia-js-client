@@ -51,6 +51,7 @@ export interface Question {
     options: QuestionOption[];
     powerUpDisabled: boolean;
     expiresInSecond: number;
+    index: number;
 
 }
 

@@ -23,7 +23,6 @@ const App: React.FC = () => {
   const [typedUsername, setTypedUsername] = useState("");
   const { user, loading, login, purchaseItem, updateBalance, updateInventory, isAuthenticated } = useUser();
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
   const [sessionData, setSessionData] = useState<GameSession | null>(null);
   const [answerSent, setAnswerSent] = useState<boolean>(false);
@@ -105,7 +104,6 @@ const App: React.FC = () => {
   const handleGameOver = () => {
     setGameStatus('GAME_OVER');
     setCurrentQuestion(null);
-    setCurrentIndex(0);
     setSessionData(null);
     setIsTicking(false);
   };
@@ -117,8 +115,6 @@ const App: React.FC = () => {
    */
   const handleAnswerResponse = (answerResponse: AnswerResponse) => {
     if (!answerResponse.isGameOver && sessionData?.id) {
-
-      setCurrentIndex(answerResponse.currentQuestionIndex + 1); // server's index start from 0
       getNextQuestion(sessionData.id);
     } else {
       handleGameOver();
@@ -173,7 +169,6 @@ const App: React.FC = () => {
     setCurrentQuestion(null);
     setSessionData(null);
     setGlobalUserMessage('');
-    setCurrentIndex(0);
     navigate('/');
   };
 
@@ -216,7 +211,7 @@ const App: React.FC = () => {
                   triggerGlobalError: triggerGlobalError,
                   handleAbandonSession: handleGameOver,
                 }}>
-                  <QuizCardPage answerSent={answerSent} sessionData={sessionData} currentQuestion={currentQuestion} currentIndex={currentIndex} questionLimit={questionLimit} onQuestionTimedout={onQuestionTimedout} />
+                  <QuizCardPage answerSent={answerSent} sessionData={sessionData} currentQuestion={currentQuestion} currentIndex={currentQuestion.index} questionLimit={questionLimit} onQuestionTimedout={onQuestionTimedout} />
                 </GameProvider>)
                 : <StatusMessage status={'LOGGING_IN'} message={'Fetching question...'} onClose={handleClearError} />
             } />
