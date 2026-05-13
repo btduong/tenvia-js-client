@@ -53,7 +53,6 @@ export interface Question {
     powerUpDisabled: boolean;
     expiresInSecond: number;
     index: number;
-
 }
 
 export interface UsePowerUpResponse {
@@ -85,4 +84,4 @@ export type GameStatus = 'IDLE'
 
 
 
-export type PowerUpType = "FIFTY_FIFTY" | "HAMMER";
+export type PowerUpType = "FIFTY_FIFTY" | "HAMMER" | "SWAP_QUESTION";

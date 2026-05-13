@@ -142,5 +142,22 @@ export const serviceApi = {
             };
 
         }
+    },
+
+    async swapQuestion(sessionId: string): Promise<ServiceResponseResult<Question>> {
+        try {
+            const response = await fetch(`${SESSION_BASE_URL}/sessions/${sessionId}/swap`, { method: 'POST' });
+            if (!response.ok) {
+                return { data: null, error: new Error(`Failed to abandon session: ${response.statusText}`) };
+            }
+            const data = await response.json();
+            return { data, error: null };
+        } catch (err) {
+            return {
+                data: null,
+                error: err instanceof Error ? err : new Error("Network error")
+            };
+
+        }
     }
 }

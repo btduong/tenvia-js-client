@@ -3,6 +3,7 @@ import appStyles from '../App.module.css';
 import QuestionTimer from '../features/Quiz/QuestionTimer';
 
 import type { AnswerResponse, GameSession, Inventory, PowerUpType, Question, UsePowerUpResponse } from "../types";
+import { useGame } from '../context/GameContext';
 
 interface QuizCardPageProps {
     currentQuestion: Question;
@@ -23,13 +24,12 @@ const QuizCardPage: React.FC<QuizCardPageProps> = ({
     return (
         <>
             <div className={appStyles.currentQuestionCount}>{`Question: ${currentIndex + 1}/${questionLimit}`}</div>
-            {sessionData && sessionData.duration ?
+            {!!sessionData?.duration &&
                 (<QuestionTimer
                     key={currentQuestion.id}
                     duration={currentQuestion.expiresInSecond}
                     isPause={answerSent}
                     onComplete={onQuestionTimedout} />)
-                : (<div></div>)
             }
             <div className={appStyles.quizPage}>
                 <QuizCard key={currentQuestion.id} />

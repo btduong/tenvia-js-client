@@ -118,14 +118,40 @@ describe('serviceApi usePowerUp', () => {
 
 describe('serviceAPI abandon session', () => {
 
-    it('expect no data and error', async() => {
+    it('expect no data and error', async () => {
         vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
             ok: true,
             statusTex: 200,
         }));
 
-        const {data, error} = await serviceApi.abandon(sessionId);
+        const { data, error } = await serviceApi.abandon(sessionId);
         expect(data).toBeNull();
         expect(error).toBeNull();
+    });
+});
+
+describe('serviceApi swap question', () => {
+    it('expect no data when response is 200', async () => {
+        const mockSwapQuestion = {
+            id: 1,
+            questionText: 'question_text',
+            options: [{}],
+            powerUpDisabled: false,
+            expiresInSeconds: 15,
+            index: 0,
+        };
+
+        const mockFetch = vi.fn();
+        vi.stubGlobal('fetch', mockFetch);
+        const mockData = mockFetch.mockResolvedValue({
+            ok: true,
+            statusText: 200,
+            json: async () => mockSwapQuestion,
+        });
+
+        const { data: question, error } = await serviceApi.swapQuestion(sessionId);
+        expect(error).toBeNull();
+        expect(question?.id).toBe(1);
+        expect(question?.questionText).toBe('question_text');
     });
 });
