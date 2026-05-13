@@ -43,6 +43,7 @@ export interface QuestionOption {
     content: string;
     id: number;
     letter: string;
+    isAvailable: boolean;
 }
 
 export interface Question {
@@ -58,9 +59,9 @@ export interface Question {
 export interface UsePowerUpResponse {
     updatedUser: User;
     effectResult: {
-        removeOptionIds: number[];
         canUsePowerUps: boolean;
         appliedPowerUp: PowerUpType;
+        questionResponse: Question;
     };
 }
 

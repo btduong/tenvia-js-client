@@ -136,6 +136,7 @@ const App: React.FC = () => {
 
     if (powerUpResponse) {
       updateInventory(powerUpResponse.updatedUser.inventory); // This triggers a re-render of QuizCard with the new count
+      setCurrentQuestion(powerUpResponse.effectResult.questionResponse);
     }
     else {
       setGameStatus('ERROR')
