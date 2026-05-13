@@ -84,4 +84,4 @@ export type GameStatus = 'IDLE'
 
 
 
-export type PowerUpType = "FIFTY_FIFTY" | "HAMMER";
+export type PowerUpType = "FIFTY_FIFTY" | "HAMMER" | "SWAP_QUESTION";
