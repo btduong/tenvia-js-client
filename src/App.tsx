@@ -173,12 +173,22 @@ const App: React.FC = () => {
     navigate('/');
   };
 
+  const handleSwapQuestion = async () => {
+    if (sessionData && sessionData.id) {
+      const {data: question, error} = await serviceApi.swapQuestion(sessionData.id);
+      if (question) {
+        setCurrentQuestion(question);
+      }
+    }
+  };
+
   const statusMessageUI = UIMessage();
 
   const hasSession = Boolean(sessionData?.id);
 
   return (
     <div className={appStyles.mobileAppWrapper}>
+      <button onClick={handleSwapQuestion}>Swap</button>
       {statusMessageUI && (<StatusMessage status={gameStatus} message={globalErrorMessage} onClose={handleClearError} />)}
       <Routes>
         <Route path="/" element={
