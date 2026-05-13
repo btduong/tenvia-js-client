@@ -60,10 +60,8 @@ const QuizCard: React.FC<QuizCardProps> = () => {
    */
   const handlePowerUpClick = async (type: PowerUpType) => {
     const usePowerUpResponse = await handleUsePoweUp(type);
-    if (usePowerUpResponse?.effectResult?.removeOptionIds) {
-      setHiddenOptionIds(usePowerUpResponse.effectResult.removeOptionIds);
+    if (usePowerUpResponse)
       setCanUsePowerUp(usePowerUpResponse.effectResult.canUsePowerUps);
-    }
   };
 
   /**
@@ -102,7 +100,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
    * @returns the style of the option button
    */
   const getOptionStyle = (option: QuestionOption) => {
-    if (hiddenOptionIds.includes(option.id)) {
+    if (!option.isAvailable) {
       return styles.optionDisabled;
     }
     if (!answerResponse) { // selected an answer option but hasn't submitted yet
@@ -222,7 +220,7 @@ const AnswerOptionList = ({
         return (
           <div className={styles.container} key={option.id}>
             <button className={`${optionButtonStyle}`}
-              disabled={answerResponse !== null || hiddenOptionIds.includes(option.id)}
+              disabled={answerResponse !== null || !option.isAvailable}
               onClick={() => { handleOptionSelect(option.id); }}>
               {/* <span className={styles.optionCircle}>{option.letter}</span> */}
               <span className={styles.optionText}>{option.content}</span>
