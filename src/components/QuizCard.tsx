@@ -17,6 +17,7 @@ import { useGame } from '../context/GameContext';
 const POWER_UP_TYPE_ICON_MAP: Record<PowerUpType, string> = {
   HAMMER: hammerIcon,
   FIFTY_FIFTY: hammerIcon,
+  SWAP_QUESTION: hammerIcon,
 };
 
 interface QuizCardProps {

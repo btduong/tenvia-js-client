@@ -44,6 +44,13 @@ const ShopModal: React.FC<ShopModalProps> = ({ user, onPurchase }) => {
             icon={hammerIcon}
             onBuy={() => onPurchase('FIFTY_FIFTY')}
           />
+          <ShopItem
+          name="Swap Question"
+          price={1}
+          count={user.inventory['SWAP_QUESTION'] || 0}
+          icon={hammerIcon}
+          onBuy={() => onPurchase('SWAP_QUESTION')}
+          />
         </div>
       </div>
     </div>
