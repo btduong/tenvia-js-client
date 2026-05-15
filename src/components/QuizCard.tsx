@@ -4,7 +4,7 @@ import styles from './QuizCard.module.css';
 
 import { playClickSound, playCorrectAnswerSound, playIncorrectAnswerSound, playQuestionStartSound } from '../utils/sounds';
 import HomeButton from './ui/HomeButton';
-import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, UsePowerUpResponse } from '../types';
+import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, UsePowerUpResponse, QuestionPenaltyType } from '../types';
 import { serviceApi } from '../api/serviceApi';
 import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 
@@ -153,12 +153,12 @@ const QuizCard: React.FC<QuizCardProps> = () => {
 
   const activePowerUps = (Object.entries(inventory) as [PowerUpType, number][]).filter(([_, count]) => count > 0);
   const hasPowerUps = activePowerUps.length > 0;
-  const isDisabled = currentQuestion.powerUpDisabled;
 
   return (
     <div className={styles.mainQuestionContainer}>
       {/* 1. Question Text*/}
-      <div className={styles.questionText}>{currentQuestion.questionText}</div>
+      <QuestionHeader questionText={currentQuestion.questionText} potentialReward={currentQuestion.potentialReward} potentialPenalty={currentQuestion.potentialPenalty} />
+
       {/* 2. Options List */}
       <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} hiddenOptionIds={hiddenOptionIds} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
       {/* 3. PowerUpItems Section */}
@@ -167,6 +167,24 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       <ControlBar answerResponse={answerResponse} handleNextQuestion={handleNextQuestion} handleAbandonSession={onAbandonSession} />
     </div>
   );
+};
+
+const QuestionHeader = ({ questionText, potentialReward, potentialPenalty }: { questionText: string, potentialReward: PowerUpType | null, potentialPenalty: QuestionPenaltyType | null }) => {
+
+  return (
+    <div className={styles.questionWrapper}>
+      <div className={styles.questionText}>{questionText}</div>
+
+      {potentialReward && <div className={styles.stakeBar}>
+        {<span className={styles.reward}> {potentialReward}</span>}
+      </div>}
+
+      {potentialPenalty && <div className={styles.stakeBar}>
+        {<span className={styles.penalty}> {potentialPenalty}</span>}
+      </div>}
+    </div>
+  );
+
 };
 
 /**
