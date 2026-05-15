@@ -41,6 +41,7 @@ export interface AnswerResponse {
     currentQuestionIndex: number;
     grantedItem: PowerUpType;
     updatedInventory: Inventory;
+    questionTrait: QuestionTrait;
 }
 
 export interface QuestionOption {
@@ -93,4 +94,4 @@ export type GameStatus = 'IDLE'
 
 export type PowerUpType = "FIFTY_FIFTY" | "HAMMER" | "SWAP_QUESTION";
 export type QuestionPenaltyType = "LOSE_GOLD" | "LOSE_TIME";
-export type QuestionTrait
+export type QuestionTrait = "STANDARD" | "MATH_HEAVY" | "TRICK_QUESTION" | "WALL_OF_TEXT";
