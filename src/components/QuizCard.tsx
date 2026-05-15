@@ -153,12 +153,12 @@ const QuizCard: React.FC<QuizCardProps> = () => {
 
   const activePowerUps = (Object.entries(inventory) as [PowerUpType, number][]).filter(([_, count]) => count > 0);
   const hasPowerUps = activePowerUps.length > 0;
-  const isDisabled = currentQuestion.powerUpDisabled;
 
   return (
     <div className={styles.mainQuestionContainer}>
       {/* 1. Question Text*/}
-      <div className={styles.questionText}>{currentQuestion.questionText}</div>
+      <QuestionHeader questionText={currentQuestion.questionText} potentialReward={currentQuestion.potentialReward}/>
+
       {/* 2. Options List */}
       <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} hiddenOptionIds={hiddenOptionIds} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
       {/* 3. PowerUpItems Section */}
@@ -167,6 +167,21 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       <ControlBar answerResponse={answerResponse} handleNextQuestion={handleNextQuestion} handleAbandonSession={onAbandonSession} />
     </div>
   );
+};
+
+const QuestionHeader = ({questionText, potentialReward}:{questionText: string, potentialReward: PowerUpType}) =>{
+
+  return (
+    <div className={styles.questionWrapper}>
+    <div className={styles.questionText}>{questionText}</div>
+    <div className={styles.stakeBar}>
+      {/* <span className={styles.rewardIcon}>💰</span> */}
+      {<span className={styles.reward}> {potentialReward}</span>}
+      {/* <span className={styles.penalty}>-5s</span> */}
+    </div>
+  </div>
+  );
+
 };
 
 /**

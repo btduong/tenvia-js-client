@@ -37,6 +37,8 @@ export interface AnswerResponse {
     summary: QuizSummary;
     correct: boolean;
     currentQuestionIndex: number;
+    grantedItem: PowerUpType;
+    updatedInventory: Inventory;
 }
 
 export interface QuestionOption {
@@ -53,6 +55,7 @@ export interface Question {
     powerUpDisabled: boolean;
     expiresInSecond: number;
     index: number;
+    potentialReward: PowerUpType;
 }
 
 export interface UsePowerUpResponse {

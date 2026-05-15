@@ -1,3 +1,54 @@
+.questionWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  position: relative; /* Useful for positioning the badge */
+}
+
+.stakeBar {
+  display: flex;
+  flex-direction: row; /* Icon on the left, text on the right */
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  /* Overlap the bottom of the question box slightly */
+  /* margin-top: -15px;  */
+  padding: 6px 14px;
+  /* border-radius: 30px; */
+  /* background-color: #3498db; */
+  font-weight: 800;
+  font-size: 0.85rem;
+  /* text-transform: uppercase; */
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  /* border: 2px solid #000;  */
+  z-index: 5;
+}
+
+/* Color logic for Rewards */
+.reward {
+  background-color: #fbbf24; /* Gold */
+  color: #000;
+}
+
+/* Color logic for Penalties */
+.penalty {
+  background-color: #ef4444; /* Alert Red */
+  color: #fff;
+}
+
+.stakeIcon {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+.stakeText {
+  white-space: nowrap;
+}
+
 .nextButtonContainer {
   display: flex;
   flex-direction: column;
@@ -24,7 +75,7 @@
   border: #000000;
   margin: 0 auto;
   padding: 10px;
-  gap: 50px;
+  gap: 30px;
   /* Gap between the question and the answer options */
 }
 

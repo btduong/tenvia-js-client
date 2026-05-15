@@ -115,6 +115,9 @@ const App: React.FC = () => {
    */
   const handleAnswerResponse = (answerResponse: AnswerResponse) => {
     if (!answerResponse.isGameOver && sessionData?.id) {
+      if (answerResponse.updatedInventory) {
+        updateInventory(answerResponse.updatedInventory);
+      }
       getNextQuestion(sessionData.id);
     } else {
       handleGameOver();
