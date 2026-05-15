@@ -4,7 +4,7 @@ import styles from './QuizCard.module.css';
 
 import { playClickSound, playCorrectAnswerSound, playIncorrectAnswerSound, playQuestionStartSound } from '../utils/sounds';
 import HomeButton from './ui/HomeButton';
-import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, UsePowerUpResponse } from '../types';
+import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, UsePowerUpResponse, QuestionPenaltyType } from '../types';
 import { serviceApi } from '../api/serviceApi';
 import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 
@@ -157,7 +157,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   return (
     <div className={styles.mainQuestionContainer}>
       {/* 1. Question Text*/}
-      <QuestionHeader questionText={currentQuestion.questionText} potentialReward={currentQuestion.potentialReward} />
+      <QuestionHeader questionText={currentQuestion.questionText} potentialReward={currentQuestion.potentialReward} potentialPenalty={currentQuestion.potentialPenalty} />
 
       {/* 2. Options List */}
       <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} hiddenOptionIds={hiddenOptionIds} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
@@ -169,7 +169,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   );
 };
 
-const QuestionHeader = ({ questionText, potentialReward }: { questionText: string, potentialReward: PowerUpType | null }) => {
+const QuestionHeader = ({ questionText, potentialReward, potentialPenalty }: { questionText: string, potentialReward: PowerUpType | null, potentialPenalty: QuestionPenaltyType | null }) => {
 
   return (
     <div className={styles.questionWrapper}>
@@ -177,6 +177,10 @@ const QuestionHeader = ({ questionText, potentialReward }: { questionText: strin
 
       {potentialReward && <div className={styles.stakeBar}>
         {<span className={styles.reward}> {potentialReward}</span>}
+      </div>}
+
+      {potentialPenalty && <div className={styles.stakeBar}>
+        {<span className={styles.penalty}> {potentialPenalty}</span>}
       </div>}
     </div>
   );

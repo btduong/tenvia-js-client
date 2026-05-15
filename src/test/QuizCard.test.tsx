@@ -20,7 +20,7 @@ const mockQuestion = {
     expiresInSecond: 10,
     index: 0,
     potentialReward: null,
-
+    potentialPenalty: null,
 };
 
 const inventory = {
