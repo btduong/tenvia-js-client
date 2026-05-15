@@ -157,7 +157,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   return (
     <div className={styles.mainQuestionContainer}>
       {/* 1. Question Text*/}
-      <QuestionHeader questionText={currentQuestion.questionText} potentialReward={currentQuestion.potentialReward}/>
+      <QuestionHeader questionText={currentQuestion.questionText} potentialReward={currentQuestion.potentialReward} />
 
       {/* 2. Options List */}
       <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} hiddenOptionIds={hiddenOptionIds} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
@@ -169,17 +169,16 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   );
 };
 
-const QuestionHeader = ({questionText, potentialReward}:{questionText: string, potentialReward: PowerUpType}) =>{
+const QuestionHeader = ({ questionText, potentialReward }: { questionText: string, potentialReward: PowerUpType | null }) => {
 
   return (
     <div className={styles.questionWrapper}>
-    <div className={styles.questionText}>{questionText}</div>
-    <div className={styles.stakeBar}>
-      {/* <span className={styles.rewardIcon}>💰</span> */}
-      {<span className={styles.reward}> {potentialReward}</span>}
-      {/* <span className={styles.penalty}>-5s</span> */}
+      <div className={styles.questionText}>{questionText}</div>
+
+      {potentialReward && <div className={styles.stakeBar}>
+        {<span className={styles.reward}> {potentialReward}</span>}
+      </div>}
     </div>
-  </div>
   );
 
 };

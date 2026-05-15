@@ -55,7 +55,7 @@ export interface Question {
     powerUpDisabled: boolean;
     expiresInSecond: number;
     index: number;
-    potentialReward: PowerUpType;
+    potentialReward: PowerUpType | null;
 }
 
 export interface UsePowerUpResponse {

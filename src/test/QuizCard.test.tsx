@@ -14,15 +14,19 @@ vi.mock('react-router-dom', () => ({
 const mockQuestion = {
     id: 1,
     questionText: 'who are you',
-    options: [{ id: 10, letter: 'A', content: 'me' },
-    { id: 11, letter: 'B', content: 'you' }],
+    options: [{ id: 10, letter: 'A', content: 'me', isAvailable: true },
+    { id: 11, letter: 'B', content: 'you', isAvailable: true }],
     powerUpDisabled: false,
     expiresInSecond: 10,
+    index: 0,
+    potentialReward: null,
+
 };
 
 const inventory = {
     "HAMMER": 1,
     "FIFTY_FIFTY": 1,
+    "SWAP_QUESTION": 0,
 };
 
 const mockHandleUsePowerUp = vi.fn();
