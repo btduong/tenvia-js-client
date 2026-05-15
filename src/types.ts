@@ -93,3 +93,4 @@ export type GameStatus = 'IDLE'
 
 export type PowerUpType = "FIFTY_FIFTY" | "HAMMER" | "SWAP_QUESTION";
 export type QuestionPenaltyType = "LOSE_GOLD" | "LOSE_TIME";
+export type QuestionTrait
