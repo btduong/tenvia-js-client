@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import appStyles from './App.module.css';
 
 import Home from './components/Home';
@@ -17,6 +17,7 @@ import QuizCardPage from './pages/QuizCardPage';
 import ShopPage from './pages/ShopPage';
 import type { AnswerResponse, GameSession, GameStatus, PowerUpType, Question, UsePowerUpResponse } from './types';
 import { waitFor } from './utils/timer';
+import { PreviewPage } from './pages/PreviewPage';
 
 const App: React.FC = () => {
   const [gameStatus, setGameStatus] = useState<GameStatus>('IDLE');
@@ -118,7 +119,7 @@ const App: React.FC = () => {
       if (answerResponse.updatedInventory) {
         updateInventory(answerResponse.updatedInventory);
       }
-      getNextQuestion(sessionData.id);
+      navigate('/preview');
     } else {
       handleGameOver();
     }
@@ -222,7 +223,9 @@ const App: React.FC = () => {
 
             <Route path="/summary" element={<SummaryPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
-
+            <Route path="/preview" element={
+              sessionData?.id ? (<PreviewPage getNextQuestion={getNextQuestion} sessionId={sessionData.id} />) : (<Navigate to="/" replace />)
+            } />
           </>
         )}
 

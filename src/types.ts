@@ -41,7 +41,7 @@ export interface AnswerResponse {
     currentQuestionIndex: number;
     grantedItem: PowerUpType;
     updatedInventory: Inventory;
-    questionTrait: QuestionTrait;
+    nextQuestionTrait: QuestionTrait;
 }
 
 export interface QuestionOption {
