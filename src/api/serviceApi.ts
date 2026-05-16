@@ -1,4 +1,4 @@
-import type { AnswerResponse, GameSession, LederboardDTO, PowerUpType, Question, UsePowerUpResponse, User } from "../types";
+import type { AnswerResponse, GameSession, LederboardDTO, PeekResponseDTO, PowerUpType, Question, UsePowerUpResponse, User } from "../types";
 import type { ServiceResponseResult } from "./serviceApiResult";
 
 const SESSION_BASE_URL = 'http://localhost:8080';
@@ -159,5 +159,22 @@ export const serviceApi = {
             };
 
         }
-    }
+    },
+
+    async peekAtNextQuestion(sessionId: string): Promise<ServiceResponseResult<PeekResponseDTO>> {
+        try {
+            const response = await fetch(`${SESSION_BASE_URL}/sessions/${sessionId}/peek`, { method: 'POST' });
+            if (!response.ok) {
+                return { data: null, error: new Error(`Failed to abandon session: ${response.statusText}`) };
+            }
+            const data = await response.json();
+            return { data, error: null };
+        } catch (err) {
+            return {
+                data: null,
+                error: err instanceof Error ? err : new Error("Network error")
+            };
+
+        }
+    },
 }

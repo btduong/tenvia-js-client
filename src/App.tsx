@@ -224,7 +224,7 @@ const App: React.FC = () => {
             <Route path="/summary" element={<SummaryPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/preview" element={
-              sessionData?.id ? (<PreviewPage getNextQuestion={getNextQuestion} sessionId={sessionData.id} />) : (<Navigate to="/" replace />)
+              sessionData ? (<PreviewPage getNextQuestion={getNextQuestion} sessionData={sessionData} triggerGlobalError={triggerGlobalError} />) : (<Navigate to="/" replace />)
             } />
           </>
         )}

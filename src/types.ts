@@ -77,6 +77,15 @@ export interface LederboardDTO {
     score: number;
 }
 
+export interface PeekResponseDTO {
+    questionText: string;
+    potentialReward: PowerUpType | null;
+    potentialPenalty: QuestionPenaltyType | null;
+    trait: QuestionTrait;
+    timeLimit: number;
+    questionIndex: number;
+}
+
 
 export type GameStatus = 'IDLE'
     | 'UNAUTHENTICATED'
