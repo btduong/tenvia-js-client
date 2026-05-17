@@ -51,7 +51,7 @@ export const PreviewPage = ({ getNextQuestion, sessionData, triggerGlobalError }
     return (
         <div>
             <h2>Preview</h2>
-            <div>Question number: {peekData?.questionIndex}</div>
+            {peekData && (<div>Question number: {peekData?.questionIndex + 1}</div>)}
             <div>Question time limit: {peekData?.timeLimit}s</div>
 
             <div className={styles.previewBox}>

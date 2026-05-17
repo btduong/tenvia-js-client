@@ -17,6 +17,7 @@ const SummaryPage = () => {
             <div>Score: {summary.score}</div>
             <div>Correct: {summary.correctAnswerCount}</div>
             <div>Incorrect: {summary.incorrectAnswerCount}</div>
+            <div>Skip: {summary.skipQuestionCount}</div>
             <HomeButton/>
         </div>
     );
