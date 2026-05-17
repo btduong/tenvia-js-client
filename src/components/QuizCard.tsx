@@ -156,7 +156,6 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   return (
     <div className={styles.mainQuestionContainer}>
       {/* 1. Question Text*/}
-      <div>{answerResponse?.nextQuestionTrait && <button>{answerResponse.nextQuestionTrait}</button>}</div>
       <QuestionHeader questionText={currentQuestion.questionText} potentialReward={currentQuestion.potentialReward} potentialPenalty={currentQuestion.potentialPenalty} />
       {/* 2. Options List */}
       <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
