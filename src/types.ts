@@ -30,6 +30,7 @@ export interface QuizSummary {
     score: number;
     correctAnswerCount: number;
     incorrectAnswerCount: number;
+    skipQuestionCount: number;
 }
 
 export interface AnswerResponse {
