@@ -79,7 +79,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
 
     const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(sessionId, optionId);
     if (answerResponse) {
-      if (answerResponse.correct) {
+      if (answerResponse.isCorrect) {
         playCorrectAnswerSound();
       } else {
         playIncorrectAnswerSound();

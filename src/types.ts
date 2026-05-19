@@ -37,7 +37,7 @@ export interface AnswerResponse {
     newBalance: number;
     isGameOver: boolean;
     summary: QuizSummary;
-    correct: boolean;
+    isCorrect: boolean;
     currentQuestionIndex: number;
     grantedItem: PowerUpType;
     updatedInventory: Inventory;
@@ -93,4 +93,3 @@ export type GameStatus = 'IDLE'
 
 export type PowerUpType = "FIFTY_FIFTY" | "HAMMER" | "SWAP_QUESTION";
 export type QuestionPenaltyType = "LOSE_GOLD" | "LOSE_TIME";
-export type QuestionTrait
