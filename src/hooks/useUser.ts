@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import type { Inventory, PowerUpType, User } from "../types";
 import { serviceApi } from "../api/serviceApi";
-import { useGameContext } from "../context/GameContext";
+import { useGameContext } from "./GameContext";
 
 export const useUser = () => {
 

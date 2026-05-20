@@ -9,7 +9,7 @@ import { serviceApi } from '../api/serviceApi';
 import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 
 import hammerIcon from '../assets/icons/suit_diamonds.png';
-import { useGameContext } from '../context/GameContext';
+import { useGameContext } from '../hooks/GameContext';
 
 /**
  * A map to find icon for a given PowerUpType.

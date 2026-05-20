@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import QuizCard from "../components/QuizCard";
 import { render, screen, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
-import { useGameContext } from "../context/GameContext";
+import { useGameContext } from "../hooks/GameContext";
 import userEvent from "@testing-library/user-event";
 
 const mockNavigate = vi.fn();

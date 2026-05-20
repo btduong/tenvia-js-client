@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import appStyles from './App.module.css';
 
 import Home from './components/Home';
-import { GameProvider } from './context/GameContext';
+import { GameProvider } from './hooks/GameContext';
 import SummaryPage from './features/SummaryPage/SummaryPage';
 import LeaderboardPage from './pages/LeaderboardPage';
 
