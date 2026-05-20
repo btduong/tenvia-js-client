@@ -40,7 +40,7 @@ export const GameProvider: React.FC<{ value: GameContextType, children: React.Re
  * 
  * This hook should be used in a component that needs access to the GameContext.
  */
-export const useGame = () => {
+export const useGameContext = () => {
     const context = useContext(GameContext);
     if (context === undefined) {
         throw new Error("useGame must ")

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import QuizCard from "../components/QuizCard";
 import { render, screen, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
-import { useGame } from "../context/GameContext";
+import { useGameContext } from "../context/GameContext";
 import userEvent from "@testing-library/user-event";
 
 const mockNavigate = vi.fn();
@@ -52,11 +52,11 @@ describe('QuizCard', (() => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        vi.mocked(useGame).mockReturnValue(defaultGameContext);
+        vi.mocked(useGameContext).mockReturnValue(defaultGameContext);
     });
 
     it('can render default view when question is null', () => {
-        vi.mocked(useGame).mockReturnValue({ ...defaultGameContext, currentQuestion: null });
+        vi.mocked(useGameContext).mockReturnValue({ ...defaultGameContext, currentQuestion: null });
         const { container } = render(<QuizCard />);
         expect(container).toBeEmptyDOMElement();
     });
