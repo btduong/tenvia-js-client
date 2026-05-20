@@ -28,7 +28,16 @@ vi.mock("../features/Quiz/QuestionTimer", () => {
 
 describe('QuizCardPage', () => {
 
-    const mockQuestion = { id: 1, questionText: 'text', options: [{ content: 'x', id: 1, letter: 'B' }], powerUpDisabled: false, expiresInSecond: 15 };
+    const mockQuestion = {
+        id: 1,
+        questionText: 'text',
+        options: [{ content: 'x', id: 1, letter: 'B', isAvailable: true }],
+        powerUpDisabled: false,
+        expiresInSecond: 15,
+        index: 0,
+        potentialReward: null,
+        potentialPenalty: null
+    };
     const mockOnQuestionTimedout = vi.fn();
 
     const defaultProps = {

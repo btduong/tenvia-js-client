@@ -11,6 +11,14 @@ vi.mock('react-router-dom', () => ({
     useNavigate: () => mockNavigate,
 }));
 
+/**
+ * Needed for `vi.mocked(useGameContext).mockReturnValue(defaultGameContext)` to work in test.
+ * This is due to vi 'hoisted' the vi.mock to the top of the file so vi.mocked...was never in the test.
+ * Therefore this vi.mock here is mocking the 'module' GameContext and return a mock.
+ * Then the vi.mocked...mockReturnValue can work as expected.
+ */
+vi.mock('../hooks/GameContext');
+
 const mockQuestion = {
     id: 1,
     questionText: 'who are you',
