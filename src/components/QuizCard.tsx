@@ -9,7 +9,7 @@ import { serviceApi } from '../api/serviceApi';
 import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
 
 import hammerIcon from '../assets/icons/suit_diamonds.png';
-import { useGame } from '../context/GameContext';
+import { useGameContext } from '../context/GameContext';
 
 /**
  * A map to find icon for a given PowerUpType.
@@ -32,7 +32,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   // Use nagivator to different path ie /leaderboard, /home
   const navigate = useNavigate();
 
-  const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswerResponse, triggerGlobalError, handleAbandonSession } = useGame();
+  const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswerResponse, triggerGlobalError, handleAbandonSession } = useGameContext();
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
   const [hiddenOptionIds, setHiddenOptionIds] = useState<number[]>([]);

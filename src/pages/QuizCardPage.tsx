@@ -3,7 +3,7 @@ import appStyles from '../App.module.css';
 import QuestionTimer from '../features/Quiz/QuestionTimer';
 
 import type { AnswerResponse, GameSession, Inventory, PowerUpType, Question, UsePowerUpResponse } from "../types";
-import { useGame } from '../context/GameContext';
+import { useGameContext } from '../context/GameContext';
 
 interface QuizCardPageProps {
     currentQuestion: Question;
