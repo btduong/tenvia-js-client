@@ -151,7 +151,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   // Guard check to stop TS strict null check.
   if (!currentQuestion || !sessionId) return null;
 
-  const activePowerUps = (Object.entries(inventory) as [PowerUpType, number][]).filter(([_, count]) => count > 0);
+  const activePowerUps = (Object.keys(inventory).length === 0) ? [] :  (Object.entries(inventory) as [PowerUpType, number][]).filter(([_, count]) => count > 0);
   const hasPowerUps = activePowerUps.length > 0;
 
   return (
