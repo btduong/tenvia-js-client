@@ -1,5 +1,5 @@
 import React from 'react';
-import type {User} from '../types.js'
+import type {User} from '../../types.js'
 import styles from './TopBar.module.css';
 
 interface TopBarProps {

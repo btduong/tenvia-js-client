@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import SummaryPage from "../features/SummaryPage/SummaryPage";
 import { render, screen } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
+import SummaryPage from "./SummaryPage";
 
 const mockSessionSummary = {
     score: 1,

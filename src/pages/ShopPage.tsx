@@ -1,5 +1,5 @@
+import ShopModal from "../components/Modal/ShopModal";
 import type { PowerUpType, User } from "../types";
-import ShopModal from '../components/ShopModal';
 
 interface ShopPageProps {
     user: User;

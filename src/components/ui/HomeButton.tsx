@@ -1,7 +1,7 @@
 import React from 'react';
 import homeStyles from './HomeIcon.module.css';
 import HomeIcon from './HomeIcon';
-import NavButton from '../common/NavButton';
+import NavButton from './NavButton';
 
 interface HomeButtonProps {
     handleAbandonSession?: () => Promise<boolean> | boolean;

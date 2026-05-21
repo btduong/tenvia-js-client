@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import ShopItem from "../components/ShopItem";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import ShopItem from "./ShopItem";
 
 const onClickBuy = vi.fn();
 
