@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './QuizCard.module.css';
 
-import { playClickSound, playCorrectAnswerSound, playIncorrectAnswerSound, playQuestionStartSound } from '../utils/sounds';
-import HomeButton from './ui/HomeButton';
-import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, UsePowerUpResponse, QuestionPenaltyType } from '../types';
-import { serviceApi } from '../api/serviceApi';
-import { useKeyboardShortcut } from '../hooks/useKeyboardShortcut';
+import { playClickSound, playCorrectAnswerSound, playIncorrectAnswerSound, playQuestionStartSound } from '../../utils/sounds';
+import HomeButton from '../ui/HomeButton';
+import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, UsePowerUpResponse, QuestionPenaltyType } from '../../types';
+import { serviceApi } from '../../api/serviceApi';
+import { useKeyboardShortcut } from '../../hooks/useKeyboardShortcut';
 
-import hammerIcon from '../assets/icons/suit_diamonds.png';
-import { useGameContext } from '../hooks/GameContext';
+import hammerIcon from '../../assets/icons/suit_diamonds.png';
+import { useGameContext } from '../../context/GameContext';
 
 /**
  * A map to find icon for a given PowerUpType.

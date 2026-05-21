@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import QuizCardPage from "../pages/QuizCardPage";
 import { render, screen } from "@testing-library/react";
-import QuestionTimer from "../features/Quiz/QuestionTimer";
 
 /**
  * default is needed because vitest use ESM.
@@ -10,7 +9,7 @@ import QuestionTimer from "../features/Quiz/QuestionTimer";
  * If it was export const QuizCard... then simply do:
  * return {QuizCard: function someFunction() }
  */
-vi.mock('../components/QuizCard', () => {
+vi.mock('../components/QuizCard/QuizCard', () => {
     return {
         default: function Dummy() {
             return <div data-testid="mock-quiz-data-id" />; // data-* is needed as that's what RTL is looking for when use with getByTestId
@@ -18,7 +17,7 @@ vi.mock('../components/QuizCard', () => {
     }
 });
 
-vi.mock("../features/Quiz/QuestionTimer", () => {
+vi.mock("../components/QuestionTimer/QuestionTimer", () => {
     return {
         default: function QuestionTimer() {
             return <div data-testid="mock-question-timer" />

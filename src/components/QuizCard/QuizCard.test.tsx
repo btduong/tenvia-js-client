@@ -1,10 +1,10 @@
 import { isFunctionTypeNode } from "typescript";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import QuizCard from "../components/QuizCard";
 import { render, screen, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
-import { useGameContext } from "../hooks/GameContext";
 import userEvent from "@testing-library/user-event";
+import { useGameContext } from "../../context/GameContext";
+import QuizCard from "./QuizCard";
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', () => ({
@@ -17,7 +17,7 @@ vi.mock('react-router-dom', () => ({
  * Therefore this vi.mock here is mocking the 'module' GameContext and return a mock.
  * Then the vi.mocked...mockReturnValue can work as expected.
  */
-vi.mock('../hooks/GameContext');
+vi.mock('../../context/GameContext');
 
 const mockQuestion = {
     id: 1,
@@ -50,11 +50,6 @@ const defaultGameContext = {
     triggerGlobalError: vi.fn(),
     handleAbandonSession: vi.fn(),
 };
-
-vi.mock('../context/GameContext', () => ({
-    useGame: vi.fn(),
-}));
-
 
 describe('QuizCard', (() => {
 

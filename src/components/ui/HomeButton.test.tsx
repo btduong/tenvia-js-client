@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
-import SummaryPage from "../features/SummaryPage/SummaryPage";
-import LeaderboardPage from "../pages/LeaderboardPage";
+import LeaderboardPage from "../../pages/LeaderboardPage";
+import SummaryPage from "../../pages/SummaryPage";
 
 
 const mockNavigate = vi.fn();

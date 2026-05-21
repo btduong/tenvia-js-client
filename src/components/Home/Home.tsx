@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import styles from './Home.module.css';
 
-import { playQuestionStartSound } from '../utils/sounds';
-import NavButton from './common/NavButton';
+import { playQuestionStartSound } from '../../utils/sounds';
+import NavButton from '../ui/NavButton';
 
 interface HomeProps {
   hasActivateSession: boolean;

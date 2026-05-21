@@ -1,9 +1,9 @@
 import React from 'react';
-import ShopItem from './ShopItem';
+import ShopItem from '../ShopItem/ShopItem';
 import { useNavigate } from 'react-router-dom';
-import type { PowerUpType, User } from '../types';
+import type { PowerUpType, User } from '../../types';
 import styles from './ShopModal.module.css';
-import hammerIcon from '../assets/icons/suit_diamonds.png';
+import hammerIcon from '../../assets/icons/suit_diamonds.png';
 
 interface ShopModalProps {
   user: User;

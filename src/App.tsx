@@ -2,21 +2,21 @@ import { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import appStyles from './App.module.css';
 
-import Home from './components/Home';
-import { GameProvider } from './hooks/GameContext';
-import SummaryPage from './features/SummaryPage/SummaryPage';
+import Home from './components/Home/Home';
+import { GameProvider } from './context/GameContext';
 import LeaderboardPage from './pages/LeaderboardPage';
 
 
 import { useNavigate } from 'react-router-dom';
 import { serviceApi } from './api/serviceApi';
-import { StatusMessage } from './components/common/StatusMessage';
+import { StatusMessage } from './components/ui/StatusMessage';
 import { useTickingSound } from './hooks/useTickingSound';
 import { useUser } from './hooks/useUser';
 import QuizCardPage from './pages/QuizCardPage';
 import ShopPage from './pages/ShopPage';
 import type { AnswerResponse, GameSession, GameStatus, PowerUpType, Question, UsePowerUpResponse } from './types';
 import { waitFor } from './utils/timer';
+import SummaryPage from './pages/SummaryPage';
 
 const App: React.FC = () => {
   const [gameStatus, setGameStatus] = useState<GameStatus>('IDLE');

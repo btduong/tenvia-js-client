@@ -1,9 +1,8 @@
-import QuizCard from '../components/QuizCard';
 import appStyles from '../App.module.css';
-import QuestionTimer from '../features/Quiz/QuestionTimer';
+import QuestionTimer from '../components/QuestionTimer/QuestionTimer';
+import QuizCard from '../components/QuizCard/QuizCard';
 
 import type { AnswerResponse, GameSession, Inventory, PowerUpType, Question, UsePowerUpResponse } from "../types";
-import { useGameContext } from '../hooks/GameContext';
 
 interface QuizCardPageProps {
     currentQuestion: Question;
