@@ -1,16 +1,50 @@
-# React + Vite
+# Tenvia client
+This is the frontend client for Tenvia written in TypeScript +  React.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Architecture
 
-Currently, two official plugins are available:
+- **Framework:** Vite + React with TypeScript 
+- **Styling** Each component uses `module.css` to avoid global name clashing
+- **Testing** Vitest for unit testing
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Overview
+1. **Custom hooks**
+State logic are encapsulated in custom hooks where appropriate. Such as:
+- `useKeyboardShortcut` hook that listening for key presses
+- `useTickingSound` to play looping sound effect
 
-## React Compiler
+2. **API Service**
+All HTTP communication with the server is abstracted in `serviceApi.ts`. 
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+3. **React Router and Components**
+The application is separated into different routes (`pages`) for handling navigation between different components like a game session summary or a question with multiple-choice answers.
 
-## Expanding the ESLint configuration
+## Main Features
+- **Gameplay:** a countdown timer with a looping audio effect
+- **Power-up Items:** an in-game item that allows players to activate lifelines such as 50-50
+- **Keyboard shortcuts:** for submitting answer without constantly clicking
+- **Leaderboard:** displays a global top 25 high scores from `leaderboard-service`
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Quickstart
+
+### Required:
+- Node.js (v18+)
+- npm or yarn
+
+### Installation
+
+```
+# Install dependencies
+npm install
+```
+
+To start the dev server
+```
+npm run dev
+```
+This makes the application available at `http://localhost:5173`
+
+To run all the tests and generate an HTML report
+```
+npm run test
+```
