@@ -1,15 +1,15 @@
 import { useNavigate } from 'react-router-dom';
-import styles from './Home.module.css';
+import styles from './HomePage.module.css';
 
-import { playQuestionStartSound } from '../../utils/sounds';
-import NavButton from '../ui/NavButton';
+import { playQuestionStartSound } from '../utils/sounds';
+import NavButton from '../components/ui/NavButton';
 
 interface HomeProps {
   hasActivateSession: boolean;
   onStartNewGame: () => {};
 }
 
-const Home: React.FC<HomeProps> = ({ hasActivateSession, onStartNewGame }) => {
+const HomePage: React.FC<HomeProps> = ({ hasActivateSession, onStartNewGame }) => {
   const navigate = useNavigate();
 
   return (
@@ -29,4 +29,4 @@ const Home: React.FC<HomeProps> = ({ hasActivateSession, onStartNewGame }) => {
   );
 };
 
-export default Home;
+export default HomePage;

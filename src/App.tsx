@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import appStyles from './App.module.css';
 
-import Home from './components/Home/Home';
+import HomePage from './pages/HomePage';
 import { GameProvider } from './context/GameContext';
 import LeaderboardPage from './pages/LeaderboardPage';
 
@@ -190,7 +190,7 @@ const App: React.FC = () => {
             (
               <LoginPage handleLogin={handleLogin} />
             ) : (
-              <Home hasActivateSession={hasSession} onStartNewGame={startNewGame} />
+              <HomePage hasActivateSession={hasSession} onStartNewGame={startNewGame} />
             )
         } />
 
