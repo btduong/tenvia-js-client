@@ -1,30 +1,25 @@
-import { useNavigate } from 'react-router-dom';
 import styles from './HomePage.module.css';
 
-import { playQuestionStartSound } from '../utils/sounds';
 import NavButton from '../components/ui/NavButton';
+import { playQuestionStartSound } from '../utils/sounds';
 
 interface HomeProps {
-  hasActivateSession: boolean;
   onStartNewGame: () => {};
 }
 
-const HomePage: React.FC<HomeProps> = ({ hasActivateSession, onStartNewGame }) => {
-  const navigate = useNavigate();
-
+const HomePage: React.FC<HomeProps> = ({ onStartNewGame }) => {
+  
   return (
     <div className={styles.homeContainer}>
       <h1>Quiz Game</h1>
-      {hasActivateSession 
-      ? <button onClick={() => navigate('/quiz')}>Resume Game</button> 
-      : <button onClick={() => {
-          onStartNewGame();
-          playQuestionStartSound();
-        }}>New Game</button>}
+      <button onClick={() => {
+        onStartNewGame();
+        playQuestionStartSound();
+      }}>New Game</button>
 
-      <NavButton to='/leaderboard' label='Leaderboard' ariaLabel='To Leaderboard'/>
-      <NavButton to='/shop' label='Shop' ariaLabel='To Shop'/>
-      
+      <NavButton to='/leaderboard' label='Leaderboard' ariaLabel='To Leaderboard' />
+      <NavButton to='/shop' label='Shop' ariaLabel='To Shop' />
+
     </div>
   );
 };
