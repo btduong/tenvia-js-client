@@ -17,10 +17,11 @@ import ShopPage from './pages/ShopPage';
 import type { AnswerResponse, GameSession, GameStatus, PowerUpType, Question, UsePowerUpResponse } from './types';
 import { waitFor } from './utils/timer';
 import SummaryPage from './pages/SummaryPage';
+import { LoginPage } from './pages/LoginPage';
 
 const App: React.FC = () => {
   const [gameStatus, setGameStatus] = useState<GameStatus>('IDLE');
-  const [typedUsername, setTypedUsername] = useState("");
+
   const { user, loading, login, purchaseItem, updateBalance, updateInventory, isAuthenticated } = useUser();
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
@@ -186,11 +187,8 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={
           !user ?
-            (<div className={appStyles.loginContainer}>
-              <h2>Enter a name to play</h2>
-              <input type='text' placeholder='Name' onChange={(e) => setTypedUsername(e.target.value)} />
-              <button onClick={() => handleLogin(typedUsername)} disabled={!typedUsername.trim()}>Play</button>
-            </div>
+            (
+              <LoginPage handleLogin={handleLogin} />
             ) : (
               <Home hasActivateSession={hasSession} onStartNewGame={startNewGame} />
             )
