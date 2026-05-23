@@ -190,7 +190,7 @@ const App: React.FC = () => {
             (
               <LoginPage handleLogin={handleLogin} />
             ) : (
-              <HomePage hasActivateSession={hasSession} onStartNewGame={startNewGame} />
+              <HomePage onStartNewGame={startNewGame} />
             )
         } />
 
