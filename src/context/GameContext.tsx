@@ -43,7 +43,7 @@ export const GameProvider: React.FC<{ value: GameContextType, children: React.Re
 export const useGameContext = () => {
     const context = useContext(GameContext);
     if (context === undefined) {
-        throw new Error("useGame must ")
+        throw new Error("useGameContext must be used within GameContext.Provider");
     }
     return context;
 }
