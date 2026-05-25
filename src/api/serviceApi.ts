@@ -1,4 +1,4 @@
-import type { AnswerResponse, GameSession, LederboardDTO, PowerUpType, Question, UsePowerUpResponse, User } from "../types";
+import type { AnswerResponse, GameSession, LeaderboardDTO, PowerUpType, Question, UsePowerUpResponse, User } from "../types";
 import type { ServiceResponseResult } from "./serviceApiResult";
 
 const SESSION_BASE_URL = 'http://localhost:8080';
@@ -103,7 +103,7 @@ export const serviceApi = {
         }
     },
 
-    async leaderboardPage(): Promise<ServiceResponseResult<LederboardDTO[]>> {
+    async leaderboardPage(): Promise<ServiceResponseResult<LeaderboardDTO[]>> {
         try {
             const response = await fetch(`${LEADERBOARD_BASE_URL}/leaderboard`, {
                 method: 'GET'

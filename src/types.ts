@@ -16,7 +16,7 @@ export interface User {
 }
 
 export interface GameSession {
-    questions: any;
+    questions: Question[];
     fiftyFiftyUsed: boolean;
     currentQuestionIndex: number;
     score: number;
@@ -72,7 +72,7 @@ export interface UsePowerUpResponse {
     };
 }
 
-export interface LederboardDTO {
+export interface LeaderboardDTO {
     userName: string;
     score: number;
 }
