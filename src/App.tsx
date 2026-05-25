@@ -22,7 +22,7 @@ import { LoginPage } from './pages/LoginPage';
 const App: React.FC = () => {
   const [gameStatus, setGameStatus] = useState<GameStatus>('IDLE');
 
-  const { user, loading, login, purchaseItem, updateBalance, updateInventory, isAuthenticated } = useUser();
+  const { user, loading, login, purchaseItem, updateBalance, updateInventory } = useUser();
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
   const [sessionData, setSessionData] = useState<GameSession | null>(null);

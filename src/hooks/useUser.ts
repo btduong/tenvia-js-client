@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
-import type { Inventory, PowerUpType, User } from "../types";
 import { serviceApi } from "../api/serviceApi";
-import { useGameContext } from "../context/GameContext";
+import type { Inventory, PowerUpType, User } from "../types";
 
 export const useUser = () => {
 
@@ -16,14 +15,17 @@ export const useUser = () => {
     const login = useCallback(async (username: string) => {
         setLoading(true);
 
-        const result = await serviceApi.login(username);
-        const authenticatedUser = result.data;
-        if (authenticatedUser) {
-            setUser(authenticatedUser);
+        try {
+            const result = await serviceApi.login(username);
+            const authenticatedUser = result.data;
+            if (authenticatedUser) {
+                setUser(authenticatedUser);
+            }
+            return result;
+        } finally {
             setLoading(false);
         }
-        return result;
-        
+
     }, []);
 
     /**
@@ -31,21 +33,16 @@ export const useUser = () => {
      */
     const purchaseItem = useCallback(async (itemType: PowerUpType) => {
         if (!user) return false;
-        const url = `http://localhost:8080/shop/buy?userId=${user.id}&type=${itemType}`;
 
-        const res = await fetch(url, { method: 'POST' });
-        try {
-            if (res.ok) {
-                const data = await res.json();
-                setUser(prev => prev ? { ...prev, inventory: data.inventory } : null);
-                return true;
-            }
-
-            return false;
-        } catch (err) {
-            console.log("Purchase ffailed. Check your balalnce", err);
+        const { data : updatedUser, error } = await serviceApi.purchasePowerUp(user.id, itemType);
+        if (updatedUser) {
+            setUser(prev => prev ? { ...prev, inventory: updatedUser.inventory } : null);
+            return true
+        } else {
+            console.log("Purchase failed. Check your balalnce", error.message);
             return false;
         }
+
     }, [user]);
 
     /***
@@ -61,6 +58,6 @@ export const useUser = () => {
         }
     }, []);
 
-    return { user, loading, login, purchaseItem, updateBalance, updateInventory, isAuthenticated: !user };
+    return { user, loading, login, purchaseItem, updateBalance, updateInventory };
 
 };

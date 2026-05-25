@@ -159,5 +159,27 @@ export const serviceApi = {
             };
 
         }
+    },
+
+    /**
+     * Purchase a power-up item.
+     * @param userId - id of the user
+     * @param itemType - type of the power-up item
+     * @returns a Promise<User>
+     */
+    async purchasePowerUp(userId: number, itemType: PowerUpType): Promise<ServiceResponseResult<User>> {
+        try {
+            const response = await fetch(`${SESSION_BASE_URL}/shop/buy?userId=${userId}&type=${itemType}`, { method: 'POST' });
+            if (!response.ok) {
+                return { data: null, error: new Error(`Error:`) };
+            }
+            const data = await response.json() as User;
+            return { data: data, error: null };
+        } catch (err) {
+            return {
+                data: null,
+                error: err instanceof Error ? err : new Error("Network error")
+            };
+        }
     }
 }
