@@ -5,12 +5,26 @@ import { useRef, useEffect } from 'react';
 export const useTickingSound = (isPlaying: boolean) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
+    /**
+     * Initialise the Audio once.
+     */
     useEffect(() => {
+        const audio = new Audio(clockTickingSfx);
+        audio.loop = true;
+        audioRef.current = audio;
 
-        if (!audioRef.current) {
-            audioRef.current = new Audio(clockTickingSfx);
-            audioRef.current.loop = true; // play it in a loop
-        }
+        return () => {
+            audio.pause();
+            audioRef.current = null;
+        };
+    }, []);
+
+
+    /**
+     * Handle Audio state changes. 
+     */
+    useEffect(() => {
+        if (!audioRef.current) return;
 
         if (isPlaying) {
             audioRef.current.play().catch(err => console.error('Audio playback failed', err));
@@ -18,12 +32,5 @@ export const useTickingSound = (isPlaying: boolean) => {
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
         }
-
-
-        // Clear up if component unmounts
-        return () => {
-            audioRef.current?.pause();
-            audioRef.current = null;
-        };
     }, [isPlaying]);
 };
