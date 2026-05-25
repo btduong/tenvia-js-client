@@ -25,7 +25,7 @@ export const useUser = () => {
         } finally {
             setLoading(false);
         }
-        
+
     }, []);
 
     /**
@@ -33,21 +33,16 @@ export const useUser = () => {
      */
     const purchaseItem = useCallback(async (itemType: PowerUpType) => {
         if (!user) return false;
-        const url = `http://localhost:8080/shop/buy?userId=${user.id}&type=${itemType}`;
 
-        const res = await fetch(url, { method: 'POST' });
-        try {
-            if (res.ok) {
-                const data = await res.json();
-                setUser(prev => prev ? { ...prev, inventory: data.inventory } : null);
-                return true;
-            }
-
-            return false;
-        } catch (err) {
-            console.log("Purchase ffailed. Check your balalnce", err);
+        const { data : updatedUser, error } = await serviceApi.purchasePowerUp(user.id, itemType);
+        if (updatedUser) {
+            setUser(prev => prev ? { ...prev, inventory: updatedUser.inventory } : null);
+            return true
+        } else {
+            console.log("Purchase failed. Check your balalnce", error.message);
             return false;
         }
+
     }, [user]);
 
     /***
@@ -63,6 +58,6 @@ export const useUser = () => {
         }
     }, []);
 
-    return { user, loading, login, purchaseItem, updateBalance, updateInventory};
+    return { user, loading, login, purchaseItem, updateBalance, updateInventory };
 
 };
