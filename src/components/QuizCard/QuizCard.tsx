@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './QuizCard.module.css';
 
-import { playClickSound, playCorrectAnswerSound, playIncorrectAnswerSound, playQuestionStartSound } from '../../utils/sounds';
-import HomeButton from '../ui/HomeButton';
-import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, UsePowerUpResponse, QuestionPenaltyType } from '../../types';
 import { serviceApi } from '../../api/serviceApi';
 import { useKeyboardShortcut } from '../../hooks/useKeyboardShortcut';
+import type { AnswerResponse, PowerUpType, QuestionOption, QuestionPenaltyType } from '../../types';
+import { playClickSound, playCorrectAnswerSound, playIncorrectAnswerSound, playQuestionStartSound } from '../../utils/sounds';
+import HomeButton from '../ui/HomeButton';
 
 import hammerIcon from '../../assets/icons/suit_diamonds.png';
 import { useGameContext } from '../../context/GameContext';
@@ -35,13 +35,8 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswerResponse, triggerGlobalError, handleAbandonSession } = useGameContext();
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
-  const [hiddenOptionIds, setHiddenOptionIds] = useState<number[]>([]);
   const [status, setStatus] = useState<QuizCardStatus>('IDLE');
   const [canUsePowerUp, setCanUsePowerUp] = useState<boolean>(true);
-
-  useEffect(() => {
-    setStatus('IDLE');
-  }, [currentQuestion]);
 
   const handleSpaceKeyPressed = () => {
     if (answerResponse) {
@@ -160,7 +155,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       <QuestionHeader questionText={currentQuestion.questionText} potentialReward={currentQuestion.potentialReward} potentialPenalty={currentQuestion.potentialPenalty} />
 
       {/* 2. Options List */}
-      <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} hiddenOptionIds={hiddenOptionIds} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
+      <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
       {/* 3. PowerUpItems Section */}
       <PowerUpItemBar answerResponse={answerResponse} hasPowerUps={hasPowerUps} activePowerUps={activePowerUps} handlePowerUpActivate={handlePowerUpActivate} isDisabled={!canUsePowerUp} />
       {/* 4. Area for nav buttons ie home, next */}
@@ -222,13 +217,11 @@ const ControlBar = ({ answerResponse, handleNextQuestion, handleAbandonSession }
 const AnswerOptionList = ({
   options,
   answerResponse,
-  hiddenOptionIds,
   handleOptionSelect,
   getOptionStyle
 }: {
   options: QuestionOption[],
   answerResponse: AnswerResponse | null,
-  hiddenOptionIds: number[],
   handleOptionSelect: (id: number) => void,
   getOptionStyle: (option: QuestionOption) => string | undefined
 }) => {
