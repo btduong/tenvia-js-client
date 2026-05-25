@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
-import type { Inventory, PowerUpType, User } from "../types";
 import { serviceApi } from "../api/serviceApi";
-import { useGameContext } from "../context/GameContext";
+import type { Inventory, PowerUpType, User } from "../types";
 
 export const useUser = () => {
 
@@ -16,13 +15,16 @@ export const useUser = () => {
     const login = useCallback(async (username: string) => {
         setLoading(true);
 
-        const result = await serviceApi.login(username);
-        const authenticatedUser = result.data;
-        if (authenticatedUser) {
-            setUser(authenticatedUser);
+        try {
+            const result = await serviceApi.login(username);
+            const authenticatedUser = result.data;
+            if (authenticatedUser) {
+                setUser(authenticatedUser);
+            }
+            return result;
+        } finally {
             setLoading(false);
         }
-        return result;
         
     }, []);
 
