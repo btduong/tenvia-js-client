@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './QuizCard.module.css';
 
-import { playClickSound, playCorrectAnswerSound, playIncorrectAnswerSound, playQuestionStartSound } from '../../utils/sounds';
-import HomeButton from '../ui/HomeButton';
-import type { AnswerResponse, Inventory, PowerUpType, QuestionOption, Question, UsePowerUpResponse, QuestionPenaltyType } from '../../types';
 import { serviceApi } from '../../api/serviceApi';
 import { useKeyboardShortcut } from '../../hooks/useKeyboardShortcut';
+import type { AnswerResponse, PowerUpType, QuestionOption, QuestionPenaltyType } from '../../types';
+import { playClickSound, playCorrectAnswerSound, playIncorrectAnswerSound, playQuestionStartSound } from '../../utils/sounds';
+import HomeButton from '../ui/HomeButton';
 
 import hammerIcon from '../../assets/icons/suit_diamonds.png';
 import { useGameContext } from '../../context/GameContext';
@@ -37,10 +37,6 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
   const [status, setStatus] = useState<QuizCardStatus>('IDLE');
   const [canUsePowerUp, setCanUsePowerUp] = useState<boolean>(true);
-
-  useEffect(() => {
-    setStatus('IDLE');
-  }, [currentQuestion]);
 
   const handleSpaceKeyPressed = () => {
     if (answerResponse) {
