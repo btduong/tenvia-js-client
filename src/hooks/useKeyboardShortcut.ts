@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useRef } from "react"
-import type { AnswerResponse } from "../types"
+import { useEffect, useRef } from "react";
 
 export const useKeyboardShortcut = (callback: () => void) => {
 
@@ -16,16 +15,21 @@ export const useKeyboardShortcut = (callback: () => void) => {
         const handleKeyDown = (event: KeyboardEvent) => {
 
             if (event.code === 'Space') {
-                event.preventDefault(); // Dont want to scroll the page while submitting the selected answer
-                callbackRef.current(); // Execute the callback
+                // Dont want to scroll the page while submitting the selected answer
+                // The browser's default behaviour is keydown
+                event.preventDefault(); 
+
+                if (!event.repeat) { // Prevent spamming by holding down the space key
+                    callbackRef.current(); // Execute the callback
+                }
             }
-        }
+        };
         // Listener to the window
-        window.addEventListener('keyup', handleKeyDown);
+        window.addEventListener('keydown', handleKeyDown);
 
         // Clean up
         return () => {
-            window.removeEventListener('keyup', handleKeyDown);
+            window.removeEventListener('keydown', handleKeyDown);
         };
 
     }, []); // No dependency so this effect is run everytime caller is rendered
