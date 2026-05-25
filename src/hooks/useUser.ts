@@ -63,6 +63,6 @@ export const useUser = () => {
         }
     }, []);
 
-    return { user, loading, login, purchaseItem, updateBalance, updateInventory, isAuthenticated: !user };
+    return { user, loading, login, purchaseItem, updateBalance, updateInventory};
 
 };
