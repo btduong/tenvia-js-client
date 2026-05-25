@@ -148,7 +148,7 @@ export const serviceApi = {
         try {
             const response = await fetch(`${SESSION_BASE_URL}/sessions/${sessionId}/swap`, { method: 'POST' });
             if (!response.ok) {
-                return { data: null, error: new Error(`Failed to abandon session: ${response.statusText}`) };
+                return { data: null, error: new Error(`Failed to swap question: ${response.statusText}`) };
             }
             const data = await response.json();
             return { data, error: null };
