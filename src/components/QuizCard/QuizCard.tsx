@@ -35,7 +35,6 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswerResponse, triggerGlobalError, handleAbandonSession } = useGameContext();
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
-  const [hiddenOptionIds, setHiddenOptionIds] = useState<number[]>([]);
   const [status, setStatus] = useState<QuizCardStatus>('IDLE');
   const [canUsePowerUp, setCanUsePowerUp] = useState<boolean>(true);
 
@@ -160,7 +159,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       <QuestionHeader questionText={currentQuestion.questionText} potentialReward={currentQuestion.potentialReward} potentialPenalty={currentQuestion.potentialPenalty} />
 
       {/* 2. Options List */}
-      <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} hiddenOptionIds={hiddenOptionIds} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
+      <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
       {/* 3. PowerUpItems Section */}
       <PowerUpItemBar answerResponse={answerResponse} hasPowerUps={hasPowerUps} activePowerUps={activePowerUps} handlePowerUpActivate={handlePowerUpActivate} isDisabled={!canUsePowerUp} />
       {/* 4. Area for nav buttons ie home, next */}
@@ -222,13 +221,11 @@ const ControlBar = ({ answerResponse, handleNextQuestion, handleAbandonSession }
 const AnswerOptionList = ({
   options,
   answerResponse,
-  hiddenOptionIds,
   handleOptionSelect,
   getOptionStyle
 }: {
   options: QuestionOption[],
   answerResponse: AnswerResponse | null,
-  hiddenOptionIds: number[],
   handleOptionSelect: (id: number) => void,
   getOptionStyle: (option: QuestionOption) => string | undefined
 }) => {
