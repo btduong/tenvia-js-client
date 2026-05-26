@@ -77,6 +77,11 @@ export interface LeaderboardDTO {
     score: number;
 }
 
+export interface ErrorResponseDTO {
+    errorCode: string;
+    errorMessage: string;
+}
+
 
 export type GameStatus = 'IDLE'
     | 'UNAUTHENTICATED'
