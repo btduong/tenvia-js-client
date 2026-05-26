@@ -14,7 +14,7 @@ const mockInventory = { 'HAMMER': 5, 'FIFTY_FIFTY': 1, 'SWAP_QUESTION': 1 };
 const validUser = { id: 2, username: "player1", createdAt: "2026-04-28T19:57:24.747338965", balance: 0, inventory: mockInventory };
 const validQuestion = {
     id: 1428,
-    questionText: "questionText", options: [{ 0: { content: "A", id: 5371, letter: "A" } }],
+    questionText: "questionText", options: [{ content: "A", id: 5371, letter: "A", isAvailable: true }],
     powerUpDisabled: false,
     expiresInSecond: 15
 }

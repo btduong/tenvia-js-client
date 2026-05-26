@@ -4,10 +4,12 @@ import type {
     PowerUpType,
     UsePowerUpResponse,
     AnswerResponse,
-    Question
+    Question,
+    GameStatus
 } from "../types";
 
 interface GameContextType {
+    gameStatus: GameStatus;
     sessionId: string | null;
     inventory: Inventory;
     currentQuestion: Question | null;

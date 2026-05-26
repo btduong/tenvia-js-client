@@ -78,6 +78,7 @@ const App: React.FC = () => {
    * This also stops any looping sounds.
    */
   const onAnswerSent = () => {
+    setGameStatus('VALIDATING_ANSWER');
     setAnswerSent(true);
     setIsTicking(false);
   };
@@ -119,6 +120,7 @@ const App: React.FC = () => {
       if (answerResponse.updatedInventory) {
         updateInventory(answerResponse.updatedInventory);
       }
+      setGameStatus('FETCHING_QUESTION');
       getNextQuestion(sessionData.id);
     } else {
       handleGameOver();
@@ -201,6 +203,7 @@ const App: React.FC = () => {
             <Route path="/quiz" element={
               currentQuestion && sessionData?.id ?
                 (<GameProvider value={{
+                  gameStatus: gameStatus,
                   sessionId: sessionData.id,
                   inventory: user.inventory,
                   currentQuestion: currentQuestion,
