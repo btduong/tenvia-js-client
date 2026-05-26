@@ -148,18 +148,6 @@ const App: React.FC = () => {
     return powerUpResponse;
   };
 
-  /**
-   * Displaying a message on UI in case of an event failure ie fail to get a question from the server.
-   * @returns a message
-   */
-  const UIMessage = () => {
-    if (gameStatus == 'LOGGING_IN') return { message: "Logging in ...." };
-    if (gameStatus == 'UNAUTHENTICATED') return { message: "Login failed ...." };
-    // Placeholder error. Need to propagate the error message up from the ApiService layer to here.
-    if (gameStatus == 'ERROR') return { message: 'Error..' };
-    return null;
-  };
-
   const triggerGlobalError = (message: string) => {
     setGameStatus('ERROR');
     setGlobalUserMessage(message);
@@ -177,11 +165,22 @@ const App: React.FC = () => {
     navigate('/');
   };
 
+  /**
+   * Displaying a message on UI in case of an event failure ie fail to get a question from the server.
+   * @returns a message
+   */
+  const UIMessage = () => {
+    if (gameStatus == 'LOGGING_IN') return { message: "Logging in ...." };
+    if (gameStatus == 'UNAUTHENTICATED') return { message: "Login failed ...." };
+    if (gameStatus == 'ERROR') return { message: 'Error..' };
+    return null;
+  };
+
   const statusMessageUI = UIMessage();
 
   return (
     <div className={appStyles.mobileAppWrapper}>
-      {statusMessageUI && (<StatusMessage status={gameStatus} message={globalErrorMessage} onClose={handleClearError} />)}
+      {statusMessageUI && (<StatusMessage status={gameStatus} message={statusMessageUI.toString() || globalErrorMessage} onClose={handleClearError} />)}
       <Routes>
         <Route path="/" element={
           !user ?
