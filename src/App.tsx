@@ -169,10 +169,10 @@ const App: React.FC = () => {
    * Displaying a message on UI in case of an event failure ie fail to get a question from the server.
    * @returns a message
    */
-  const UIMessage = () => {
-    if (gameStatus == 'LOGGING_IN') return { message: "Logging in ...." };
-    if (gameStatus == 'UNAUTHENTICATED') return { message: "Login failed ...." };
-    if (gameStatus == 'ERROR') return { message: 'Error..' };
+  const UIMessage = (): string | null => {
+    if (gameStatus == 'LOGGING_IN') return "Logging in ....";
+    if (gameStatus == 'UNAUTHENTICATED') return "Login failed ....";
+    if (gameStatus == 'ERROR') return globalErrorMessage || 'An unknown error occurred.'
     return null;
   };
 
@@ -180,7 +180,7 @@ const App: React.FC = () => {
 
   return (
     <div className={appStyles.mobileAppWrapper}>
-      {statusMessageUI && (<StatusMessage status={gameStatus} message={statusMessageUI.toString() || globalErrorMessage} onClose={handleClearError} />)}
+      {statusMessageUI && (<StatusMessage status={gameStatus} message={statusMessageUI} onClose={handleClearError} />)}
       <Routes>
         <Route path="/" element={
           !user ?
