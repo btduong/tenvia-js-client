@@ -1,4 +1,4 @@
-import { test, vi, it, expect, afterEach, describe } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { serviceApi } from "../api/serviceApi";
 
 const sessionId = '123';
@@ -13,9 +13,23 @@ describe('serviceApi getNewSession', () => {
     const questionLimit = 10;
 
     it('can get new session', async () => {
-        const mockSession = { id: 'session_123', questions: [] };
+        const mockSession = {
+            id: 'session_123',
+            questions: [],
+            currentQuestionIndex: 0,
+            score: 0,
+            user: null,
+            duration: 15,
+            endTime: 'endTIme'
+        };
 
-        const mockFetch = vi.fn().mockResolvedValue({ ok: true, json: async () => mockSession });
+        const mockFetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => mockSession,
+            headers: new Headers({
+                'content-type': 'application/json',
+            })
+        });
         vi.stubGlobal('fetch', mockFetch);
 
         const { data: gameSession, error } = await serviceApi.getNewSession(userId, questionLimit);
@@ -34,14 +48,17 @@ describe('serviceApi getNewSession', () => {
             ok: false,
             statusText: '404',
             json: vi.fn().mockResolvedValue({
-                errorCode: 'user-id not found',
+                errorCode: '404',
                 errorMessage: 'userId: 1 not found'
             }),
+            headers: new Headers({
+                'content-type': 'application/json',
+            })
         }));
 
         const { data, error } = await serviceApi.getNewSession(userId, questionLimit);
         expect(data).toBeNull();
-        expect(error?.message).toBe('userId: 1 not found');
+        expect(error?.message).toBe('404: userId: 1 not found');
     });
 });
 
@@ -53,7 +70,10 @@ describe('serviceApi getQuestion', () => {
 
         const mockFetch = vi.fn().mockResolvedValue({
             ok: true,
-            json: async () => question
+            json: async () => question,
+            headers: new Headers({
+                'content-type': 'application/json',
+            })
         });
         vi.stubGlobal('fetch', mockFetch);
 
@@ -71,7 +91,10 @@ describe('serviceApi getQuestion', () => {
 
         vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
             ok: false,
-            statusText: '404'
+            statusText: '404',
+            headers: new Headers({
+                'content-type': 'application/json',
+            })
         }))
 
         const { data, error } = await serviceApi.getQuestion(sessionId);
@@ -90,6 +113,9 @@ describe('serviceApi usePowerUp', () => {
         const mockFetch = vi.fn().mockResolvedValue({
             ok: true,
             json: async () => powerUpResponse,
+            headers: new Headers({
+                'content-type': 'application/json',
+            })
         });
         vi.stubGlobal('fetch', mockFetch);
 
@@ -108,6 +134,9 @@ describe('serviceApi usePowerUp', () => {
         vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
             ok: false,
             statusText: 404,
+            headers: new Headers({
+                'content-type': 'application/json',
+            })
         }));
 
         const { data, error } = await serviceApi.usePowerUp(powerUpType, userId, sessionId);
@@ -122,6 +151,9 @@ describe('serviceAPI abandon session', () => {
         vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
             ok: true,
             statusTex: 200,
+            headers: new Headers({
+                'content-type': 'text/html',
+            })
         }));
 
         const { data, error } = await serviceApi.abandon(sessionId);
@@ -139,6 +171,8 @@ describe('serviceApi swap question', () => {
             powerUpDisabled: false,
             expiresInSeconds: 15,
             index: 0,
+            potentialReward: null,
+            potentialPenalty: null,
         };
 
         const mockFetch = vi.fn();
@@ -147,6 +181,9 @@ describe('serviceApi swap question', () => {
             ok: true,
             statusText: 200,
             json: async () => mockSwapQuestion,
+            headers: new Headers({
+                'content-type': 'application/json',
+            })
         });
 
         const { data: question, error } = await serviceApi.swapQuestion(sessionId);

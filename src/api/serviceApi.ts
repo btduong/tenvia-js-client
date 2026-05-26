@@ -1,185 +1,93 @@
-import type { AnswerResponse, GameSession, LeaderboardDTO, PowerUpType, Question, UsePowerUpResponse, User } from "../types";
+import type { AnswerResponse, GameSession, LeaderboardDTO, PowerUpType, Question, UsePowerUpResponse, User, ErrorResponseDTO } from "../types";
 import type { ServiceResponseResult } from "./serviceApiResult";
 
 const SESSION_BASE_URL = 'http://localhost:8080';
 const LEADERBOARD_BASE_URL = 'http://localhost:8081';
 
+/**
+ * A generic helper to process API requests.
+ * Handles the server's standard ErrorResponseDTO and data parsing.
+ */
+async function fetchWithHandling<T>(url: string, options?: RequestInit): Promise<ServiceResponseResult<T>> {
+    try {
+        const response = await fetch(url, options);
+
+        // Handle error response
+        if (!response.ok) {
+            let errorMessage = response.statusText;
+            const contentType = response.headers.get("content-type");
+
+            // Extract ErrorResponseDTO (errorCode, errorMessage) from the response's body.
+            if (contentType && contentType.includes("application/json")) {
+                try {
+                    const errorData = await response.json() as ErrorResponseDTO;
+                    if (errorData && errorData.errorMessage) {
+                        errorMessage = errorData.errorCode
+                            ? `${errorData.errorCode}: ${errorData.errorMessage}`
+                            : errorData.errorMessage;
+                    }
+                } catch (e) {
+                    // Shouldn't get here otherwise it means the server has changed or updated the ErrorResponseDTO.
+                }
+            }
+            return { data: null, error: new Error(errorMessage) };
+        }
+
+        // Handle OK response
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            return { data: data as T, error: null };
+        }
+
+        // Handle responses with empty body ie /abandon
+        return { data: null as any, error: null };
+    } catch (error) {
+        return {
+            data: null,
+            error: error instanceof Error ? error : new Error("Network error")
+        };
+    }
+}
+
 export const serviceApi = {
     async getNewSession(userId: number, questionLimit: number): Promise<ServiceResponseResult<GameSession>> {
-        try {
-
-            // In the case of a non 200 response such as 404, the errorCode and errorMessage is in the body of the response.
-            const response = await fetch(`${SESSION_BASE_URL}/sessions/start?id=${userId}&limit=${questionLimit}`, { method: 'POST' });
-            if (response.ok) {
-                const data = await response.json();
-                return { data, error: null };
-            } else {
-                const data = await response.json();
-                return { data: null, error: new Error(data.errorMessage) };
-            }
-        }
-        catch (error) {
-            return {
-                data: null,
-                error: error instanceof Error ? error : new Error("Failed to get new session")
-            };
-        }
+        return fetchWithHandling<GameSession>(`${SESSION_BASE_URL}/sessions/start?id=${userId}&limit=${questionLimit}`, { method: 'POST' });
     },
 
     async getQuestion(sessionId: string): Promise<ServiceResponseResult<Question>> {
-        try {
-            const response = await fetch(`${SESSION_BASE_URL}/sessions/${sessionId}/questions/next`, { method: 'GET' });
-            if (response.ok) {
-                const data = await response.json() as Question;
-                return { data, error: null };
-            }
-            return { data: null, error: new Error(response.statusText) };
-
-        } catch (error) {
-            return {
-                data: null,
-                error: error instanceof Error ? error : new Error("Failed to get new question")
-            };
-        }
-
+        return fetchWithHandling<Question>(`${SESSION_BASE_URL}/sessions/${sessionId}/questions/next`, { method: 'GET' });
     },
 
     async usePowerUp(type: PowerUpType, userId: number, sessionId: string): Promise<ServiceResponseResult<UsePowerUpResponse>> {
-        try {
-            const response = await fetch(`${SESSION_BASE_URL}/api/powerups/use?type=${type}&userId=${userId}&sessionId=${sessionId}`, { method: 'POST' });
-
-            if (response.ok) {
-                const data = await response.json();
-                return { data, error: null };
-            }
-            return { data: null, error: new Error(response.statusText) };
-        } catch (error) {
-            return {
-                data: null,
-                error: error instanceof Error ? error : new Error("Failed to use power up")
-            };
-        }
+        return fetchWithHandling<UsePowerUpResponse>(`${SESSION_BASE_URL}/api/powerups/use?type=${type}&userId=${userId}&sessionId=${sessionId}`, { method: 'POST' });
     },
 
     async validateSelectedAnswer(sessionId: string, optionId: number): Promise<ServiceResponseResult<AnswerResponse>> {
-        try {
-            const response = await fetch(`${SESSION_BASE_URL}/sessions/${sessionId}/answer`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    selectedOptionId: optionId
-                })
-            });
-            if (response.ok) {
-                const data = await response.json();
-                return { data, error: null };
-            }
-            return { data: null, error: new Error(response.statusText) };
-        } catch (error) {
-            return {
-                data: null,
-                error: error instanceof Error ? error : new Error("Failed to validate answer")
-            };
-        }
+        return fetchWithHandling<AnswerResponse>(`${SESSION_BASE_URL}/sessions/${sessionId}/answer`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ selectedOptionId: optionId })
+        });
     },
 
     async login(username: string): Promise<ServiceResponseResult<User>> {
-        try {
-            const response = await fetch(`${SESSION_BASE_URL}/users/login?username=${username}`, {
-                method: 'POST'
-            });
-
-            if (!response.ok) {
-                return { data: null, error: new Error(`Login failed: ${response.statusText}`) };
-            }
-
-            const data = await response.json() as User;
-            return { data, error: null };
-        } catch (err) {
-            return {
-                data: null,
-                error: err instanceof Error ? err : new Error("Failed to login")
-            };
-        }
+        return fetchWithHandling<User>(`${SESSION_BASE_URL}/users/login?username=${username}`, { method: 'POST' });
     },
 
     async leaderboardPage(): Promise<ServiceResponseResult<LeaderboardDTO[]>> {
-        try {
-            const response = await fetch(`${LEADERBOARD_BASE_URL}/leaderboard`, {
-                method: 'GET'
-            });
-
-            if (!response.ok) {
-                return { data: null, error: new Error(`Failed to retrieve /leaderbard ${response.statusText}`) };
-            }
-
-            const data = await response.json();
-            return { data, error: null };
-        } catch (err) {
-            return {
-                data: null,
-                error: err instanceof Error ? err : new Error("Failed to retrieve /leaderboard")
-            };
-        }
+        return fetchWithHandling<LeaderboardDTO[]>(`${LEADERBOARD_BASE_URL}/leaderboard`, { method: 'GET' });
     },
 
-    /**
-     * Send a request to abandon the current game session.
-     * @param sessionId 
-     * @returns void
-     */
     async abandon(sessionId: string): Promise<ServiceResponseResult<null>> {
-        try {
-            const response = await fetch(`${SESSION_BASE_URL}/sessions/${sessionId}/abandon`, { method: 'POST' });
-            if (!response.ok) {
-                return { data: null, error: new Error(`Failed to abandon session: ${response.statusText}`) };
-            }
-            return { data: null, error: null };
-        } catch (err) {
-            return {
-                data: null,
-                error: err instanceof Error ? err : new Error("Network error")
-            };
-
-        }
+        return fetchWithHandling<null>(`${SESSION_BASE_URL}/sessions/${sessionId}/abandon`, { method: 'POST' });
     },
 
     async swapQuestion(sessionId: string): Promise<ServiceResponseResult<Question>> {
-        try {
-            const response = await fetch(`${SESSION_BASE_URL}/sessions/${sessionId}/swap`, { method: 'POST' });
-            if (!response.ok) {
-                return { data: null, error: new Error(`Failed to swap question: ${response.statusText}`) };
-            }
-            const data = await response.json();
-            return { data, error: null };
-        } catch (err) {
-            return {
-                data: null,
-                error: err instanceof Error ? err : new Error("Network error")
-            };
-
-        }
+        return fetchWithHandling<Question>(`${SESSION_BASE_URL}/sessions/${sessionId}/swap`, { method: 'POST' });
     },
 
-    /**
-     * Purchase a power-up item.
-     * @param userId - id of the user
-     * @param itemType - type of the power-up item
-     * @returns a Promise<User>
-     */
     async purchasePowerUp(userId: number, itemType: PowerUpType): Promise<ServiceResponseResult<User>> {
-        try {
-            const response = await fetch(`${SESSION_BASE_URL}/shop/buy?userId=${userId}&type=${itemType}`, { method: 'POST' });
-            if (!response.ok) {
-                return { data: null, error: new Error(`Error:`) };
-            }
-            const data = await response.json() as User;
-            return { data: data, error: null };
-        } catch (err) {
-            return {
-                data: null,
-                error: err instanceof Error ? err : new Error("Network error")
-            };
-        }
+        return fetchWithHandling<User>(`${SESSION_BASE_URL}/shop/buy?userId=${userId}&type=${itemType}`, { method: 'POST' });
     }
-}
+};
