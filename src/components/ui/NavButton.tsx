@@ -7,11 +7,12 @@ interface NavButtonProps {
     label: string;
     icon?: React.ReactNode; // Make icon optional as not all buttons have icons
     iconClassName?: string;
+    className?: string;
     ariaLabel: string;
     onNavigate?: (() => Promise<boolean> | boolean) | undefined;
 }
 
-const NavButton: React.FC<NavButtonProps> = ({ to, label, icon, iconClassName, ariaLabel, onNavigate}) => {
+const NavButton: React.FC<NavButtonProps> = ({ to, label, icon, iconClassName, className, ariaLabel, onNavigate}) => {
     const navigate = useNavigate();
 
     const handleClick = async () => {
@@ -27,7 +28,7 @@ const NavButton: React.FC<NavButtonProps> = ({ to, label, icon, iconClassName, a
         <button
             aria-label={ariaLabel}
             onClick={handleClick}
-            className={`{className}`}>
+            className={className || ''}>
             {icon && <span className={`${iconClassName}`}>{icon}</span>}
             {!icon && label}
         </button>
