@@ -4,6 +4,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import { useGameContext } from "../../context/GameContext";
+import type { GameStatus } from "../../types";
 import QuizCard from "./QuizCard";
 
 const mockNavigate = vi.fn();
@@ -40,6 +41,7 @@ const inventory = {
 const mockHandleUsePowerUp = vi.fn();
 
 const defaultGameContext = {
+    gameStatus: 'PLAYING' as GameStatus,
     currentQuestion: mockQuestion,
     sessionId: '123',
     inventory: inventory,
@@ -67,6 +69,19 @@ describe('QuizCard', (() => {
     it('can render question', () => {
         render(<QuizCard />);
         expect(screen.getByText('who are you')).toBeInTheDocument();
+    });
+
+    it('disables options when gameStatus is VALIDATING_ANSWER', () => {
+        vi.mocked(useGameContext).mockReturnValue({ ...defaultGameContext, gameStatus: 'VALIDATING_ANSWER' });
+        render(<QuizCard />);
+        
+        const optionButtons = [
+            screen.getByRole('button', { name: 'me' }),
+            screen.getByRole('button', { name: 'you' })
+        ];
+        optionButtons.forEach(button => {
+            expect(button).toBeDisabled();
+        });
     });
 
     it('expect power-up bar to be hidden after used a power-up item ', async () => {

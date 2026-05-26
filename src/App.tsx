@@ -63,12 +63,11 @@ const App: React.FC = () => {
     if (gameSession) {
       setSessionData(gameSession);
       if (gameSession?.id) {
-        setGameStatus("PLAYING");
+        setGameStatus("FETCHING_QUESTION");
         getNextQuestion(gameSession.id);
         navigate('/quiz');
       }
     } else {
-      setGameStatus('ERROR');
       triggerGlobalError(error.message);
     }
 
@@ -79,6 +78,7 @@ const App: React.FC = () => {
    * This also stops any looping sounds.
    */
   const onAnswerSent = () => {
+    setGameStatus('VALIDATING_ANSWER');
     setAnswerSent(true);
     setIsTicking(false);
   };
@@ -92,10 +92,11 @@ const App: React.FC = () => {
     if (question) {
       await waitFor(500);
       setCurrentQuestion(question);
+      setGameStatus('PLAYING');
       setAnswerSent(false);
       setIsTicking(true);
     } else {
-      setGameStatus('ERROR');
+      triggerGlobalError(error.message);
     }
   };
 
@@ -119,6 +120,7 @@ const App: React.FC = () => {
       if (answerResponse.updatedInventory) {
         updateInventory(answerResponse.updatedInventory);
       }
+      setGameStatus('FETCHING_QUESTION');
       getNextQuestion(sessionData.id);
     } else {
       handleGameOver();
@@ -148,18 +150,6 @@ const App: React.FC = () => {
     return powerUpResponse;
   };
 
-  /**
-   * Displaying a message on UI in case of an event failure ie fail to get a question from the server.
-   * @returns a message
-   */
-  const UIMessage = () => {
-    if (gameStatus == 'LOGGING_IN') return { message: "Logging in ...." };
-    if (gameStatus == 'UNAUTHENTICATED') return { message: "Login failed ...." };
-    // Placeholder error. Need to propagate the error message up from the ApiService layer to here.
-    if (gameStatus == 'ERROR') return { message: 'Error..' };
-    return null;
-  };
-
   const triggerGlobalError = (message: string) => {
     setGameStatus('ERROR');
     setGlobalUserMessage(message);
@@ -177,13 +167,23 @@ const App: React.FC = () => {
     navigate('/');
   };
 
-  const statusMessageUI = UIMessage();
+  /**
+   * Displaying a message on UI in case of an event failure ie fail to get a question from the server.
+   * @returns a message
+   */
+  const UIMessage = (): string | null => {
+    if (gameStatus == 'LOGGING_IN') return "Logging in ....";
+    if (gameStatus == 'UNAUTHENTICATED') return "Login failed ....";
+    if (gameStatus == 'FETCHING_QUESTION') return "Fetching question...";
+    if (gameStatus == 'ERROR') return globalErrorMessage || 'An unknown error occurred.'
+    return null;
+  };
 
-  const hasSession = Boolean(sessionData?.id);
+  const statusMessageUI = UIMessage();
 
   return (
     <div className={appStyles.mobileAppWrapper}>
-      {statusMessageUI && (<StatusMessage status={gameStatus} message={globalErrorMessage} onClose={handleClearError} />)}
+      {statusMessageUI && (<StatusMessage status={gameStatus} message={statusMessageUI} onClose={handleClearError} />)}
       <Routes>
         <Route path="/" element={
           !user ?
@@ -203,6 +203,7 @@ const App: React.FC = () => {
             <Route path="/quiz" element={
               currentQuestion && sessionData?.id ?
                 (<GameProvider value={{
+                  gameStatus: gameStatus,
                   sessionId: sessionData.id,
                   inventory: user.inventory,
                   currentQuestion: currentQuestion,
@@ -215,7 +216,7 @@ const App: React.FC = () => {
                 }}>
                   <QuizCardPage answerSent={answerSent} sessionData={sessionData} currentQuestion={currentQuestion} currentIndex={currentQuestion.index} questionLimit={questionLimit} onQuestionTimedout={onQuestionTimedout} />
                 </GameProvider>)
-                : <StatusMessage status={'LOGGING_IN'} message={'Fetching question...'} onClose={handleClearError} />
+                : <div />
             } />
 
             <Route path="/summary" element={<SummaryPage />} />

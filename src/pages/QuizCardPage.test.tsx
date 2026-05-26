@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import QuizCardPage from "../pages/QuizCardPage";
 import { render, screen } from "@testing-library/react";
+import type { SessionData } from "react-router-dom";
+import type { GameSession } from "../types";
 
 /**
  * default is needed because vitest use ESM.
@@ -43,7 +45,7 @@ describe('QuizCardPage', () => {
         currentQuestion: mockQuestion,
         currentIndex: 1,
         questionLimit: 10,
-        sessionData: { duration: 1 } as any,
+        sessionData: { duration: 1 } as GameSession,
         answerSent: false,
         onQuestionTimedout: mockOnQuestionTimedout,
     }

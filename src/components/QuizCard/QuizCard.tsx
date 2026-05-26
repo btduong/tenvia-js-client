@@ -23,8 +23,6 @@ const POWER_UP_TYPE_ICON_MAP: Record<PowerUpType, string> = {
 interface QuizCardProps {
 }
 
-type QuizCardStatus = 'IDLE' | 'WAITING_VERIFY' | 'FETCH_NEXT_QUESTION';
-
 /**
  * Reander the quiz which includes question text and options for answers
  */
@@ -32,17 +30,15 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   // Use nagivator to different path ie /leaderboard, /home
   const navigate = useNavigate();
 
-  const { currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswerResponse, triggerGlobalError, handleAbandonSession } = useGameContext();
+  const { gameStatus, currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswerResponse, triggerGlobalError, handleAbandonSession } = useGameContext();
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
-  const [status, setStatus] = useState<QuizCardStatus>('IDLE');
   const [canUsePowerUp, setCanUsePowerUp] = useState<boolean>(true);
 
   const handleSpaceKeyPressed = () => {
     if (answerResponse) {
       handleAnswerResponse(answerResponse);
-    } else if (selectedOptionId > 0 && status !== 'WAITING_VERIFY') { // all answer option ids are positive
-      setStatus('WAITING_VERIFY');
+    } else if (selectedOptionId > 0 && gameStatus !== 'VALIDATING_ANSWER') { // all answer option ids are positive
       handleVerify(selectedOptionId);
     }
   };
@@ -155,7 +151,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       <QuestionHeader questionText={currentQuestion.questionText} potentialReward={currentQuestion.potentialReward} potentialPenalty={currentQuestion.potentialPenalty} />
 
       {/* 2. Options List */}
-      <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
+      <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} isVerifying={gameStatus === 'VALIDATING_ANSWER'} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
       {/* 3. PowerUpItems Section */}
       <PowerUpItemBar answerResponse={answerResponse} hasPowerUps={hasPowerUps} activePowerUps={activePowerUps} handlePowerUpActivate={handlePowerUpActivate} isDisabled={!canUsePowerUp} />
       {/* 4. Area for nav buttons ie home, next */}
@@ -217,11 +213,13 @@ const ControlBar = ({ answerResponse, handleNextQuestion, handleAbandonSession }
 const AnswerOptionList = ({
   options,
   answerResponse,
+  isVerifying,
   handleOptionSelect,
   getOptionStyle
 }: {
   options: QuestionOption[],
   answerResponse: AnswerResponse | null,
+  isVerifying: boolean,
   handleOptionSelect: (id: number) => void,
   getOptionStyle: (option: QuestionOption) => string | undefined
 }) => {
@@ -232,7 +230,7 @@ const AnswerOptionList = ({
         return (
           <div className={styles.container} key={option.id}>
             <button className={`${optionButtonStyle}`}
-              disabled={answerResponse !== null || !option.isAvailable}
+              disabled={answerResponse !== null || !option.isAvailable || isVerifying}
               onClick={() => { handleOptionSelect(option.id); }}>
               {/* <span className={styles.optionCircle}>{option.letter}</span> */}
               <span className={styles.optionText}>{option.content}</span>
