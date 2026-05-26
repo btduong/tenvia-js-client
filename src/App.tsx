@@ -63,12 +63,11 @@ const App: React.FC = () => {
     if (gameSession) {
       setSessionData(gameSession);
       if (gameSession?.id) {
-        setGameStatus("PLAYING");
+        setGameStatus("FETCHING_QUESTION");
         getNextQuestion(gameSession.id);
         navigate('/quiz');
       }
     } else {
-      setGameStatus('ERROR');
       triggerGlobalError(error.message);
     }
 
@@ -92,10 +91,11 @@ const App: React.FC = () => {
     if (question) {
       await waitFor(500);
       setCurrentQuestion(question);
+      setGameStatus('PLAYING');
       setAnswerSent(false);
       setIsTicking(true);
     } else {
-      setGameStatus('ERROR');
+      triggerGlobalError(error.message);
     }
   };
 
@@ -172,6 +172,7 @@ const App: React.FC = () => {
   const UIMessage = (): string | null => {
     if (gameStatus == 'LOGGING_IN') return "Logging in ....";
     if (gameStatus == 'UNAUTHENTICATED') return "Login failed ....";
+    if (gameStatus == 'FETCHING_QUESTION') return "Fetching question...";
     if (gameStatus == 'ERROR') return globalErrorMessage || 'An unknown error occurred.'
     return null;
   };
@@ -212,7 +213,7 @@ const App: React.FC = () => {
                 }}>
                   <QuizCardPage answerSent={answerSent} sessionData={sessionData} currentQuestion={currentQuestion} currentIndex={currentQuestion.index} questionLimit={questionLimit} onQuestionTimedout={onQuestionTimedout} />
                 </GameProvider>)
-                : <StatusMessage status={'LOGGING_IN'} message={'Fetching question...'} onClose={handleClearError} />
+                : <div />
             } />
 
             <Route path="/summary" element={<SummaryPage />} />
