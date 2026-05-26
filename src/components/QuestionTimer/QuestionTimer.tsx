@@ -26,25 +26,23 @@ const QuestionTimer: React.FC<SessionTimerProps> = ({ duration, isPause, onCompl
 
     const [timeLeft, setTimeLeft] = useState(duration);
 
+    // Interval update
     useEffect(() => {
-        let timerId = 0;
+        if (isPause || timeLeft <= 0) return;
 
-        if (timeLeft <= 0) {
-            onComplete();
-            return;
-        }
-
-        if (!isPause) {
-            timerId = setInterval(() => {
-                setTimeLeft(x => x - 0.1);
-            }, 100);
-        } else {
-            clearInterval(timerId);
-        }
+        const timerId = setInterval(() => {
+            setTimeLeft(x => x - 0.1);
+        }, 100);
 
         return () => clearInterval(timerId);
+    }, [isPause, timeLeft <= 0]);
 
-    }, [timeLeft, isPause]);
+    // Trigger onComplete
+    useEffect(() => {
+        if (timeLeft <= 0) {
+            onComplete();
+        }
+    }, [timeLeft, onComplete]);
 
     const percentage = (timeLeft / duration) * 100;
 
