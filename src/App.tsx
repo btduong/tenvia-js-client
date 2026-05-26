@@ -179,8 +179,6 @@ const App: React.FC = () => {
 
   const statusMessageUI = UIMessage();
 
-  const hasSession = Boolean(sessionData?.id);
-
   return (
     <div className={appStyles.mobileAppWrapper}>
       {statusMessageUI && (<StatusMessage status={gameStatus} message={globalErrorMessage} onClose={handleClearError} />)}
