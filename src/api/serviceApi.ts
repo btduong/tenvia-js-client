@@ -63,7 +63,14 @@ export const serviceApi = {
         return fetchWithHandling<UsePowerUpResponse>(`${SESSION_BASE_URL}/api/powerups/use?type=${type}&userId=${userId}&sessionId=${sessionId}`, { method: 'POST' });
     },
 
-    async validateSelectedAnswer(sessionId: string, optionId: number): Promise<ServiceResponseResult<AnswerResponse>> {
+    /**
+     * Send a validate request to with a selected optionId. Wehen the optionId param is null, this indicates
+     * to the server that the current question is skipped (ie when the question is timed out)
+     * @param sessionId 
+     * @param optionId 
+     * @returns {@link AnswerResponse}
+     */
+    async validateSelectedAnswer(sessionId: string, optionId: number | null): Promise<ServiceResponseResult<AnswerResponse>> {
         return fetchWithHandling<AnswerResponse>(`${SESSION_BASE_URL}/sessions/${sessionId}/answer`, {
             method: 'POST',
             headers: { 'content-type': 'application/json' },

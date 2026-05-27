@@ -123,15 +123,23 @@ const App: React.FC = () => {
       setGameStatus('FETCHING_QUESTION');
       getNextQuestion(sessionData.id);
     } else {
+      navigate('/summary', { state: { sessionSummary: answerResponse.summary } });
       handleGameOver();
     }
   };
 
+  /**
+   * When a question is timed out, a validate request with null option Id is sent to the server 
+   * to indicate that the current question was skipped.
+   */
   const onQuestionTimedout = async () => {
     setIsTicking(false);
 
     if (sessionData?.id) {
-      getNextQuestion(sessionData.id);
+      const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(sessionData.id, null);
+      if (answerResponse) {
+        handleAnswerResponse(answerResponse);
+      }
     }
   };
 

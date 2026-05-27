@@ -27,8 +27,6 @@ interface QuizCardProps {
  * Reander the quiz which includes question text and options for answers
  */
 const QuizCard: React.FC<QuizCardProps> = () => {
-  // Use nagivator to different path ie /leaderboard, /home
-  const navigate = useNavigate();
 
   const { gameStatus, currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswerResponse, triggerGlobalError, handleAbandonSession } = useGameContext();
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
@@ -79,7 +77,6 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       updateBalance(answerResponse.newBalance);
       if (answerResponse.isGameOver) {
         handleAnswerResponse(answerResponse);
-        navigate('/summary', { state: { sessionSummary: answerResponse.summary } });
       }
     } else if (error) {
       triggerGlobalError(error.message);
