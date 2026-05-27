@@ -51,4 +51,22 @@ describe('QuestionTimer', () => {
         expect(mockOnComplete).not.toHaveBeenCalled();
     });
 
+    it('should not call onComplete multiple times if parent re-renders', () => {
+        
+        const mockSecondOnComplete = vi.fn();
+
+        const { rerender } = render(<QuestionTimer duration={0.1} isPause={false} onComplete={mockOnComplete} />);
+
+        // Trigger a tick down to 0.
+        act(() => {
+            vi.advanceTimersByTime(100);
+        });
+
+        // Re-render
+        rerender(<QuestionTimer duration={0.1} isPause={false} onComplete={mockSecondOnComplete} />);
+
+        expect(mockOnComplete).toHaveBeenCalled();
+        expect(mockSecondOnComplete).not.toHaveBeenCalled();
+    });
+
 });

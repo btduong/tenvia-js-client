@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import timelineStyle from './QuestionTimer.module.css';
 
 interface SessionTimerProps {
@@ -7,6 +7,11 @@ interface SessionTimerProps {
     onComplete: () => void;
 }
 
+/**
+ * A timeline component represents a progress bar.
+ * @param percentage - 100% = full bar, 0% = empty bar
+ * @returns a horizontal div
+ */
 const TimeLine = ({ percentage }: { percentage: number }) => {
     return (
         <div className={timelineStyle.timelineContainer}>
@@ -37,9 +42,15 @@ const QuestionTimer: React.FC<SessionTimerProps> = ({ duration, isPause, onCompl
         return () => clearInterval(timerId);
     }, [isPause, timeLeft <= 0]);
 
-    // Trigger onComplete
+    /**
+     * Defensive guard to ensure onComplete doesn't get called multiple times.
+     * Without this guard, in the case this component gets re-rendered and the timeleft is 0, onComplete will be called again.
+     */
+    const hasCompletedRef = useRef(false);
+
     useEffect(() => {
-        if (timeLeft <= 0) {
+        if (timeLeft <= 0 && !hasCompletedRef.current) {
+            hasCompletedRef.current = true;
             onComplete();
         }
     }, [timeLeft, onComplete]);
