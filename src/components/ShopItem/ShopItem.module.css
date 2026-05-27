@@ -9,8 +9,6 @@
     transition: transform 0.1s ease, border-color 0.2s;
   }
 
-
-  
   .shopItem:hover {
     border-color: #666;
     transform: translateY(-2px);
@@ -29,7 +27,7 @@
   }
   
   .itemCount span {
-    color: #00d2ff; /* Highlight the count */
+    color: #00d2ff; 
     font-weight: bold;
   }
   
@@ -53,8 +51,7 @@
   .buyButton:active:not(:disabled) {
     transform: scale(0.98);
   }
-  
-  /* The "Broke" State */
+
   .buyButton.disabled {
     background: #3d3d3d;
     color: #777;

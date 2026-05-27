@@ -1,6 +1,6 @@
 .modalOverlay {
   position: absolute;
-  /* Because root is relative */
+  
   top: 0;
   left: 0;
   width: 100%;
@@ -50,10 +50,7 @@
 .itemIcon {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  /* Keeps the PNG proportions perfect */
-  image-rendering: pixelated;
-  /* Optional: use if your PNGs are low-res/pixel art */
+  object-fit: contain; 
 }
 
 .title {
@@ -88,7 +85,7 @@
 
 .currency {
   color: #ffd700;
-  /* Gold color for money */
+  
   font-size: 1.2rem;
   margin-left: 8px;
 }
@@ -96,7 +93,7 @@
 .shopItemsGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  /* Two items per row */
+  
   gap: 15px;
 }
 

@@ -1,6 +1,6 @@
 .timelineContainer {
     height: 10px;
-    flex-shrink: 0; /* Prevent the browser from squishing the height to 0 */
+    flex-shrink: 0; 
     width: 100%;
     background: #333;
 }

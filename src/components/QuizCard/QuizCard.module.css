@@ -3,39 +3,34 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  position: relative; /* Useful for positioning the badge */
+  position: relative; 
 }
 
 .stakeBar {
   display: flex;
-  flex-direction: row; /* Icon on the left, text on the right */
+  flex-direction: row; 
   align-items: center;
   justify-content: center;
   gap: 8px;
 
-  /* Overlap the bottom of the question box slightly */
-  /* margin-top: -15px;  */
   padding: 6px 14px;
-  /* border-radius: 30px; */
-  /* background-color: #3498db; */
+
   font-weight: 800;
   font-size: 0.85rem;
-  /* text-transform: uppercase; */
+  
   letter-spacing: 0.5px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  /* border: 2px solid #000;  */
+  
   z-index: 5;
 }
 
-/* Color logic for Rewards */
 .reward {
-  background-color: #fbbf24; /* Gold */
+  background-color: #fbbf24; 
   color: #000;
 }
 
-/* Color logic for Penalties */
 .penalty {
-  background-color: #ef4444; /* Alert Red */
+  background-color: #ef4444; 
   color: #fff;
 }
 
@@ -61,7 +56,7 @@
   width: 100%;
   border: 0;
   border-top: 1px solid #000000;
-  /* Very light gray line */
+  
   margin: 10px 0;
 }
 
@@ -69,134 +64,86 @@
   display: flex;
   flex-direction: column;
   color: white;
-  /* background-color: #f9f9f9; */
+  
   max-width: 600px;
   align-content: center;
   border: #000000;
   margin: 0 auto;
   padding: 10px;
   gap: 30px;
-  /* Gap between the question and the answer options */
+  
 }
 
 .optionCircle {
   display: flex;
-  /* To center the letter inside the circle */
+  
   align-items: center;
   justify-content: center;
 
   width: 40px;
-  /* Equal width and height are key */
+  
   height: 40px;
   min-width: 40px;
-  /* Prevents the circle from squishing if text is long */
 
   background-color: #4a5568;
-  /* Slightly lighter than button */
+  
   border: 2px solid #fbbf24;
-  /* Gold border for the "pop" */
+  
   border-radius: 50%;
-  /* Makes it a perfect circle */
 
   color: #fbbf24;
-  /* Match the border color */
+  
   font-weight: 900;
   font-size: 1.2rem;
   margin-right: 15px;
 }
 
-/* '.optionText {
-  color: white;
-  font-size: 1.1rem;
-  text-align: left;
-}' */
-
-.optionLetter {
-  font-size: 1.1rem;
-  /* Bigger than the answer text */
-  font-weight: 900;
-  /* Extra bold */
-  color: #fbe924;
-  /* A nice "Gold/Amber" or your primary brand color */
-  margin-right: 12px;
-  /* Space between "A" and "Yellow" */
-  font-family: 'serif';
-  /* Optional: A different font for the letters looks cool */
-}
-
 .questionText {
   width: 100%;
   max-width: 430px;
-  /* margin: 0 auto; */
+  
   color: #000000;
   font-size: 1.1rem;
   font-weight: 800;
-  /* Bold makes it "pop" */
+  
   text-align: center;
-  /* Pushes the 2x2 grid down so it's not cramped */
 
-  /* Deep charcoal/black for high contrast */
   line-height: 1.2;
-  /* Very light gray/blue (Tailwind-style) */
+  
   background-color: #ffffff00;
-  /* Soft border that isn't too "loud" */
-  /* border: 3px solid #000000; */
-  /* Rounded corners for a modern look */
+
   border-radius: 12px;
-  /* Space inside the box so text doesn't touch edges */
-  /* Padding only the inside of the specified width */
+
   box-sizing: border-box;
-  /* padding: 10px; */
+  
   padding-top: 10px;
   padding-bottom: 20px;
   background-color: #3d3a330b;
-  /* Space between the box and the options */
 
-  /* Optional: Soft shadow to make it "float" */
   box-shadow: 0 20px 16px -1px rgba(4, 4, 4, 0.1);
 
 }
 
 .optionText {
-  /* font-size: 1.rem; */
-  /* font-weight: 700; */
-  text-align: center;
-  /* margin-bottom: 2rem; */
-  color: #1b1e25;
-  /* line-height: 1.1; */
-  /* border: 3px solid #751775; */
-}
 
-/* Optional: Make it even bigger on Large screens */
-/* @media (min-width: 768px) {
-  .questionText {
-    font-size: 1.3rem;
-    font-weight: 600;
-  }
-} */
+  text-align: center;
+  
+  color: #1b1e25;
+
+}
 
 .optionsContainer {
   display: grid;
-  /* Create 2 columns of equal width */
-  /* grid-template-columns: repeat(2, 1fr); */
-  /* Vertical stack of buttons */
-  grid-template-columns: 1fr;
-  /* Add space between the buttons */
-  gap: 5px;
-  /* Optional: limit width on large screens */
-  width: 100%;
-  /* max-width: 400px; */
-  margin: 0 auto;
-  /* border: 3px solid #751775; */
-}
 
-/* When the screen is wider than 480px, switch to 2x2 */
-/* @media (min-width: 480px) {
-  .optionsContainer {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-} */
+  grid-template-columns: 1fr;
+  
+  gap: 5px;
+  
+  width: 100%;
+  
+  margin: 0 auto;
+  
+}
 
 .optionDisabled {
 
@@ -204,17 +151,13 @@
   padding: 15px;
   margin: 10px 0;
   opacity: 0.3;
-  /* Makes it look faded */
+  
   cursor: not-allowed;
-  /* Changes the mouse cursor to a 'circle-slash' */
+  
   pointer-events: none;
-  /* Safety net: prevents clicks even if JS fails */
+  
   filter: grayscale(80%);
-  /* Removes the color pop */
-  /* border: 1px dashed #cbd5e0; */
-  /* Optional: change solid border to dashed */
-  /* box-shadow: none !important; */
-  /* Remove any "glow" or lift */
+
 }
 
 .optionBtn {
@@ -227,8 +170,7 @@
   background-color: rgb(255, 255, 255);
   cursor: pointer;
   transition: all 0.2s ease;
-  /* Smooth color change */
-  /* font-size: 1rem; */
+
 }
 
 .optionIncorrectBtn {
@@ -241,7 +183,7 @@
   background-color: rgb(167, 7, 7);
   cursor: pointer;
   transition: all 0.2s ease;
-  /* Smooth color change */
+  
   font-size: 1rem;
 }
 
@@ -255,7 +197,7 @@
   background-color: rgb(15, 223, 77);
   cursor: pointer;
   transition: all 0.2s ease;
-  /* Smooth color change */
+  
   font-size: 1rem;
 }
 
@@ -269,7 +211,7 @@
   background-color: #ca7321;
   cursor: pointer;
   transition: all 0.2s ease;
-  /* Smooth color change */
+  
   font-size: 1rem;
 }
 
@@ -278,7 +220,6 @@
   background-color: #ca7321;
 }
 
-/* This class is added by React when isSelected is true */
 .optionBtn.selected {
   background-color: #ca7321;
   color: white;
@@ -288,23 +229,21 @@
 
 .submitBtn:active {
   transform: scale(0.98);
-  /* Slight shrink when pressed */
+  
   filter: brightness(0.9);
 }
 
 .controlBar {
   position: fixed;
   bottom: 0;
-  left: 0;         /* Ensure it starts at the very left */
+  left: 0;         
   width: 100%;
-  max-width: 430px; /* Same as the appWrapper */
+  max-width: 430px; 
 
-  /* Needs these two settings to make the controlBar at the centre because with 'position: fixed', it breaks the flow
-  ie width: 100% will ginore the parent and sketch the full width of the browser */
   left: 50%;
   transform: translateX(-50%);
 
-  box-sizing: border-box; /* CRITICAL: Padding stays inside the 100% */
+  box-sizing: border-box; 
   padding: 0 20px;
   
   display: flex;
@@ -312,17 +251,14 @@
   justify-content: space-between;
   
   height: 70px;
-  /* background: rgba(255, 255, 255, 0.1); */
-  /* backdrop-filter: blur(10px); */
+
 }
 
-/* These two share the side space equally */
 .navSpacer, 
 .navRight {
   flex: 1;
 }
 
-/* Ensures the Next button stays on the far right of its container */
 .navRight {
   display: flex;
   justify-content: flex-end;
@@ -330,7 +266,7 @@
 
 .nextBtn {
   padding: 8px 16px;
-  /* border-radius: 2px; */
+  
   background-color: #706c6a3b;
   color: white;
   border: none;
@@ -348,9 +284,9 @@
 }
 
 .powerUpBtn:hover::after {
-  content: attr(data-tooltip); /* Pulls text from the attribute */
+  content: attr(data-tooltip); 
   position: absolute;
-  bottom: 120%; /* Position above the button */
+  bottom: 120%; 
   left: 50%;
   transform: translateX(-50%);
   background: #333;
@@ -360,6 +296,6 @@
   font-size: 0.75rem;
   white-space: nowrap;
   z-index: 100;
-  pointer-events: none; /* Prevents tooltip from blocking clicks */
+  pointer-events: none; 
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
