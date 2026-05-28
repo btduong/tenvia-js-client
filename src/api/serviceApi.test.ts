@@ -192,3 +192,33 @@ describe('serviceApi swap question', () => {
         expect(question?.questionText).toBe('question_text');
     });
 });
+
+describe('serviceApi validateSelectedAnswer', () => {
+
+    it('can receive valid response', async () => {
+
+        const mockAnswerResponse = {
+            correctLetter: "A",
+            newBalance: 8,
+            isGameOver: false,
+            summary: { score: 1, correctAnswerCount: 1, incorrectAnswerCount: 2, skipQuestionCount: 3 },
+            isCorrect: false,
+            currentQuestionIndex: 0,
+            grantedItem: 'HAMMER',
+            updatedInventory: { 'HAMMER': 1 }
+        }
+
+        const mockFetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => mockAnswerResponse,
+            headers: new Headers({
+                'content-type': 'application/json',
+            })
+        });
+        vi.stubGlobal('fetch', mockFetch);
+
+        const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(sessionId, 5);
+        expect(answerResponse).not.toBeNull();
+        expect(answerResponse?.correctLetter).toBe("A");
+    });
+});

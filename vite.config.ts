@@ -14,6 +14,11 @@ export default defineConfig({
     setupFiles: './src/test/setup.ts',
     reporters: ['default', 'html'],
     outputFile: './src/test/report/index.html',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      reportsDirectory: './test/coverage'
+    },
     server: {
       deps: {
         inline: [/msw/], // neeeds to enable global fetch
