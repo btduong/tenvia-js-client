@@ -6,8 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import ShopPage from './pages/ShopPage';
-
-const typedUsername = "player1";
+import { serviceApi } from './api/serviceApi';
 
 const mockInventory = { 'HAMMER': 5, 'FIFTY_FIFTY': 1, 'SWAP_QUESTION': 1 };
 
@@ -19,7 +18,7 @@ const validQuestion = {
     expiresInSecond: 15
 }
 
-const validSession = {};
+const validSession = { id: 'session123', duration: 15 };
 
 const restHandlers = [
     http.post('*/users/login', ({ request }) => {
@@ -28,7 +27,7 @@ const restHandlers = [
         return HttpResponse.json(validUser);
     }),
     http.post('*/start', () => {
-        return HttpResponse.json(validQuestion);
+        return HttpResponse.json(validSession);
     }),
     http.get('*/questions/next', ({ request }) => {
         const url = new URL(request.url);
@@ -37,6 +36,18 @@ const restHandlers = [
 ]
 
 const server = setupServer(...restHandlers);
+
+vi.mock('./components/QuestionTimer/QuestionTimer', () => {
+    return {
+        default: ({ onComplete }: any) => {
+            return (
+                <div data-testid="mock-timer">
+                    <button onClick={onComplete}>Force Timeout</button>
+                </div>
+            )
+        }
+    }
+});
 
 describe('App Login', () => {
 
@@ -87,7 +98,6 @@ describe('App Login', () => {
         const loginButton = screen.getByRole('button', { name: /Play/ });
         await userEvent.click(loginButton);
 
-
         // Verify a new game session is created and new game button is there
         // for player to start playing
         await waitFor(() => {
@@ -128,6 +138,63 @@ describe('App Login', () => {
             expect(audioSpy).toHaveBeenCalled();
             expect(screen.getByText(/Question:/i)).toBeInTheDocument();
         });
+    });
+
+    it('can handle question timeout correctly', async () => {
+        const audioSpy = vi.spyOn(window.HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
+
+        const validateSpy = vi.spyOn(serviceApi, 'validateSelectedAnswer');
+
+        server.use(
+            http.post('*/sessions/*/answer', () => {
+                return HttpResponse.json({
+                    correctLetter: "A",
+                    newBalance: 8,
+                    isGameOver: false,
+                    summary: { score: 1, correctAnswerCount: 1, incorrectAnswerCount: 2, skipQuestionCount: 3 },
+                    isCorrect: false,
+                    currentQuestionIndex: 0,
+                    grantedItem: 'HAMMER',
+                    updatedInventory: { 'HAMMER': 1, 'FIFTY_FIFTY': 0, 'SWAP_QUESTION': 0 }
+                });
+            })
+        );
+
+        render(
+            <MemoryRouter initialEntries={['/']}>
+                <App />
+            </MemoryRouter>
+        );
+
+        // Type in username
+        const input = screen.getByPlaceholderText(/Name/);
+        await userEvent.type(input, 'player1');
+
+        // Click the player button
+        const loginButton = screen.getByRole('button', { name: /Play/ });
+        await userEvent.click(loginButton);
+
+        await waitFor(() => {
+            expect(screen.getByText(/New Game/i)).toBeInTheDocument();
+        });
+
+        const newGameButton = screen.getByRole('button', { name: /New Game/ });
+        await userEvent.click(newGameButton);
+
+        await waitFor(() => {
+            expect(screen.getByText(/Question:/i)).toBeInTheDocument();
+        });
+
+        expect(audioSpy).toHaveBeenCalled();
+
+        // Trigger timeout manually
+        const timeoutButton = screen.getByRole('button', { name: /Force Timeout/ });
+        await userEvent.click(timeoutButton);
+
+        await waitFor(() => {
+            expect(validateSpy).toHaveBeenCalledWith('session123', null);
+        });
+
     });
 
 });

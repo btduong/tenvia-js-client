@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styles from './QuizCard.module.css';
 
 import { serviceApi } from '../../api/serviceApi';
