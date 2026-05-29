@@ -5,7 +5,12 @@ import styles from './QuizCard.module.css';
 import { serviceApi } from '@/api/serviceApi';
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
 import type { AnswerResponse, PowerUpType, QuestionOption, QuestionPenaltyType } from '@/types';
-import { playClickSound, playCorrectAnswerSound, playIncorrectAnswerSound, playQuestionStartSound } from '@/utils/sounds';
+import {
+  playClickSound,
+  playCorrectAnswerSound,
+  playIncorrectAnswerSound,
+  playQuestionStartSound,
+} from '@/utils/sounds';
 import HomeButton from '@/components/ui/HomeButton';
 
 import hammerIcon from '@/assets/icons/suit_diamonds.png';
@@ -20,15 +25,24 @@ const POWER_UP_TYPE_ICON_MAP: Record<PowerUpType, string> = {
   SWAP_QUESTION: hammerIcon,
 };
 
-interface QuizCardProps {
-}
+interface QuizCardProps {}
 
 /**
  * Reander the quiz which includes question text and options for answers
  */
 const QuizCard: React.FC<QuizCardProps> = () => {
-
-  const { gameStatus, currentQuestion, sessionId, inventory, handleUsePoweUp, updateBalance, onAnswerSent, handleAnswerResponse, triggerGlobalError, handleAbandonSession } = useGameContext();
+  const {
+    gameStatus,
+    currentQuestion,
+    sessionId,
+    inventory,
+    handleUsePoweUp,
+    updateBalance,
+    onAnswerSent,
+    handleAnswerResponse,
+    triggerGlobalError,
+    handleAbandonSession,
+  } = useGameContext();
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
   const [canUsePowerUp, setCanUsePowerUp] = useState<boolean>(true);
@@ -36,7 +50,8 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   const handleSpaceKeyPressed = () => {
     if (answerResponse) {
       handleAnswerResponse(answerResponse);
-    } else if (selectedOptionId > 0 && gameStatus !== GameStatus.VALIDATING_ANSWER) { // all answer option ids are positive
+    } else if (selectedOptionId > 0 && gameStatus !== GameStatus.VALIDATING_ANSWER) {
+      // all answer option ids are positive
       handleVerify(selectedOptionId);
     }
   };
@@ -45,13 +60,12 @@ const QuizCard: React.FC<QuizCardProps> = () => {
 
   /**
    * Activate a power-up item.
-   * 
+   *
    * @param type - the power up type ie hammer or 50-50
    */
   const handlePowerUpClick = async (type: PowerUpType) => {
     const usePowerUpResponse = await handleUsePoweUp(type);
-    if (usePowerUpResponse)
-      setCanUsePowerUp(usePowerUpResponse.effectResult.canUsePowerUps);
+    if (usePowerUpResponse) setCanUsePowerUp(usePowerUpResponse.effectResult.canUsePowerUps);
   };
 
   /**
@@ -62,11 +76,14 @@ const QuizCard: React.FC<QuizCardProps> = () => {
     // Stop the count down sound as soon as the answer is submitted.
     onAnswerSent();
     if (!sessionId) {
-      triggerGlobalError("Cannot verify answer because sessionId is not valid");
+      triggerGlobalError('Cannot verify answer because sessionId is not valid');
       return;
     }
 
-    const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(sessionId, optionId);
+    const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(
+      sessionId,
+      optionId
+    );
     if (answerResponse) {
       if (answerResponse.isCorrect) {
         playCorrectAnswerSound();
@@ -92,10 +109,13 @@ const QuizCard: React.FC<QuizCardProps> = () => {
     if (!option.isAvailable) {
       return styles.optionDisabled;
     }
-    if (!answerResponse) { // selected an answer option but hasn't submitted yet
+    if (!answerResponse) {
+      // selected an answer option but hasn't submitted yet
       return selectedOptionId === option.id ? styles.optionSelected : styles.optionBtn;
     }
-    if (option.letter === answerResponse.correctLetter) // selected and submitted answer option is the correct one
+    if (
+      option.letter === answerResponse.correctLetter
+    ) // selected and submitted answer option is the correct one
     {
       return styles.optionCorrectBtn;
     }
@@ -103,7 +123,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       return styles.optionIncorrectBtn;
     }
     return styles.optionBtn;
-  }
+  };
 
   const handleOptionSelect = (optionId: number) => {
     setSelectedOptionId(optionId);
@@ -134,51 +154,92 @@ const QuizCard: React.FC<QuizCardProps> = () => {
 
     handleAbandonSession();
     return true;
-  }
+  };
 
   // Guard check to stop TS strict null check.
   if (!currentQuestion || !sessionId) return null;
 
-  const activePowerUps = (Object.keys(inventory).length === 0) ? [] :  (Object.entries(inventory) as [PowerUpType, number][]).filter(([_, count]) => count > 0);
+  const activePowerUps =
+    Object.keys(inventory).length === 0
+      ? []
+      : (Object.entries(inventory) as [PowerUpType, number][]).filter(([_, count]) => count > 0);
   const hasPowerUps = activePowerUps.length > 0;
 
   return (
     <div className={styles.mainQuestionContainer}>
       {/* 1. Question Text*/}
-      <QuestionHeader questionText={currentQuestion.questionText} potentialReward={currentQuestion.potentialReward} potentialPenalty={currentQuestion.potentialPenalty} />
+      <QuestionHeader
+        questionText={currentQuestion.questionText}
+        potentialReward={currentQuestion.potentialReward}
+        potentialPenalty={currentQuestion.potentialPenalty}
+      />
 
       {/* 2. Options List */}
-      <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} isVerifying={gameStatus === GameStatus.VALIDATING_ANSWER} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
+      <AnswerOptionList
+        options={currentQuestion.options}
+        answerResponse={answerResponse}
+        isVerifying={gameStatus === GameStatus.VALIDATING_ANSWER}
+        handleOptionSelect={handleOptionSelect}
+        getOptionStyle={getOptionStyle}
+      />
       {/* 3. PowerUpItems Section */}
-      <PowerUpItemBar answerResponse={answerResponse} hasPowerUps={hasPowerUps} activePowerUps={activePowerUps} handlePowerUpActivate={handlePowerUpActivate} isDisabled={!canUsePowerUp} />
+      <PowerUpItemBar
+        answerResponse={answerResponse}
+        hasPowerUps={hasPowerUps}
+        activePowerUps={activePowerUps}
+        handlePowerUpActivate={handlePowerUpActivate}
+        isDisabled={!canUsePowerUp}
+      />
       {/* 4. Area for nav buttons ie home, next */}
-      <ControlBar answerResponse={answerResponse} handleNextQuestion={handleNextQuestion} handleAbandonSession={onAbandonSession} />
+      <ControlBar
+        answerResponse={answerResponse}
+        handleNextQuestion={handleNextQuestion}
+        handleAbandonSession={onAbandonSession}
+      />
     </div>
   );
 };
 
-const QuestionHeader = ({ questionText, potentialReward, potentialPenalty }: { questionText: string, potentialReward: PowerUpType | null, potentialPenalty: QuestionPenaltyType | null }) => {
-
+const QuestionHeader = ({
+  questionText,
+  potentialReward,
+  potentialPenalty,
+}: {
+  questionText: string;
+  potentialReward: PowerUpType | null;
+  potentialPenalty: QuestionPenaltyType | null;
+}) => {
   return (
     <div className={styles.questionWrapper}>
       <div className={styles.questionText}>{questionText}</div>
 
-      {potentialReward && <div className={styles.stakeBar}>
-        {<span className={styles.reward}> {potentialReward}</span>}
-      </div>}
+      {potentialReward && (
+        <div className={styles.stakeBar}>
+          {<span className={styles.reward}> {potentialReward}</span>}
+        </div>
+      )}
 
-      {potentialPenalty && <div className={styles.stakeBar}>
-        {<span className={styles.penalty}> {potentialPenalty}</span>}
-      </div>}
+      {potentialPenalty && (
+        <div className={styles.stakeBar}>
+          {<span className={styles.penalty}> {potentialPenalty}</span>}
+        </div>
+      )}
     </div>
   );
-
 };
 
 /**
  * Component at the bottm of the screen showing buttons like home or next button.
  */
-const ControlBar = ({ answerResponse, handleNextQuestion, handleAbandonSession }: { answerResponse: AnswerResponse | null, handleNextQuestion: () => void, handleAbandonSession: () => Promise<boolean> | boolean }) => {
+const ControlBar = ({
+  answerResponse,
+  handleNextQuestion,
+  handleAbandonSession,
+}: {
+  answerResponse: AnswerResponse | null;
+  handleNextQuestion: () => void;
+  handleAbandonSession: () => Promise<boolean> | boolean;
+}) => {
   return (
     <nav className={styles.controlBar}>
       <hr />
@@ -190,7 +251,6 @@ const ControlBar = ({ answerResponse, handleNextQuestion, handleAbandonSession }
       </div>
       {/* rigth space */}
       <div className={styles.navRight}>
-
         <button
           className={styles.nextBtn}
           disabled={!answerResponse}
@@ -198,7 +258,10 @@ const ControlBar = ({ answerResponse, handleNextQuestion, handleAbandonSession }
             if (answerResponse) {
               handleNextQuestion();
             }
-          }}>Next</button>
+          }}
+        >
+          Next
+        </button>
       </div>
     </nav>
   );
@@ -212,13 +275,13 @@ const AnswerOptionList = ({
   answerResponse,
   isVerifying,
   handleOptionSelect,
-  getOptionStyle
+  getOptionStyle,
 }: {
-  options: QuestionOption[],
-  answerResponse: AnswerResponse | null,
-  isVerifying: boolean,
-  handleOptionSelect: (id: number) => void,
-  getOptionStyle: (option: QuestionOption) => string | undefined
+  options: QuestionOption[];
+  answerResponse: AnswerResponse | null;
+  isVerifying: boolean;
+  handleOptionSelect: (id: number) => void;
+  getOptionStyle: (option: QuestionOption) => string | undefined;
 }) => {
   return (
     <div className={styles.optionsContainer}>
@@ -226,9 +289,13 @@ const AnswerOptionList = ({
         const optionButtonStyle = getOptionStyle(option);
         return (
           <div className={styles.container} key={option.id}>
-            <button className={`${optionButtonStyle}`}
+            <button
+              className={`${optionButtonStyle}`}
               disabled={answerResponse !== null || !option.isAvailable || isVerifying}
-              onClick={() => { handleOptionSelect(option.id); }}>
+              onClick={() => {
+                handleOptionSelect(option.id);
+              }}
+            >
               {/* <span className={styles.optionCircle}>{option.letter}</span> */}
               <span className={styles.optionText}>{option.content}</span>
             </button>
@@ -242,36 +309,44 @@ const AnswerOptionList = ({
 /**
  * The component to display power-up items owned by the players, if any.
  */
-const PowerUpItemBar = ({ answerResponse,
+const PowerUpItemBar = ({
+  answerResponse,
   hasPowerUps,
   activePowerUps,
   handlePowerUpActivate,
-  isDisabled }:
-  {
-    answerResponse: AnswerResponse | null,
-    hasPowerUps: boolean,
-    activePowerUps: [PowerUpType, number][],
-    handlePowerUpActivate: (type: PowerUpType) => void,
-    isDisabled: boolean
-  }) => {
+  isDisabled,
+}: {
+  answerResponse: AnswerResponse | null;
+  hasPowerUps: boolean;
+  activePowerUps: [PowerUpType, number][];
+  handlePowerUpActivate: (type: PowerUpType) => void;
+  isDisabled: boolean;
+}) => {
   if (answerResponse || !hasPowerUps || isDisabled) return null;
 
   return (
     <div style={{ marginTop: '10px' }}>
       <>
-        {<div className="inventory-bar">
-          <h4>Your Power-Ups:</h4>
-          {activePowerUps.map(([type, _]) => (
-            <button
-              key={type}
-              className={styles.powerUpBtn}
-              data-tooltip={type}
-              onClick={() => { handlePowerUpActivate(type); }}
-            >
-              <img src={POWER_UP_TYPE_ICON_MAP[type]} className={styles.powerUpBtnIcon} alt={type} />
-            </button>
-          ))}
-        </div>
+        {
+          <div className="inventory-bar">
+            <h4>Your Power-Ups:</h4>
+            {activePowerUps.map(([type, _]) => (
+              <button
+                key={type}
+                className={styles.powerUpBtn}
+                data-tooltip={type}
+                onClick={() => {
+                  handlePowerUpActivate(type);
+                }}
+              >
+                <img
+                  src={POWER_UP_TYPE_ICON_MAP[type]}
+                  className={styles.powerUpBtnIcon}
+                  alt={type}
+                />
+              </button>
+            ))}
+          </div>
         }
       </>
     </div>

@@ -22,7 +22,9 @@ const ShopModal: React.FC<ShopModalProps> = ({ user, onPurchase }) => {
       <div className={styles.shopModal}>
         <div className={styles.shopHeader}>
           <h2 className={styles.title}>🛒 Power-Up Store</h2>
-          <button className={styles.closeBtn} onClick={handleClose}>&times;</button>
+          <button className={styles.closeBtn} onClick={handleClose}>
+            &times;
+          </button>
         </div>
 
         <div className={styles.shopBalance}>
@@ -45,11 +47,11 @@ const ShopModal: React.FC<ShopModalProps> = ({ user, onPurchase }) => {
             onBuy={() => onPurchase('FIFTY_FIFTY')}
           />
           <ShopItem
-          name="Swap Question"
-          price={1}
-          count={user.inventory['SWAP_QUESTION'] || 0}
-          icon={hammerIcon}
-          onBuy={() => onPurchase('SWAP_QUESTION')}
+            name="Swap Question"
+            price={1}
+            count={user.inventory['SWAP_QUESTION'] || 0}
+            icon={hammerIcon}
+            onBuy={() => onPurchase('SWAP_QUESTION')}
           />
         </div>
       </div>

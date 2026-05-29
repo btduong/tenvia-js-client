@@ -3,12 +3,12 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  position: relative; 
+  position: relative;
 }
 
 .stakeBar {
   display: flex;
-  flex-direction: row; 
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 8px;
@@ -17,20 +17,20 @@
 
   font-weight: 800;
   font-size: 0.85rem;
-  
+
   letter-spacing: 0.5px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  
+
   z-index: 5;
 }
 
 .reward {
-  background-color: #fbbf24; 
+  background-color: #fbbf24;
   color: #000;
 }
 
 .penalty {
-  background-color: #ef4444; 
+  background-color: #ef4444;
   color: #fff;
 }
 
@@ -56,7 +56,7 @@
   width: 100%;
   border: 0;
   border-top: 1px solid #000000;
-  
+
   margin: 10px 0;
 }
 
@@ -64,35 +64,34 @@
   display: flex;
   flex-direction: column;
   color: white;
-  
+
   max-width: 600px;
   align-content: center;
   border: #000000;
   margin: 0 auto;
   padding: 10px;
   gap: 30px;
-  
 }
 
 .optionCircle {
   display: flex;
-  
+
   align-items: center;
   justify-content: center;
 
   width: 40px;
-  
+
   height: 40px;
   min-width: 40px;
 
   background-color: #4a5568;
-  
+
   border: 2px solid #fbbf24;
-  
+
   border-radius: 50%;
 
   color: #fbbf24;
-  
+
   font-weight: 900;
   font-size: 1.2rem;
   margin-right: 15px;
@@ -101,63 +100,57 @@
 .questionText {
   width: 100%;
   max-width: 430px;
-  
+
   color: #000000;
   font-size: 1.1rem;
   font-weight: 800;
-  
+
   text-align: center;
 
   line-height: 1.2;
-  
+
   background-color: #ffffff00;
 
   border-radius: 12px;
 
   box-sizing: border-box;
-  
+
   padding-top: 10px;
   padding-bottom: 20px;
   background-color: #3d3a330b;
 
   box-shadow: 0 20px 16px -1px rgba(4, 4, 4, 0.1);
-
 }
 
 .optionText {
-
   text-align: center;
-  
-  color: #1b1e25;
 
+  color: #1b1e25;
 }
 
 .optionsContainer {
   display: grid;
 
   grid-template-columns: 1fr;
-  
+
   gap: 5px;
-  
+
   width: 100%;
-  
+
   margin: 0 auto;
-  
 }
 
 .optionDisabled {
-
   width: 100%;
   padding: 15px;
   margin: 10px 0;
   opacity: 0.3;
-  
-  cursor: not-allowed;
-  
-  pointer-events: none;
-  
-  filter: grayscale(80%);
 
+  cursor: not-allowed;
+
+  pointer-events: none;
+
+  filter: grayscale(80%);
 }
 
 .optionBtn {
@@ -170,7 +163,6 @@
   background-color: rgb(255, 255, 255);
   cursor: pointer;
   transition: all 0.2s ease;
-
 }
 
 .optionIncorrectBtn {
@@ -183,7 +175,7 @@
   background-color: rgb(167, 7, 7);
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   font-size: 1rem;
 }
 
@@ -197,7 +189,7 @@
   background-color: rgb(15, 223, 77);
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   font-size: 1rem;
 }
 
@@ -211,7 +203,7 @@
   background-color: #ca7321;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   font-size: 1rem;
 }
 
@@ -229,32 +221,31 @@
 
 .submitBtn:active {
   transform: scale(0.98);
-  
+
   filter: brightness(0.9);
 }
 
 .controlBar {
   position: fixed;
   bottom: 0;
-  left: 0;         
+  left: 0;
   width: 100%;
-  max-width: 430px; 
+  max-width: 430px;
 
   left: 50%;
   transform: translateX(-50%);
 
-  box-sizing: border-box; 
+  box-sizing: border-box;
   padding: 0 20px;
-  
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
-  height: 70px;
 
+  height: 70px;
 }
 
-.navSpacer, 
+.navSpacer,
 .navRight {
   flex: 1;
 }
@@ -266,7 +257,7 @@
 
 .nextBtn {
   padding: 8px 16px;
-  
+
   background-color: #706c6a3b;
   color: white;
   border: none;
@@ -284,9 +275,9 @@
 }
 
 .powerUpBtn:hover::after {
-  content: attr(data-tooltip); 
+  content: attr(data-tooltip);
   position: absolute;
-  bottom: 120%; 
+  bottom: 120%;
   left: 50%;
   transform: translateX(-50%);
   background: #333;
@@ -296,6 +287,6 @@
   font-size: 0.75rem;
   white-space: nowrap;
   z-index: 100;
-  pointer-events: none; 
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  pointer-events: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }

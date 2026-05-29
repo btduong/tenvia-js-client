@@ -1,73 +1,63 @@
-import { renderHook } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { useTickingSound } from "./useTickingSound";
+import { renderHook } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useTickingSound } from './useTickingSound';
 
 describe('useTickingSound hook', () => {
+  let audioSpy: any;
+  let mockPause = vi.fn();
+  let mockPlay = vi.fn();
 
-    let audioSpy: any;
-    let mockPause = vi.fn();
-    let mockPlay = vi.fn();
+  beforeEach(() => {
+    mockPlay = vi.fn().mockResolvedValue(undefined);
+    mockPause = vi.fn();
 
-    beforeEach(() => {
-        mockPlay = vi.fn().mockResolvedValue(undefined);
-        mockPause = vi.fn();
+    // Mock the audio functionlities
+    window.HTMLMediaElement.prototype.play = mockPlay;
+    window.HTMLMediaElement.prototype.pause = mockPause;
 
-        // Mock the audio functionlities
-        window.HTMLMediaElement.prototype.play = mockPlay;
-        window.HTMLMediaElement.prototype.pause = mockPause;
+    audioSpy = vi.spyOn(window, 'Audio');
+  });
 
-        audioSpy = vi.spyOn(window, 'Audio');
-    });
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
 
-    afterEach(() => {
-        vi.resetAllMocks();
-    });
+  it('can create Audio initially', () => {
+    const { result } = renderHook(() => useTickingSound(false));
 
-    it('can create Audio initially', () => {
-        const { result } = renderHook(() => useTickingSound(false));
+    expect(result.current).not.toBeNull();
+    expect(audioSpy).toHaveBeenCalled();
 
-        expect(result.current).not.toBeNull();
-        expect(audioSpy).toHaveBeenCalled();
+    expect(mockPause).toHaveBeenCalled();
+    expect(mockPlay).not.toHaveBeenCalled();
+  });
 
-        expect(mockPause).toHaveBeenCalled();
-        expect(mockPlay).not.toHaveBeenCalled();
+  it('should play Audio when isPlaying is true', () => {
+    const { rerender } = renderHook((playing) => useTickingSound(playing), { initialProps: false });
 
-    });
+    expect(mockPause).toHaveBeenCalled();
+    expect(mockPlay).not.toHaveBeenCalled();
 
-    it('should play Audio when isPlaying is true', () => {
+    mockPause.mockClear();
+    mockPlay.mockClear();
 
-        const { rerender } = renderHook(
-            (playing) => useTickingSound(playing),
-            { initialProps: false }
-        );
+    rerender(true);
 
-        expect(mockPause).toHaveBeenCalled();
-        expect(mockPlay).not.toHaveBeenCalled();
+    expect(mockPause).not.toHaveBeenCalled();
+    expect(mockPlay).toHaveBeenCalled();
+  });
 
-        mockPause.mockClear();
-        mockPlay.mockClear();
+  it('should pause when isPlaying changes true -> false', () => {
+    const { rerender } = renderHook((playing) => useTickingSound(playing), { initialProps: true });
 
-        rerender(true);
+    expect(mockPause).not.toHaveBeenCalled();
+    expect(mockPlay).toHaveBeenCalled();
 
-        expect(mockPause).not.toHaveBeenCalled();
-        expect(mockPlay).toHaveBeenCalled();
-    });
+    mockPlay.mockClear();
 
-    it('should pause when isPlaying changes true -> false', () => {
-        const { rerender } = renderHook(
-            (playing) => useTickingSound(playing),
-            { initialProps: true }
-        );
+    rerender(false);
 
-        expect(mockPause).not.toHaveBeenCalled();
-        expect(mockPlay).toHaveBeenCalled();
-
-        mockPlay.mockClear();
-
-        rerender(false);
-
-        expect(mockPause).toHaveBeenCalled();
-        expect(mockPlay).not.toHaveBeenCalled();
-    });
-
+    expect(mockPause).toHaveBeenCalled();
+    expect(mockPlay).not.toHaveBeenCalled();
+  });
 });

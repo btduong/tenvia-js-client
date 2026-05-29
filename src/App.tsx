@@ -14,38 +14,53 @@ import ShopPage from './pages/ShopPage';
 import SummaryPage from './pages/SummaryPage';
 
 const App: React.FC = () => {
-
   const navigate = useNavigate();
   const { user, loading, login, purchaseItem, updateBalance, updateInventory } = useUser();
 
-  const { gameStatus, setGameStatus,
-    currentQuestion, sessionData, answerSent, questionLimit, globalErrorMessage,
-    startNewGame, onAnswerSent, handleAnswerResponse, onQuestionTimedout,
-    handleUsePowerUp, triggerGlobalError, handleClearError, handleGameOver } = useGameSession(user, updateInventory, navigate);
-
-  const contextValue = useMemo(() => ({
-    gameStatus: gameStatus,
-    sessionId: sessionData?.id || null,
-    inventory: user?.inventory || ({} as any),
-    currentQuestion: currentQuestion,
-    handleUsePoweUp: handleUsePowerUp,
-    updateBalance: updateBalance,
-    onAnswerSent: onAnswerSent,
-    handleAnswerResponse: handleAnswerResponse,
-    triggerGlobalError: triggerGlobalError,
-    handleAbandonSession: handleGameOver,
-  }), [
+  const {
     gameStatus,
-    sessionData?.id,
-    user?.inventory,
+    setGameStatus,
     currentQuestion,
-    handleUsePowerUp,
-    updateBalance,
+    sessionData,
+    answerSent,
+    questionLimit,
+    globalErrorMessage,
+    startNewGame,
     onAnswerSent,
     handleAnswerResponse,
+    onQuestionTimedout,
+    handleUsePowerUp,
     triggerGlobalError,
-    handleGameOver
-  ]);
+    handleClearError,
+    handleGameOver,
+  } = useGameSession(user, updateInventory, navigate);
+
+  const contextValue = useMemo(
+    () => ({
+      gameStatus: gameStatus,
+      sessionId: sessionData?.id || null,
+      inventory: user?.inventory || ({} as any),
+      currentQuestion: currentQuestion,
+      handleUsePoweUp: handleUsePowerUp,
+      updateBalance: updateBalance,
+      onAnswerSent: onAnswerSent,
+      handleAnswerResponse: handleAnswerResponse,
+      triggerGlobalError: triggerGlobalError,
+      handleAbandonSession: handleGameOver,
+    }),
+    [
+      gameStatus,
+      sessionData?.id,
+      user?.inventory,
+      currentQuestion,
+      handleUsePowerUp,
+      updateBalance,
+      onAnswerSent,
+      handleAnswerResponse,
+      triggerGlobalError,
+      handleGameOver,
+    ]
+  );
   /**
    * Logging in the game with a username.
    * @param name - name to display in the game
@@ -61,16 +76,15 @@ const App: React.FC = () => {
     }
   };
 
-
   /**
    * Displaying a message on UI in case of an event failure ie fail to get a question from the server.
    * @returns a message
    */
   const UIMessage = (): string | null => {
-    if (gameStatus == GameStatus.LOGGING_IN) return "Logging in ....";
-    if (gameStatus == GameStatus.UNAUTHENTICATED) return "Login failed ....";
-    if (gameStatus == GameStatus.FETCHING_QUESTION) return "Fetching question...";
-    if (gameStatus == GameStatus.ERROR) return globalErrorMessage || 'An unknown error occurred.'
+    if (gameStatus == GameStatus.LOGGING_IN) return 'Logging in ....';
+    if (gameStatus == GameStatus.UNAUTHENTICATED) return 'Login failed ....';
+    if (gameStatus == GameStatus.FETCHING_QUESTION) return 'Fetching question...';
+    if (gameStatus == GameStatus.ERROR) return globalErrorMessage || 'An unknown error occurred.';
     return null;
   };
 
@@ -78,39 +92,51 @@ const App: React.FC = () => {
 
   return (
     <div className={appStyles.mobileAppWrapper}>
-      {statusMessageUI && (<StatusMessage status={gameStatus} message={statusMessageUI} onClose={handleClearError} />)}
+      {statusMessageUI && (
+        <StatusMessage status={gameStatus} message={statusMessageUI} onClose={handleClearError} />
+      )}
       <Routes>
-        <Route path="/" element={
-          !user ?
-            (
+        <Route
+          path="/"
+          element={
+            !user ? (
               <LoginPage handleLogin={handleLogin} />
             ) : (
               <HomePage onStartNewGame={startNewGame} />
             )
-        } />
+          }
+        />
 
         {user && (
           <>
-            <Route path="/shop" element={
-              <ShopPage user={user} onPurchase={purchaseItem} />
-            } />
+            <Route path="/shop" element={<ShopPage user={user} onPurchase={purchaseItem} />} />
 
-            <Route path="/quiz" element={
-              currentQuestion && sessionData?.id ?
-                (<GameProvider value={contextValue}>
-                  <QuizCardPage answerSent={answerSent} sessionData={sessionData} currentQuestion={currentQuestion} currentIndex={currentQuestion.index} questionLimit={questionLimit} onQuestionTimedout={onQuestionTimedout} />
-                </GameProvider>)
-                : <div />
-            } />
+            <Route
+              path="/quiz"
+              element={
+                currentQuestion && sessionData?.id ? (
+                  <GameProvider value={contextValue}>
+                    <QuizCardPage
+                      answerSent={answerSent}
+                      sessionData={sessionData}
+                      currentQuestion={currentQuestion}
+                      currentIndex={currentQuestion.index}
+                      questionLimit={questionLimit}
+                      onQuestionTimedout={onQuestionTimedout}
+                    />
+                  </GameProvider>
+                ) : (
+                  <div />
+                )
+              }
+            />
 
             <Route path="/summary" element={<SummaryPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
-
           </>
         )}
-
       </Routes>
     </div>
   );
-}
-export default App
+};
+export default App;

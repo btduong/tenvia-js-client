@@ -8,18 +8,20 @@ interface HomeProps {
 }
 
 const HomePage: React.FC<HomeProps> = ({ onStartNewGame }) => {
-  
   return (
     <div className={styles.homeContainer}>
       <h1>Quiz Game</h1>
-      <button onClick={() => {
-        onStartNewGame();
-        playQuestionStartSound();
-      }}>New Game</button>
+      <button
+        onClick={() => {
+          onStartNewGame();
+          playQuestionStartSound();
+        }}
+      >
+        New Game
+      </button>
 
-      <NavButton to='/leaderboard' label='Leaderboard' ariaLabel='To Leaderboard' />
-      <NavButton to='/shop' label='Shop' ariaLabel='To Shop' />
-
+      <NavButton to="/leaderboard" label="Leaderboard" ariaLabel="To Leaderboard" />
+      <NavButton to="/shop" label="Shop" ariaLabel="To Shop" />
     </div>
   );
 };
