@@ -8,12 +8,19 @@ interface LoginPageProps {
 export const LoginPage: React.FC<LoginPageProps> = ({ handleLogin }) => {
     const [userName, setTypedUsername] = useState<string>("");
 
+    const onSubmit = (e: React.SubmitEvent) => {
+        e.preventDefault();
+        if (userName.trim()) {
+            handleLogin(userName);
+        }
+    };
+
     return (
-        <div className={styles.loginContainer}>
+        <form className={styles.loginContainer} onSubmit={onSubmit}>
             <h2>Enter a name to play</h2>
-            <input type='text' placeholder='Name' onChange={(e) => setTypedUsername(e.target.value)} />
-            <button onClick={() => handleLogin(userName)} disabled={!userName.trim()}>Play</button>
-        </div>
+            <input type='text' placeholder='Name' value={userName} onChange={(e => setTypedUsername(e.target.value))} />
+            <button type="submit" disabled={!userName.trim()}>Play</button>
+        </form>
 
     );
 }
