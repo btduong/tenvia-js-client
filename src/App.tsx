@@ -1,3 +1,4 @@
+import { GameStatus } from '@/types';
 import { useMemo } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import appStyles from './App.module.css';
@@ -50,13 +51,13 @@ const App: React.FC = () => {
    * @param name - name to display in the game
    */
   const handleLogin = async (name: string) => {
-    setGameStatus('LOGGING_IN');
+    setGameStatus(GameStatus.LOGGING_IN);
     const { data: user, error } = await login(name);
     if (user) {
-      setGameStatus('IDLE');
+      setGameStatus(GameStatus.IDLE);
     } else {
       triggerGlobalError(error.message);
-      setGameStatus('UNAUTHENTICATED');
+      setGameStatus(GameStatus.UNAUTHENTICATED);
     }
   };
 
@@ -66,10 +67,10 @@ const App: React.FC = () => {
    * @returns a message
    */
   const UIMessage = (): string | null => {
-    if (gameStatus == 'LOGGING_IN') return "Logging in ....";
-    if (gameStatus == 'UNAUTHENTICATED') return "Login failed ....";
-    if (gameStatus == 'FETCHING_QUESTION') return "Fetching question...";
-    if (gameStatus == 'ERROR') return globalErrorMessage || 'An unknown error occurred.'
+    if (gameStatus == GameStatus.LOGGING_IN) return "Logging in ....";
+    if (gameStatus == GameStatus.UNAUTHENTICATED) return "Login failed ....";
+    if (gameStatus == GameStatus.FETCHING_QUESTION) return "Fetching question...";
+    if (gameStatus == GameStatus.ERROR) return globalErrorMessage || 'An unknown error occurred.'
     return null;
   };
 

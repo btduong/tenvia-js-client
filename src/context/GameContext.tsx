@@ -1,12 +1,10 @@
 import { createContext, useContext } from "react";
-import type {
-    Inventory,
+import type { Inventory,
     PowerUpType,
     UsePowerUpResponse,
     AnswerResponse,
-    Question,
-    GameStatus
-} from "@/types";
+    Question } from '@/types';
+import { GameStatus } from '@/types';
 
 interface GameContextType {
     gameStatus: GameStatus;
