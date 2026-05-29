@@ -1,5 +1,10 @@
 import { useEffect, useRef } from "react";
 
+/**
+ * A custom hook that listens for a specific keyboard shortcut and executes a callback.
+ * 
+ * @param callback - The function to execute when the shortcut is triggered.
+ */
 export const useKeyboardShortcut = (callback: () => void) => {
 
     // Cache the callback
