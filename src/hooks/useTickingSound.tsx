@@ -2,6 +2,11 @@ import clockTickingSfx from '../assets/clock-ticking.mp3';
 
 import { useRef, useEffect } from 'react';
 
+/**
+ * A custom hook to manage the playback lifecycle of a ticking clock sound effect.
+ * 
+ * @param isPlaying - Boolean flag indicating whether the ticking sound should be playing.
+ */
 export const useTickingSound = (isPlaying: boolean) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
