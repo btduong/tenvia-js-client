@@ -4,7 +4,8 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import { useGameContext } from "@/context/GameContext";
-import type { GameStatus, PowerUpType } from "@/types";
+import type { PowerUpType } from '@/types';
+import { GameStatus } from '@/types';
 import QuizCard from "./QuizCard";
 import { serviceApi } from "@/api/serviceApi";
 
@@ -46,7 +47,7 @@ const inventory = {
 const mockHandleUsePowerUp = vi.fn();
 
 const defaultGameContext = {
-    gameStatus: 'PLAYING' as GameStatus,
+    gameStatus: GameStatus.PLAYING as GameStatus,
     currentQuestion: mockQuestion,
     sessionId: '123',
     inventory: inventory,
@@ -77,7 +78,7 @@ describe('QuizCard', (() => {
     });
 
     it('disables options when gameStatus is VALIDATING_ANSWER', () => {
-        vi.mocked(useGameContext).mockReturnValue({ ...defaultGameContext, gameStatus: 'VALIDATING_ANSWER' });
+        vi.mocked(useGameContext).mockReturnValue({ ...defaultGameContext, gameStatus: GameStatus.VALIDATING_ANSWER });
         render(<QuizCard />);
 
         const optionButtons = [

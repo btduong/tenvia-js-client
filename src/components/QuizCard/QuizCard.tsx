@@ -1,3 +1,4 @@
+import { GameStatus } from '@/types';
 import { useState } from 'react';
 import styles from './QuizCard.module.css';
 
@@ -35,7 +36,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   const handleSpaceKeyPressed = () => {
     if (answerResponse) {
       handleAnswerResponse(answerResponse);
-    } else if (selectedOptionId > 0 && gameStatus !== 'VALIDATING_ANSWER') { // all answer option ids are positive
+    } else if (selectedOptionId > 0 && gameStatus !== GameStatus.VALIDATING_ANSWER) { // all answer option ids are positive
       handleVerify(selectedOptionId);
     }
   };
@@ -147,7 +148,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       <QuestionHeader questionText={currentQuestion.questionText} potentialReward={currentQuestion.potentialReward} potentialPenalty={currentQuestion.potentialPenalty} />
 
       {/* 2. Options List */}
-      <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} isVerifying={gameStatus === 'VALIDATING_ANSWER'} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
+      <AnswerOptionList options={currentQuestion.options} answerResponse={answerResponse} isVerifying={gameStatus === GameStatus.VALIDATING_ANSWER} handleOptionSelect={handleOptionSelect} getOptionStyle={getOptionStyle} />
       {/* 3. PowerUpItems Section */}
       <PowerUpItemBar answerResponse={answerResponse} hasPowerUps={hasPowerUps} activePowerUps={activePowerUps} handlePowerUpActivate={handlePowerUpActivate} isDisabled={!canUsePowerUp} />
       {/* 4. Area for nav buttons ie home, next */}

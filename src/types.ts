@@ -83,17 +83,19 @@ export interface ErrorResponseDTO {
 }
 
 
-export type GameStatus = 'IDLE'
-    | 'UNAUTHENTICATED'
-    | 'LOGGING_IN'
-    | 'STARTING_SESSION'
-    | 'FETCHING_QUESTION'
-    | 'LOADING'
-    | 'PLAYING'
-    | 'VALIDATING_ANSWER'
-    | 'ERROR'
-    | 'GAME_OVER'
-    | 'SUMMARY';
+export enum GameStatus {
+    IDLE = 'IDLE',
+    UNAUTHENTICATED = 'UNAUTHENTICATED',
+    LOGGING_IN = 'LOGGING_IN',
+    STARTING_SESSION = 'STARTING_SESSION',
+    FETCHING_QUESTION = 'FETCHING_QUESTION',
+    LOADING = 'LOADING',
+    PLAYING = 'PLAYING',
+    VALIDATING_ANSWER = 'VALIDATING_ANSWER',
+    ERROR = 'ERROR',
+    GAME_OVER = 'GAME_OVER',
+    SUMMARY = 'SUMMARY'
+}
 
 
 

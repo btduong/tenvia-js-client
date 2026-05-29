@@ -1,4 +1,4 @@
-import type { GameStatus } from "@/types";
+import { GameStatus } from '@/types';
 import styles from './StatusMessage.module.css';
 
 interface StatusMessageProps {
@@ -12,9 +12,9 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({ status, message, o
     return (
         <div className={styles.overlay}>
             <div className={styles.box}>
-                {status !== 'ERROR' && <div className={styles.spinner} />}
+                {status !== GameStatus.ERROR && <div className={styles.spinner} />}
                 <p>{message}</p>
-                {status === 'ERROR' && (<button onClick={onClose}>Ok</button>)}
+                {status === GameStatus.ERROR && (<button onClick={onClose}>Ok</button>)}
             </div>
         </div>
     );

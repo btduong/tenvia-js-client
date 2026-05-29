@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { NavigateFunction } from "react-router-dom";
 import { serviceApi } from "@/api/serviceApi";
-import type { AnswerResponse, GameSession, GameStatus, Inventory, PowerUpType, Question, UsePowerUpResponse, User } from "@/types";
+import type { AnswerResponse, GameSession, Inventory, PowerUpType, Question, UsePowerUpResponse, User } from '@/types';
+import { GameStatus } from '@/types';
 import { waitFor } from "@/utils/timer";
 import { useTickingSound } from "./useTickingSound";
 
@@ -17,7 +18,7 @@ import { useTickingSound } from "./useTickingSound";
  */
 export const useGameSession = (user: User | null, updateInventory: (inventory: Inventory) => void, navigate: NavigateFunction) => {
 
-    const [gameStatus, setGameStatus] = useState<GameStatus>('IDLE');
+    const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.IDLE);
     const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
     const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
     const [sessionData, setSessionData] = useState<GameSession | null>(null);
@@ -39,7 +40,7 @@ export const useGameSession = (user: User | null, updateInventory: (inventory: I
         if (gameSession) {
             setSessionData(gameSession);
             if (gameSession?.id) {
-                setGameStatus("FETCHING_QUESTION");
+                setGameStatus(GameStatus.FETCHING_QUESTION);
                 getNextQuestion(gameSession.id);
                 navigate('/quiz');
             }
@@ -54,7 +55,7 @@ export const useGameSession = (user: User | null, updateInventory: (inventory: I
    * This also stops any looping sounds.
    */
     const onAnswerSent = () => {
-        setGameStatus('VALIDATING_ANSWER');
+        setGameStatus(GameStatus.VALIDATING_ANSWER);
         setAnswerSent(true);
         setIsTicking(false);
     };
@@ -68,7 +69,7 @@ export const useGameSession = (user: User | null, updateInventory: (inventory: I
         if (question) {
             await waitFor(500);
             setCurrentQuestion(question);
-            setGameStatus('PLAYING');
+            setGameStatus(GameStatus.PLAYING);
             setAnswerSent(false);
             setIsTicking(true);
         } else {
@@ -80,7 +81,7 @@ export const useGameSession = (user: User | null, updateInventory: (inventory: I
    * Reset the game state when the current game session is finished.
    */
     const handleGameOver = () => {
-        setGameStatus('GAME_OVER');
+        setGameStatus(GameStatus.GAME_OVER);
         setCurrentQuestion(null);
         setSessionData(null);
         setIsTicking(false);
@@ -96,7 +97,7 @@ export const useGameSession = (user: User | null, updateInventory: (inventory: I
             if (answerResponse.updatedInventory) {
                 updateInventory(answerResponse.updatedInventory);
             }
-            setGameStatus('FETCHING_QUESTION');
+            setGameStatus(GameStatus.FETCHING_QUESTION);
             getNextQuestion(sessionData.id);
         } else {
             navigate('/summary', { state: { sessionSummary: answerResponse.summary } });
@@ -129,13 +130,13 @@ export const useGameSession = (user: User | null, updateInventory: (inventory: I
             setCurrentQuestion(powerUpResponse.effectResult.questionResponse);
         }
         else {
-            setGameStatus('ERROR')
+            setGameStatus(GameStatus.ERROR)
         }
         return powerUpResponse;
     };
 
     const triggerGlobalError = (message: string) => {
-        setGameStatus('ERROR');
+        setGameStatus(GameStatus.ERROR);
         setGlobalUserMessage(message);
     };
 
@@ -144,7 +145,7 @@ export const useGameSession = (user: User | null, updateInventory: (inventory: I
      * This automtically reset the game state and move the player back to the main page.
      */
     const handleClearError = () => {
-        setGameStatus('IDLE');
+        setGameStatus(GameStatus.IDLE);
         setCurrentQuestion(null);
         setSessionData(null);
         setGlobalUserMessage('');
