@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import styles from './SummaryPage.module.css';
-import HomeButton from '../components/ui/HomeButton';
+import HomeButton from '@/components/ui/HomeButton';
 
 const SummaryPage = () => {
     const location = useLocation();

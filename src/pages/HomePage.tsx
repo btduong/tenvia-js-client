@@ -1,7 +1,7 @@
 import styles from './HomePage.module.css';
 
-import NavButton from '../components/ui/NavButton';
-import { playQuestionStartSound } from '../utils/sounds';
+import NavButton from '@/components/ui/NavButton';
+import { playQuestionStartSound } from '@/utils/sounds';
 
 interface HomeProps {
   onStartNewGame: () => {};

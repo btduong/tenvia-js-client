@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { NavigateFunction } from "react-router-dom";
-import { serviceApi } from "../api/serviceApi";
-import type { AnswerResponse, GameSession, GameStatus, Inventory, PowerUpType, Question, UsePowerUpResponse, User } from "../types";
-import { waitFor } from "../utils/timer";
+import { serviceApi } from "@/api/serviceApi";
+import type { AnswerResponse, GameSession, GameStatus, Inventory, PowerUpType, Question, UsePowerUpResponse, User } from "@/types";
+import { waitFor } from "@/utils/timer";
 import { useTickingSound } from "./useTickingSound";
 
 

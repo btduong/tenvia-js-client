@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { playClickSound } from "../../utils/sounds";
+import { playClickSound } from "@/utils/sounds";
 
 
 interface NavButtonProps {

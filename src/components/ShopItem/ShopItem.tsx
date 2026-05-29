@@ -1,4 +1,4 @@
-import { playClickSound } from '../../utils/sounds';
+import { playClickSound } from '@/utils/sounds';
 import styles from './ShopItem.module.css';
 
 interface ShopItemProps {

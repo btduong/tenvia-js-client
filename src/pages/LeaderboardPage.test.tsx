@@ -3,7 +3,7 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { MemoryRouter } from "react-router-dom";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import LeaderboardPage from "../pages/LeaderboardPage";
+import LeaderboardPage from "@/pages/LeaderboardPage";
 
 const mockData = [
     { userName: 'A', score: 1},

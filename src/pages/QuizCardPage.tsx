@@ -1,8 +1,8 @@
-import appStyles from '../App.module.css';
-import QuestionTimer from '../components/QuestionTimer/QuestionTimer';
-import QuizCard from '../components/QuizCard/QuizCard';
+import appStyles from '@/App.module.css';
+import QuestionTimer from '@/components/QuestionTimer/QuestionTimer';
+import QuizCard from '@/components/QuizCard/QuizCard';
 
-import type { AnswerResponse, GameSession, Inventory, PowerUpType, Question, UsePowerUpResponse } from "../types";
+import type { AnswerResponse, GameSession, Inventory, PowerUpType, Question, UsePowerUpResponse } from "@/types";
 
 interface QuizCardPageProps {
     currentQuestion: Question;

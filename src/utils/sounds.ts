@@ -1,7 +1,7 @@
-import clickSfx from '../assets/selectSound.mp3';
-import correctSfx from '../assets/freesound-correct.mp3';
-import questionSwooshSfx from '../assets/freesound-question-swoosh.mp3';
-import incorrectAnswerSfx from '../assets/freesound-incorrect-answer.mp3';
+import clickSfx from '@/assets/selectSound.mp3';
+import correctSfx from '@/assets/freesound-correct.mp3';
+import questionSwooshSfx from '@/assets/freesound-question-swoosh.mp3';
+import incorrectAnswerSfx from '@/assets/freesound-incorrect-answer.mp3';
 
 
 export const playClickSound = () => {

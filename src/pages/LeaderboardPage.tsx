@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import styles from './LeaderboardPage.module.css';
-import type { LeaderboardDTO } from '../types';
-import { serviceApi } from '../api/serviceApi';
-import HomeButton from '../components/ui/HomeButton';
+import type { LeaderboardDTO } from '@/types';
+import { serviceApi } from '@/api/serviceApi';
+import HomeButton from '@/components/ui/HomeButton';
 
 export default function LeaderboardPage({ }) {
     const [scores, setScores] = useState<LeaderboardDTO[]>([]);

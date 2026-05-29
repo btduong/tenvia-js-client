@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import QuizCardPage from "../pages/QuizCardPage";
+import QuizCardPage from "@/pages/QuizCardPage";
 import { render, screen } from "@testing-library/react";
 import type { SessionData } from "react-router-dom";
-import type { GameSession } from "../types";
+import type { GameSession } from "@/types";
 
 /**
  * default is needed because vitest use ESM.

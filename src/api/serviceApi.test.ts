@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { serviceApi } from "../api/serviceApi";
+import { serviceApi } from "@/api/serviceApi";
 
 const sessionId = '123';
 const userId = 1;

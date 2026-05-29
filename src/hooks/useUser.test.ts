@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useUser } from "./useUser";
-import { serviceApi } from "../api/serviceApi";
+import { serviceApi } from "@/api/serviceApi";
 
 
 vi.mock('../api/serviceApi');
