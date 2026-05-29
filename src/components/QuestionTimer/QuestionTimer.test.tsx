@@ -5,68 +5,67 @@ import QuestionTimer from './QuestionTimer';
 let mockOnComplete = vi.fn();
 
 beforeEach(() => {
-    vi.resetAllMocks();
-    vi.useFakeTimers();
+  vi.resetAllMocks();
+  vi.useFakeTimers();
 });
 
 afterEach(() => {
-    vi.runOnlyPendingTimers();
-    vi.useRealTimers();
+  vi.runOnlyPendingTimers();
+  vi.useRealTimers();
 });
 
 describe('QuestionTimer', () => {
+  it('should calls onComplete if initialized with duration 0', () => {
+    render(<QuestionTimer duration={0} isPause={false} onComplete={mockOnComplete} />);
 
-    it('should calls onComplete if initialized with duration 0', () => {
-        render(<QuestionTimer duration={0} isPause={false} onComplete={mockOnComplete} />);
+    expect(mockOnComplete).toHaveBeenCalled();
+  });
 
-        expect(mockOnComplete).toHaveBeenCalled();
+  it('should ticks down and calls onComplete when the duration expires', () => {
+    // Set duration to 0.2
+    render(<QuestionTimer duration={0.2} isPause={false} onComplete={mockOnComplete} />);
+
+    expect(mockOnComplete).not.toHaveBeenCalled();
+
+    // the 1st tick down, timeLeft: 0.2 - 0.1 = .1
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+    expect(mockOnComplete).not.toHaveBeenCalled();
+
+    // the 2nd tick down, timeleft: .1 - .1 = 0
+    act(() => {
+      vi.advanceTimersByTime(100);
     });
 
-    it('should ticks down and calls onComplete when the duration expires', () => {
-        // Set duration to 0.2
-        render(<QuestionTimer duration={0.2} isPause={false} onComplete={mockOnComplete} />);
+    // onCompete is triggered
+    expect(mockOnComplete).toHaveBeenCalled();
+  });
 
-        expect(mockOnComplete).not.toHaveBeenCalled();
+  it('should not tick down when paused', () => {
+    render(<QuestionTimer duration={0.2} isPause={true} onComplete={mockOnComplete} />);
 
-        // the 1st tick down, timeLeft: 0.2 - 0.1 = .1
-        act(() => {
-            vi.advanceTimersByTime(100);
-        });
-        expect(mockOnComplete).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(200);
 
-        // the 2nd tick down, timeleft: .1 - .1 = 0
-        act(() => {
-            vi.advanceTimersByTime(100);
-        });
+    expect(mockOnComplete).not.toHaveBeenCalled();
+  });
 
-        // onCompete is triggered
-        expect(mockOnComplete).toHaveBeenCalled();
+  it('should not call onComplete multiple times if parent re-renders', () => {
+    const mockSecondOnComplete = vi.fn();
+
+    const { rerender } = render(
+      <QuestionTimer duration={0.1} isPause={false} onComplete={mockOnComplete} />
+    );
+
+    // Trigger a tick down to 0.
+    act(() => {
+      vi.advanceTimersByTime(100);
     });
 
-    it('should not tick down when paused', () => {
-        render(<QuestionTimer duration={0.2} isPause={true} onComplete={mockOnComplete} />);
+    // Re-render
+    rerender(<QuestionTimer duration={0.1} isPause={false} onComplete={mockSecondOnComplete} />);
 
-        vi.advanceTimersByTime(200);
-
-        expect(mockOnComplete).not.toHaveBeenCalled();
-    });
-
-    it('should not call onComplete multiple times if parent re-renders', () => {
-        
-        const mockSecondOnComplete = vi.fn();
-
-        const { rerender } = render(<QuestionTimer duration={0.1} isPause={false} onComplete={mockOnComplete} />);
-
-        // Trigger a tick down to 0.
-        act(() => {
-            vi.advanceTimersByTime(100);
-        });
-
-        // Re-render
-        rerender(<QuestionTimer duration={0.1} isPause={false} onComplete={mockSecondOnComplete} />);
-
-        expect(mockOnComplete).toHaveBeenCalled();
-        expect(mockSecondOnComplete).not.toHaveBeenCalled();
-    });
-
+    expect(mockOnComplete).toHaveBeenCalled();
+    expect(mockSecondOnComplete).not.toHaveBeenCalled();
+  });
 });

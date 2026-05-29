@@ -1,59 +1,57 @@
 .topBar {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
 
-    width: 100%;
-    max-width: 430px;
-    height: 60px;
+  width: 100%;
+  max-width: 430px;
+  height: 60px;
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-    padding: 0 20px;
-    padding-top: env(safe-area-inset-top, 10px);
+  padding: 0 20px;
+  padding-top: env(safe-area-inset-top, 10px);
 
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .playerInfo {
-    display: flex;
-    align-items: center;
-    
+  display: flex;
+  align-items: center;
 }
 
 .goldInfo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 1rem;
-    
-    background-color: #fefcbf;
-    
-    border: 1.5px solid #faf089;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
 
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  background-color: #fefcbf;
+
+  border: 1.5px solid #faf089;
+
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid #4a5568;
-    background-color: #edf2f7;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #4a5568;
+  background-color: #edf2f7;
 }
 
 .username {
-    font-weight: 600;
-    color: #2d3748;
+  font-weight: 600;
+  color: #2d3748;
 }
 
 .goldAmount {
-    font-weight: 800;
-    color: #d69e2e;
-    font-size: 1.2rem;
+  font-weight: 800;
+  color: #d69e2e;
+  font-size: 1.2rem;
 }

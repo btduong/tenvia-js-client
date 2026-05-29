@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import QuizCardPage from "@/pages/QuizCardPage";
-import { render, screen } from "@testing-library/react";
-import type { SessionData } from "react-router-dom";
-import type { GameSession } from "@/types";
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import QuizCardPage from '@/pages/QuizCardPage';
+import { render, screen } from '@testing-library/react';
+import type { SessionData } from 'react-router-dom';
+import type { GameSession } from '@/types';
 
 /**
  * default is needed because vitest use ESM.
@@ -12,58 +12,57 @@ import type { GameSession } from "@/types";
  * return {QuizCard: function someFunction() }
  */
 vi.mock('../components/QuizCard/QuizCard', () => {
-    return {
-        default: function Dummy() {
-            return <div data-testid="mock-quiz-data-id" />; // data-* is needed as that's what RTL is looking for when use with getByTestId
-        }
-    }
+  return {
+    default: function Dummy() {
+      return <div data-testid="mock-quiz-data-id" />; // data-* is needed as that's what RTL is looking for when use with getByTestId
+    },
+  };
 });
 
-vi.mock("../components/QuestionTimer/QuestionTimer", () => {
-    return {
-        default: function QuestionTimer() {
-            return <div data-testid="mock-question-timer" />
-        }
-    }
+vi.mock('../components/QuestionTimer/QuestionTimer', () => {
+  return {
+    default: function QuestionTimer() {
+      return <div data-testid="mock-question-timer" />;
+    },
+  };
 });
 
 describe('QuizCardPage', () => {
+  const mockQuestion = {
+    id: 1,
+    questionText: 'text',
+    options: [{ content: 'x', id: 1, letter: 'B', isAvailable: true }],
+    powerUpDisabled: false,
+    expiresInSecond: 15,
+    index: 0,
+    potentialReward: null,
+    potentialPenalty: null,
+  };
+  const mockOnQuestionTimedout = vi.fn();
 
-    const mockQuestion = {
-        id: 1,
-        questionText: 'text',
-        options: [{ content: 'x', id: 1, letter: 'B', isAvailable: true }],
-        powerUpDisabled: false,
-        expiresInSecond: 15,
-        index: 0,
-        potentialReward: null,
-        potentialPenalty: null
-    };
-    const mockOnQuestionTimedout = vi.fn();
+  const defaultProps = {
+    currentQuestion: mockQuestion,
+    currentIndex: 1,
+    questionLimit: 10,
+    sessionData: { duration: 1 } as GameSession,
+    answerSent: false,
+    onQuestionTimedout: mockOnQuestionTimedout,
+  };
 
-    const defaultProps = {
-        currentQuestion: mockQuestion,
-        currentIndex: 1,
-        questionLimit: 10,
-        sessionData: { duration: 1 } as GameSession,
-        answerSent: false,
-        onQuestionTimedout: mockOnQuestionTimedout,
-    }
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
-    beforeEach(() => { vi.resetAllMocks(); });
+  it('can reander', () => {
+    render(<QuizCardPage {...defaultProps} />);
 
-    it('can reander', () => {
-        render(<QuizCardPage {...defaultProps} />);
+    expect(screen.getByText('Question: 2/10')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-quiz-data-id')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-question-timer')).toBeInTheDocument();
+  });
 
-        expect(screen.getByText('Question: 2/10')).toBeInTheDocument();
-        expect(screen.getByTestId('mock-quiz-data-id')).toBeInTheDocument();
-        expect(screen.getByTestId('mock-question-timer')).toBeInTheDocument();
-    });
-
-    it('does not render QuestionTimer if sessionData is null', () => {
-        render(<QuizCardPage {...defaultProps} sessionData={null} />);
-        expect(screen.queryByTestId('mock-question-timer')).not.toBeInTheDocument();
-    });
-
-
+  it('does not render QuestionTimer if sessionData is null', () => {
+    render(<QuizCardPage {...defaultProps} sessionData={null} />);
+    expect(screen.queryByTestId('mock-question-timer')).not.toBeInTheDocument();
+  });
 });

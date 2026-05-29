@@ -1,16 +1,18 @@
 .homeSvg {
   width: 28px;
-  
+
   height: 28px;
   color: #f8f8f8;
-  
-  transition: transform 0.2s, color 0.2s;
+
+  transition:
+    transform 0.2s,
+    color 0.2s;
 }
 
 .homeIconBtn svg {
-  width: 24px!important;   
-  height: 24px!important;
-  margin: 0 auto; 
+  width: 24px !important;
+  height: 24px !important;
+  margin: 0 auto;
   display: block;
 }
 
@@ -22,7 +24,7 @@
 
   width: 48px;
   height: 48px;
-  padding: 0;             
+  padding: 0;
 
   display: flex;
   align-items: center;

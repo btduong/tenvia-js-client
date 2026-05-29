@@ -4,9 +4,8 @@
   display: grid;
   grid-template-columns: 1fr;
   margin: 0 auto;
-  
-  gap: 10px;
 
+  gap: 10px;
 }
 
 .logo {
@@ -80,7 +79,7 @@
   flex-direction: column;
   position: relative;
   background: linear-gradient(40deg, #54a6cf 0%, #989dd5 100%);
-  overflow-x: hidden; 
+  overflow-x: hidden;
 }
 
 .currentQuestionCount {
@@ -91,7 +90,6 @@
   margin-bottom: 2px;
   background-color: #b63dce;
   font-size: 1.2rem;
-  
 }
 
 .currentTimeRemaining {

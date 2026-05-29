@@ -1,45 +1,43 @@
-import { fireEvent, renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { useKeyboardShortcut } from "./useKeyboardShortcut";
+import { fireEvent, renderHook } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useKeyboardShortcut } from './useKeyboardShortcut';
 
 const mockKeyPressedCallback = vi.fn();
 
 describe('useKeyboardShortcut hook', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
-    beforeEach(() => {
-        vi.resetAllMocks();
-    });
+  it('can trigger callback on 1st Spacebar keydown', async () => {
+    const { result } = renderHook(() => useKeyboardShortcut(mockKeyPressedCallback));
 
-    it('can trigger callback on 1st Spacebar keydown', async () => {
+    // Cannot use -> await userEvent.keyboard('{Space>5}'); // press without releasing and trigger 5 keydown
+    // userEvent expects the DOM already focused on an element to receive the click event.
+    // So use FireEvent to dispatch an event to the window directly.
+    fireEvent.keyDown(window, { code: 'Space', repeat: false });
 
-        const { result } = renderHook(() => useKeyboardShortcut(mockKeyPressedCallback));
+    expect(mockKeyPressedCallback).toHaveBeenCalled();
+  });
 
-        // Cannot use -> await userEvent.keyboard('{Space>5}'); // press without releasing and trigger 5 keydown
-        // userEvent expects the DOM already focused on an element to receive the click event.
-        // So use FireEvent to dispatch an event to the window directly.
-        fireEvent.keyDown(window, { code: 'Space', repeat: false });
+  it('should not trigger callback on repeat Spacebar keydowns', async () => {
+    const { result } = renderHook(() => useKeyboardShortcut(mockKeyPressedCallback));
 
-        expect(mockKeyPressedCallback).toHaveBeenCalled();
-    });
+    // The 1st Spacebar down event
+    fireEvent.keyDown(window, { code: 'Space', repeat: false });
 
-    it('should not trigger callback on repeat Spacebar keydowns', async () => {
-        const { result } = renderHook(() => useKeyboardShortcut(mockKeyPressedCallback));
+    for (let index = 0; index < 5; index++) {
+      fireEvent.keyDown(window, { code: 'Space', repeat: true });
+    }
 
-        // The 1st Spacebar down event
-        fireEvent.keyDown(window, { code: 'Space', repeat: false });
+    expect(mockKeyPressedCallback).toHaveBeenCalledTimes(1);
+  });
 
-        for (let index = 0; index < 5; index++) {
-            fireEvent.keyDown(window, { code: 'Space', repeat: true });
-        }
+  it('should not tirgger callback on non Spacebar keydown', async () => {
+    const { result } = renderHook(() => useKeyboardShortcut(mockKeyPressedCallback));
 
-        expect(mockKeyPressedCallback).toHaveBeenCalledTimes(1);
-    });
+    fireEvent.keyDown(window, { code: 'Enter', repeat: false });
 
-    it('should not tirgger callback on non Spacebar keydown', async () => {
-        const { result } = renderHook(() => useKeyboardShortcut(mockKeyPressedCallback));
-
-        fireEvent.keyDown(window, { code: 'Enter', repeat: false });
-
-        expect(mockKeyPressedCallback).not.toHaveBeenCalled();
-    });
+    expect(mockKeyPressedCallback).not.toHaveBeenCalled();
+  });
 });
