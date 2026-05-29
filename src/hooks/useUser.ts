@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { serviceApi } from "../api/serviceApi";
-import type { Inventory, PowerUpType, User } from "../types";
+import { serviceApi } from "@/api/serviceApi";
+import type { Inventory, PowerUpType, User } from "@/types";
 
 /**
  * A custom hook that manages the authenticated user's state, inventory, and balance.

@@ -6,7 +6,7 @@ import type {
     AnswerResponse,
     Question,
     GameStatus
-} from "../types";
+} from "@/types";
 
 interface GameContextType {
     gameStatus: GameStatus;

@@ -1,4 +1,4 @@
-import clockTickingSfx from '../assets/clock-ticking.mp3';
+import clockTickingSfx from '@/assets/clock-ticking.mp3';
 
 import { useRef, useEffect } from 'react';
 

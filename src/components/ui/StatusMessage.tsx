@@ -1,4 +1,4 @@
-import type { GameStatus } from "../../types";
+import type { GameStatus } from "@/types";
 import styles from './StatusMessage.module.css';
 
 interface StatusMessageProps {

@@ -3,10 +3,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { useNavigate } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-import { useGameContext } from "../../context/GameContext";
-import type { GameStatus, PowerUpType } from "../../types";
+import { useGameContext } from "@/context/GameContext";
+import type { GameStatus, PowerUpType } from "@/types";
 import QuizCard from "./QuizCard";
-import { serviceApi } from "../../api/serviceApi";
+import { serviceApi } from "@/api/serviceApi";
 
 
 

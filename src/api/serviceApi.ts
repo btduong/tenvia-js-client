@@ -1,4 +1,4 @@
-import type { AnswerResponse, GameSession, LeaderboardDTO, PowerUpType, Question, UsePowerUpResponse, User, ErrorResponseDTO } from "../types";
+import type { AnswerResponse, GameSession, LeaderboardDTO, PowerUpType, Question, UsePowerUpResponse, User, ErrorResponseDTO } from "@/types";
 import type { ServiceResponseResult } from "./serviceApiResult";
 
 const SESSION_BASE_URL = 'http://localhost:8080';
