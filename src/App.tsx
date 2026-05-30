@@ -67,10 +67,10 @@ const App: React.FC = () => {
    */
   const handleLogin = async (name: string) => {
     setGameStatus(GameStatus.LOGGING_IN);
-    const { data: user, error } = await login(name);
-    if (user) {
+    try {
+      await login(name);
       setGameStatus(GameStatus.IDLE);
-    } else {
+    } catch (error: any) {
       triggerGlobalError(error.message);
       setGameStatus(GameStatus.UNAUTHENTICATED);
     }
