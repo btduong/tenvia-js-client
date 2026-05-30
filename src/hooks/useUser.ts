@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { serviceApi } from '@/api/serviceApi';
 import type { Inventory, PowerUpType, User } from '@/types';
+import { useMutation } from '@tanstack/react-query';
 
 /**
  * A custom hook that manages the authenticated user's state, inventory, and balance.
@@ -10,46 +11,37 @@ import type { Inventory, PowerUpType, User } from '@/types';
  */
 export const useUser = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
 
-  /**
-   * Login before starting any game session.
-   *
-   * useCallback here to cache the function def between re-renders.
-   */
-  const login = useCallback(async (username: string) => {
-    setLoading(true);
+  const loginMutation = useMutation({
+    mutationFn: serviceApi.login,
+    onSuccess: (authenticatedUser) => setUser(authenticatedUser)
+  });
 
-    try {
-      const result = await serviceApi.login(username);
-      const authenticatedUser = result.data;
-      if (authenticatedUser) {
-        setUser(authenticatedUser);
-      }
-      return result;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  /**
-   * Purchase a PowerUpType.
-   */
-  const purchaseItem = useCallback(
-    async (itemType: PowerUpType) => {
-      if (!user) return false;
-
-      const { data: updatedUser, error } = await serviceApi.purchasePowerUp(user.id, itemType);
-      if (updatedUser) {
-        setUser((prev) => (prev ? { ...prev, inventory: updatedUser.inventory } : null));
-        return true;
-      } else {
-        console.log('Purchase failed. Check your balalnce', error.message);
-        return false;
-      }
+  const purchaseItemMutation = useMutation({
+    mutationFn: (itemType: PowerUpType) => {
+      if (!user) throw new Error('Not loggegd in');
+      return serviceApi.purchasePowerUp(user.id, itemType);
     },
-    [user]
-  );
+    onSuccess: (updatedUser) => {
+      setUser((prev) => (prev ? { ...prev, inventory: updatedUser.inventory } : null));
+    },
+    onError: (error) => {
+      console.log('Purchase failed. Check your balalnce', error.message);
+    }
+  });
+
+  const login = async (username: string) => {
+    loginMutation.mutateAsync(username);
+  };
+
+  const purchaseItem = async (itemType: PowerUpType) => {
+    try {
+      purchaseItemMutation.mutateAsync(itemType);
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
   /***
    * Update user's balance.
@@ -64,5 +56,5 @@ export const useUser = () => {
     }
   }, []);
 
-  return { user, loading, login, purchaseItem, updateBalance, updateInventory };
+  return { user, loading: loginMutation.isPending, login, purchaseItem, updateBalance, updateInventory };
 };

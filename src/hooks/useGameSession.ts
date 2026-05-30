@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { NavigateFunction } from 'react-router-dom';
+import type { NavigateFunction, SessionData } from 'react-router-dom';
 import { serviceApi } from '@/api/serviceApi';
 import type {
   AnswerResponse,
@@ -13,6 +13,7 @@ import type {
 import { GameStatus } from '@/types';
 import { waitFor } from '@/utils/timer';
 import { useTickingSound } from './useTickingSound';
+import { useMutation } from '@tanstack/react-query';
 
 /**
  * A custom hook that encapsulates the states and logic of a game session. It manages the current question, the user's progress,
@@ -37,6 +38,24 @@ export const useGameSession = (
   const [isTicking, setIsTicking] = useState(false);
   useTickingSound(isTicking);
 
+  const newSessionMutation = useMutation({
+    mutationFn: () => {
+      if (!user) throw new Error('Not logged in');
+      return serviceApi.getNewSession(user.id, questionLimit)
+    },
+    onSuccess: (gameSession) => {
+      setSessionData(gameSession)
+      if (gameSession?.id) {
+        setGameStatus(GameStatus.FETCHING_QUESTION);
+        getNextQuestion(gameSession.id);
+        navigate('/quiz');
+      }
+    },
+    onError: (error) => {
+      triggerGlobalError(error.message);
+    },
+  });
+
   /**
    * Start a new game session for a logged in user
    * @returns a new GameSession
@@ -44,19 +63,8 @@ export const useGameSession = (
   const startNewGame = async () => {
     if (!user) return;
 
-    // Rename 'data' to 'gameSession' during destructuring
-    const { data: gameSession, error } = await serviceApi.getNewSession(user.id, questionLimit);
+    newSessionMutation.mutate();
 
-    if (gameSession) {
-      setSessionData(gameSession);
-      if (gameSession?.id) {
-        setGameStatus(GameStatus.FETCHING_QUESTION);
-        getNextQuestion(gameSession.id);
-        navigate('/quiz');
-      }
-    } else {
-      triggerGlobalError(error.message);
-    }
   };
 
   /**
@@ -69,21 +77,26 @@ export const useGameSession = (
     setIsTicking(false);
   };
 
+  const nextQuestionMutation = useMutation({
+    mutationFn: serviceApi.getQuestion,
+    onSuccess: (question) => {
+      setCurrentQuestion(question);
+      setGameStatus(GameStatus.PLAYING);
+      setAnswerSent(false);
+      setIsTicking(true);
+    },
+    onError: (error) => {
+      triggerGlobalError(error.message);
+    }
+  }
+  );
+
   /**
    * Get the next question.
    * @param sessionId
    */
   const getNextQuestion = async (sessionId: string) => {
-    const { data: question, error } = await serviceApi.getQuestion(sessionId);
-    if (question) {
-      await waitFor(500);
-      setCurrentQuestion(question);
-      setGameStatus(GameStatus.PLAYING);
-      setAnswerSent(false);
-      setIsTicking(true);
-    } else {
-      triggerGlobalError(error.message);
-    }
+    nextQuestionMutation.mutate(sessionId);
   };
 
   /**
@@ -114,6 +127,15 @@ export const useGameSession = (
     }
   };
 
+  const timeoutMutation = useMutation({
+    mutationFn: (sessionId: string) => {
+      return serviceApi.validateSelectedAnswer(sessionId, null);
+    },
+    onSuccess: (answerResponse) => {
+      handleAnswerResponse(answerResponse);
+    }
+  });
+
   /**
    * When a question is timed out, a validate request with null option Id is sent to the server
    * to indicate that the current question was skipped.
@@ -122,32 +144,29 @@ export const useGameSession = (
     setIsTicking(false);
 
     if (sessionData?.id) {
-      const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(
-        sessionData.id,
-        null
-      );
-      if (answerResponse) {
-        handleAnswerResponse(answerResponse);
-      }
+      timeoutMutation.mutate(sessionData.id);
     }
   };
+
+  const powerUpMutation = useMutation({
+    mutationFn: ({ type, userId, sessionId }: { type: PowerUpType, userId: number, sessionId: string }) => {
+      return serviceApi.usePowerUp(type, userId, sessionId);
+    },
+    onSuccess: (powerUpResponse) => {
+      updateInventory(powerUpResponse.updatedUser.inventory);
+      setCurrentQuestion(powerUpResponse.effectResult.questionResponse);
+    },
+    onError: (error) => setGameStatus(GameStatus.ERROR)
+  });
 
   const handleUsePowerUp = async (type: PowerUpType): Promise<UsePowerUpResponse | null> => {
     if (!user || !sessionData || !sessionData.id) return null;
 
-    const { data: powerUpResponse, error } = await serviceApi.usePowerUp(
-      type,
-      user.id,
-      sessionData.id
-    );
-
-    if (powerUpResponse) {
-      updateInventory(powerUpResponse.updatedUser.inventory); // This triggers a re-render of QuizCard with the new count
-      setCurrentQuestion(powerUpResponse.effectResult.questionResponse);
-    } else {
-      setGameStatus(GameStatus.ERROR);
+    try {
+      return await powerUpMutation.mutateAsync({ type, userId: user.id, sessionId: sessionData.id });
+    } catch {
+      return null;
     }
-    return powerUpResponse;
   };
 
   const triggerGlobalError = (message: string) => {
