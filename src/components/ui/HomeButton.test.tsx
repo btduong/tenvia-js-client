@@ -1,13 +1,16 @@
-import { render, screen } from '@testing-library/react';
+import { serviceApi } from '@/api/serviceApi';
+import LeaderboardPage from '@/pages/LeaderboardPage';
+import SummaryPage from '@/pages/SummaryPage';
+import { renderWithClient } from '@/test/test-utils';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
-import LeaderboardPage from '@/pages/LeaderboardPage';
-import SummaryPage from '@/pages/SummaryPage';
 
 const mockNavigate = vi.fn();
 
-// Need to partially mock a module because MemoryRouter doesn't change the page view.
+vi.mock('@/api/serviceApi');
+
 vi.mock(import('react-router-dom'), async (importOriginal) => {
   const actual = await importOriginal();
   return {
@@ -18,12 +21,18 @@ vi.mock(import('react-router-dom'), async (importOriginal) => {
 
 describe('HomeButton', () => {
   it('can render default view in LeaderboardPage', async () => {
-    render(
+    // 1. Mock the underlying API call so React Query resolves instantly
+    vi.mocked(serviceApi.leaderboardPage).mockResolvedValue([
+      { userName: 'Alice', score: 100 }
+    ]);
+
+    renderWithClient(
       <MemoryRouter>
         <LeaderboardPage />
       </MemoryRouter>
     );
-    const homeButton = screen.getByRole('button', { name: /To Home/i });
+
+    const homeButton = await screen.findByRole('button', { name: /To Home/i });
     expect(homeButton).toBeInTheDocument();
 
     await userEvent.click(homeButton);
@@ -34,7 +43,7 @@ describe('HomeButton', () => {
   it('can render default view SummaryPage', async () => {
     // No need to mock useLocation as it is provided by MemoryRouter.
     // Simply provide the path and state via initialEntries.
-    render(
+    renderWithClient(
       <MemoryRouter
         initialEntries={[
           {

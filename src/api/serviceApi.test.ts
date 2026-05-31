@@ -31,10 +31,9 @@ describe('serviceApi getNewSession', () => {
     });
     vi.stubGlobal('fetch', mockFetch);
 
-    const { data: gameSession, error } = await serviceApi.getNewSession(userId, questionLimit);
+    const result = await serviceApi.getNewSession(userId, questionLimit);
 
-    expect(gameSession).toBe(mockSession);
-    expect(error).toBeNull();
+    expect(result).toBe(mockSession);
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining(`/sessions/start?id=${userId}&limit=${questionLimit}`),
       expect.objectContaining({ method: 'POST' })
@@ -57,9 +56,9 @@ describe('serviceApi getNewSession', () => {
       })
     );
 
-    const { data, error } = await serviceApi.getNewSession(userId, questionLimit);
-    expect(data).toBeNull();
-    expect(error?.message).toBe('404: userId: 1 not found');
+    await expect(serviceApi.getNewSession(userId, questionLimit))
+      .rejects
+      .toThrow('404: userId: 1 not found');
   });
 });
 
@@ -82,10 +81,9 @@ describe('serviceApi getQuestion', () => {
     });
     vi.stubGlobal('fetch', mockFetch);
 
-    const { data, error } = await serviceApi.getQuestion(sessionId);
+    const result = await serviceApi.getQuestion(sessionId);
 
-    expect(data).toBe(question);
-    expect(error).toBeNull();
+    expect(result).toBe(question);
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining(`/sessions/${sessionId}/questions/next`),
       expect.objectContaining({ method: 'GET' })
@@ -98,15 +96,19 @@ describe('serviceApi getQuestion', () => {
       vi.fn().mockResolvedValue({
         ok: false,
         statusText: '404',
+        json: vi.fn().mockResolvedValue({
+          errorCode: '404',
+          errorMessage: 'question not found'
+        }),
         headers: new Headers({
           'content-type': 'application/json',
         }),
       })
     );
 
-    const { data, error } = await serviceApi.getQuestion(sessionId);
-    expect(data).toBeNull();
-    expect(error?.message).toBe('404');
+    await expect(serviceApi.getQuestion(sessionId))
+      .rejects.
+      toThrow('404: question not found');
   });
 });
 
@@ -128,10 +130,9 @@ describe('serviceApi usePowerUp', () => {
     });
     vi.stubGlobal('fetch', mockFetch);
 
-    const { data, error } = await serviceApi.usePowerUp(powerUpType, userId, sessionId);
+    const result = await serviceApi.usePowerUp(powerUpType, userId, sessionId);
 
-    expect(error).toBeNull();
-    expect(data).toBe(powerUpResponse);
+    expect(result).toBe(powerUpResponse);
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining(
         `/api/powerups/use?type=${powerUpType}&userId=${userId}&sessionId=${sessionId}`
@@ -145,16 +146,20 @@ describe('serviceApi usePowerUp', () => {
       'fetch',
       vi.fn().mockResolvedValue({
         ok: false,
-        statusText: 404,
+        statusText: 403,
+        json: vi.fn().mockResolvedValue({
+          errorCode: 403,
+          errorMessage: 'forbidden'
+        }),
         headers: new Headers({
           'content-type': 'application/json',
         }),
       })
     );
 
-    const { data, error } = await serviceApi.usePowerUp(powerUpType, userId, sessionId);
-    expect(data).toBeNull();
-    expect(error?.message).toBe('404');
+    await expect(serviceApi.usePowerUp(powerUpType, userId, sessionId))
+      .rejects
+      .toThrow('403: forbidden');
   });
 });
 
@@ -164,16 +169,15 @@ describe('serviceAPI abandon session', () => {
       'fetch',
       vi.fn().mockResolvedValue({
         ok: true,
-        statusTex: 200,
+        statusText: 200,
         headers: new Headers({
           'content-type': 'text/html',
         }),
       })
     );
 
-    const { data, error } = await serviceApi.abandon(sessionId);
-    expect(data).toBeNull();
-    expect(error).toBeNull();
+    const result = await serviceApi.abandon(sessionId);
+    expect(result).toBeNull();
   });
 });
 
@@ -201,10 +205,10 @@ describe('serviceApi swap question', () => {
       }),
     });
 
-    const { data: question, error } = await serviceApi.swapQuestion(sessionId);
-    expect(error).toBeNull();
-    expect(question?.id).toBe(1);
-    expect(question?.questionText).toBe('question_text');
+    const result = await serviceApi.swapQuestion(sessionId);
+    expect(result).not.toBeNull();
+    expect(result.id).toBe(1);
+    expect(result.questionText).toBe('question_text');
   });
 });
 
@@ -230,8 +234,8 @@ describe('serviceApi validateSelectedAnswer', () => {
     });
     vi.stubGlobal('fetch', mockFetch);
 
-    const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(sessionId, 5);
-    expect(answerResponse).not.toBeNull();
-    expect(answerResponse?.correctLetter).toBe('A');
+    const result = await serviceApi.validateSelectedAnswer(sessionId, 5);
+    expect(result).not.toBeNull();
+    expect(result.correctLetter).toBe('A');
   });
 });

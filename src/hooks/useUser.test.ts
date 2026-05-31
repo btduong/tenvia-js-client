@@ -1,4 +1,5 @@
-import { act, renderHook } from '@testing-library/react';
+import { act } from '@testing-library/react';
+import { renderHookWithClient } from '@/test/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useUser } from './useUser';
 import { serviceApi } from '@/api/serviceApi';
@@ -11,7 +12,7 @@ beforeEach(() => {
 
 describe('useUser', () => {
   it('can set default value', () => {
-    const { result } = renderHook(() => useUser());
+    const { result } = renderHookWithClient(() => useUser());
     expect(result.current.user).toBeNull();
   });
 
@@ -24,9 +25,9 @@ describe('useUser', () => {
       inventory: { HAMMER: 1, FIFTY_FIFTY: 0, SWAP_QUESTION: 0 },
     };
 
-    vi.mocked(serviceApi.login).mockResolvedValue({ data: mockUser, error: null });
+    vi.mocked(serviceApi.login).mockResolvedValue(mockUser);
 
-    const { result } = renderHook(() => useUser());
+    const { result } = renderHookWithClient(() => useUser());
 
     let apiServicePromise;
     await act(async () => {
@@ -39,16 +40,13 @@ describe('useUser', () => {
   });
 
   it('expect loading to be false when login failed', async () => {
-    vi.mocked(serviceApi.login).mockResolvedValue({
-      data: null,
-      error: new Error('Network failure'),
-    });
+    vi.mocked(serviceApi.login).mockRejectedValue(new Error('Network failure'));
 
-    const { result } = renderHook(() => useUser());
+    const { result } = renderHookWithClient(() => useUser());
 
-    let apiServicePromise;
     await act(async () => {
-      apiServicePromise = result.current.login('alice');
+      // The Vitest native way to handle expected errors!
+      await expect(result.current.login('alice')).rejects.toThrow('Network failure');
     });
 
     expect(result.current.user).toBeNull();
@@ -72,10 +70,10 @@ describe('useUser', () => {
       inventory: { HAMMER: 1, FIFTY_FIFTY: 0, SWAP_QUESTION: 0 },
     };
 
-    vi.mocked(serviceApi.login).mockResolvedValue({ data: mockUser, error: null });
-    vi.mocked(serviceApi.purchasePowerUp).mockResolvedValue({ data: mockUpdateduser, error: null });
+    vi.mocked(serviceApi.login).mockResolvedValue(mockUser);
+    vi.mocked(serviceApi.purchasePowerUp).mockResolvedValue(mockUpdateduser);
 
-    const { result } = renderHook(() => useUser());
+    const { result } = renderHookWithClient(() => useUser());
 
     // login
     let apiServicePromise;
@@ -97,7 +95,7 @@ describe('useUser', () => {
   });
 
   it('expect error when unauthenticated user to try to purchase item', async () => {
-    const { result } = renderHook(() => useUser());
+    const { result } = renderHookWithClient(() => useUser());
     expect(result.current.user).toBeNull();
 
     let apiServicePromise;

@@ -133,10 +133,7 @@ describe('QuizCard', () => {
       updatedInventory: { HAMMER: 1, FIFTY_FIFTY: 0, SWAP_QUESTION: 0 },
     };
 
-    vi.mocked(serviceApi.validateSelectedAnswer).mockResolvedValue({
-      data: mockAnswerResponse,
-      error: null,
-    });
+    vi.mocked(serviceApi.validateSelectedAnswer).mockResolvedValue(mockAnswerResponse);
 
     const optionButton1 = screen.getByRole('button', { name: 'me' });
 

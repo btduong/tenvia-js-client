@@ -7,6 +7,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import ShopPage from './pages/ShopPage';
 import { serviceApi } from './api/serviceApi';
+import { renderWithClient } from './test/test-utils';
 
 const mockInventory = { HAMMER: 5, FIFTY_FIFTY: 1, SWAP_QUESTION: 1 };
 
@@ -76,7 +77,7 @@ describe('App Login', () => {
   });
 
   it('renders default user login page without crashing', () => {
-    render(
+    renderWithClient(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>
@@ -87,7 +88,7 @@ describe('App Login', () => {
   });
 
   it('successfully logs in and sets the user', async () => {
-    render(
+    renderWithClient(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>
@@ -115,7 +116,7 @@ describe('App Login', () => {
       .spyOn(window.HTMLMediaElement.prototype, 'play')
       .mockResolvedValue(undefined);
 
-    render(
+    renderWithClient(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>
@@ -173,7 +174,7 @@ describe('App Login', () => {
       })
     );
 
-    render(
+    renderWithClient(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>

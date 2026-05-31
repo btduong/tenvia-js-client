@@ -31,12 +31,12 @@ export const useUser = () => {
   });
 
   const login = async (username: string) => {
-    loginMutation.mutateAsync(username);
+    return await loginMutation.mutateAsync(username);
   };
 
   const purchaseItem = async (itemType: PowerUpType) => {
     try {
-      purchaseItemMutation.mutateAsync(itemType);
+      await purchaseItemMutation.mutateAsync(itemType);
       return true;
     } catch {
       return false;
