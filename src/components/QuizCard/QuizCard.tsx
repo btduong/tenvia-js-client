@@ -80,11 +80,8 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       return;
     }
 
-    const { data: answerResponse, error } = await serviceApi.validateSelectedAnswer(
-      sessionId,
-      optionId
-    );
-    if (answerResponse) {
+    try {
+      const answerResponse = await serviceApi.validateSelectedAnswer(sessionId, optionId);
       if (answerResponse.isCorrect) {
         playCorrectAnswerSound();
       } else {
@@ -95,7 +92,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
       if (answerResponse.isGameOver) {
         handleAnswerResponse(answerResponse);
       }
-    } else if (error) {
+    } catch (error: any) {
       triggerGlobalError(error.message);
     }
   };

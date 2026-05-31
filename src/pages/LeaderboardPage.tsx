@@ -1,24 +1,22 @@
-import { useEffect, useState } from 'react';
-import styles from './LeaderboardPage.module.css';
-import type { LeaderboardDTO } from '@/types';
 import { serviceApi } from '@/api/serviceApi';
 import HomeButton from '@/components/ui/HomeButton';
+import { useQuery } from '@tanstack/react-query';
+import styles from './LeaderboardPage.module.css';
+import { STALE_TIMES } from '@/constants';
 
-export default function LeaderboardPage({}) {
-  const [scores, setScores] = useState<LeaderboardDTO[]>([]);
+export default function LeaderboardPage({ }) {
 
-  useEffect(() => {
-    // Cannot use await directly inside useEffect.
-    // Has to wrap await inside an async function.
-    const getLeaderboard = async () => {
-      const { data, error } = await serviceApi.leaderboardPage();
-      if (data) {
-        setScores(data);
-      }
-    };
+  const { data: scores, isLoading, isError } = useQuery({
+    queryKey: ['leaderboard'],
+    queryFn: serviceApi.leaderboardPage,
+    // Config tanstack to not immmediately re-fetch the data from the server 
+    // if the player click away and click back to the game tab.
+    staleTime: STALE_TIMES.LEADERBOARD,
+  });
 
-    getLeaderboard();
-  }, []);
+  if (isLoading) return <div className={styles.leaderboard}><h2>Loading scores...</h2></div>;
+  if (isError) return <div className={styles.leaderboard}><h2>Failed to load leaderboard.</h2></div>;
+  if (!scores) return null;
 
   return (
     <div className={styles.leaderboard}>
@@ -44,4 +42,4 @@ export default function LeaderboardPage({}) {
       <HomeButton />
     </div>
   );
-}
+};

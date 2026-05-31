@@ -4,6 +4,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import LeaderboardPage from '@/pages/LeaderboardPage';
+import { renderWithClient } from '@/test/test-utils';
 
 const mockData = [
   { userName: 'A', score: 1 },
@@ -22,13 +23,13 @@ describe('leaderboard', () => {
   afterAll(() => server.close());
 
   it('can display table', async () => {
-    render(
+    renderWithClient(
       <MemoryRouter>
         <LeaderboardPage />
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Top 10 High Score/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Top 10 High Score/i)).toBeInTheDocument();
 
     const player1 = await screen.findByText('A');
     const player2 = await screen.findByText('B');
