@@ -21,7 +21,7 @@ const validUser = {
 
 const mockLoginDTO = {
   userDTO: validUser,
-  jwt_token: 'jwt_token'
+  jwt: 'jwt_token'
 }
 const validQuestion = {
   id: 1428,
