@@ -1,8 +1,22 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { serviceApi } from '@/api/serviceApi';
 
 const sessionId = '123';
 const userId = 1;
+const jwt_token = 'test_jwt_token';
+
+const mockLocalStorage = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+};
+
+vi.stubGlobal('localStorage', mockLocalStorage);
+
+beforeEach(() => {
+  mockLocalStorage.getItem.mockReturnValue(jwt_token);
+});
 
 afterEach(() => {
   vi.resetAllMocks();
@@ -33,10 +47,14 @@ describe('serviceApi getNewSession', () => {
 
     const result = await serviceApi.getNewSession(userId, questionLimit);
 
+    expect(mockLocalStorage.getItem).toHaveBeenCalled();
     expect(result).toBe(mockSession);
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining(`/sessions/start?id=${userId}&limit=${questionLimit}`),
-      expect.objectContaining({ method: 'POST' })
+      expect.objectContaining({
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + jwt_token }
+      })
     );
   });
 
@@ -237,5 +255,41 @@ describe('serviceApi validateSelectedAnswer', () => {
     const result = await serviceApi.validateSelectedAnswer(sessionId, 5);
     expect(result).not.toBeNull();
     expect(result.correctLetter).toBe('A');
+  });
+});
+
+describe('serviceApi login', () => {
+
+  it('can login without Authorization header', async () => {
+
+    const validUser = {
+      id: 2,
+      username: 'player1',
+      createdAt: '2026-04-28T19:57:24.747338965',
+      balance: 0,
+      inventory: { HAMMER: 5, FIFTY_FIFTY: 1, SWAP_QUESTION: 1 },
+    };
+
+    const mockLoginDTO = {
+      userDTO: validUser,
+      jwt: 'jwt_token'
+    }
+
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockLoginDTO,
+      headers: new Headers({
+        'content-type': 'application/json',
+      }),
+    });
+    vi.stubGlobal('fetch', mockFetch);
+
+    const result = await serviceApi.login('alice');
+
+    expect(mockLocalStorage.getItem).not.toHaveBeenCalled();
+    expect(result.jwt).not.toBeNull();
+    expect(mockFetch).not.toHaveBeenCalledWith(
+      expect.objectContaining({ headers: { 'Authorization': 'Bearer' } })
+    );
   });
 });

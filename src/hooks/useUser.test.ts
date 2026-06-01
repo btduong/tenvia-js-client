@@ -17,6 +17,7 @@ describe('useUser', () => {
   });
 
   it('can login successfully', async () => {
+
     const mockUser = {
       id: 1,
       username: 'alice',
@@ -25,7 +26,12 @@ describe('useUser', () => {
       inventory: { HAMMER: 1, FIFTY_FIFTY: 0, SWAP_QUESTION: 0 },
     };
 
-    vi.mocked(serviceApi.login).mockResolvedValue(mockUser);
+    const mockLoginDTO = {
+      userDTO: mockUser,
+      jwt: 'jwt_string'
+    }
+
+    vi.mocked(serviceApi.login).mockResolvedValue(mockLoginDTO);
 
     const { result } = renderHookWithClient(() => useUser());
 
@@ -70,7 +76,12 @@ describe('useUser', () => {
       inventory: { HAMMER: 1, FIFTY_FIFTY: 0, SWAP_QUESTION: 0 },
     };
 
-    vi.mocked(serviceApi.login).mockResolvedValue(mockUser);
+    const mockLoginDTO = {
+      userDTO: mockUser,
+      jwt: 'jwt_string'
+    }
+
+    vi.mocked(serviceApi.login).mockResolvedValue(mockLoginDTO);
     vi.mocked(serviceApi.purchasePowerUp).mockResolvedValue(mockUpdateduser);
 
     const { result } = renderHookWithClient(() => useUser());

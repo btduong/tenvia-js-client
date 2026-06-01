@@ -14,7 +14,10 @@ export const useUser = () => {
 
   const loginMutation = useMutation({
     mutationFn: serviceApi.login,
-    onSuccess: (authenticatedUser) => setUser(authenticatedUser)
+    onSuccess: (loginResponse) => {
+      localStorage.setItem('jwt_token', loginResponse.jwt);
+      setUser(loginResponse.userDTO);
+    }
   });
 
   const purchaseItemMutation = useMutation({

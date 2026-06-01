@@ -7,16 +7,47 @@ import type {
   UsePowerUpResponse,
   User,
   ErrorResponseDTO,
+  LoginDTO,
 } from '@/types';
 
 const SESSION_BASE_URL = 'http://localhost:8080';
 const LEADERBOARD_BASE_URL = 'http://localhost:8081';
 
 /**
- * A generic helper to process API requests.
+ * A fetch with the provided JwT token from the server.
+ * This is needed to communicate with the backend server as all endpoints (except /login)
+ * required the Authorization header.
+ *
+ * @param url 
+ * @param options 
+ * @returns a promise of T
+ */
+async function fetchWithToken<T>(
+  url: string,
+  options?: RequestInit
+): Promise<T> {
+
+  const token = localStorage.getItem('jwt_token');
+  const headers: Record<string, string> = {
+    ...(options?.headers as Record<string, string>)
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  return fetchPublic<T>(url, {...options, headers});
+}
+
+/**
+ * A generic fetch helper to process API requests.
+ * This does not attach a token to the Authorization header as it is supposed to communicate to 
+ * the endpoints on server without a token like /login.
+ * For all other endpoints that needed a token, use #fetchWithToken
+ *
  * Handles the server's standard ErrorResponseDTO and data parsing.
  */
-async function fetchWithHandling<T>(
+async function fetchPublic<T>(
   url: string,
   options?: RequestInit
 ): Promise<T> {
@@ -62,14 +93,14 @@ export const serviceApi = {
     userId: number,
     questionLimit: number
   ): Promise<GameSession> {
-    return fetchWithHandling<GameSession>(
+    return fetchWithToken<GameSession>(
       `${SESSION_BASE_URL}/sessions/start?id=${userId}&limit=${questionLimit}`,
       { method: 'POST' }
     );
   },
 
   async getQuestion(sessionId: string): Promise<Question> {
-    return fetchWithHandling<Question>(`${SESSION_BASE_URL}/sessions/${sessionId}/questions/next`, {
+    return fetchWithToken<Question>(`${SESSION_BASE_URL}/sessions/${sessionId}/questions/next`, {
       method: 'GET',
     });
   },
@@ -79,7 +110,7 @@ export const serviceApi = {
     userId: number,
     sessionId: string
   ): Promise<UsePowerUpResponse> {
-    return fetchWithHandling<UsePowerUpResponse>(
+    return fetchWithToken<UsePowerUpResponse>(
       `${SESSION_BASE_URL}/api/powerups/use?type=${type}&userId=${userId}&sessionId=${sessionId}`,
       { method: 'POST' }
     );
@@ -96,33 +127,33 @@ export const serviceApi = {
     sessionId: string,
     optionId: number | null
   ): Promise<AnswerResponse> {
-    return fetchWithHandling<AnswerResponse>(`${SESSION_BASE_URL}/sessions/${sessionId}/answer`, {
+    return fetchWithToken<AnswerResponse>(`${SESSION_BASE_URL}/sessions/${sessionId}/answer`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ selectedOptionId: optionId }),
     });
   },
 
-  async login(username: string): Promise<User> {
-    return fetchWithHandling<User>(`${SESSION_BASE_URL}/users/login?username=${username}`, {
+  async login(username: string): Promise<LoginDTO> {
+    return fetchPublic<LoginDTO>(`${SESSION_BASE_URL}/users/login?username=${username}`, {
       method: 'POST',
     });
   },
 
   async leaderboardPage(): Promise<LeaderboardDTO[]> {
-    return fetchWithHandling<LeaderboardDTO[]>(`${LEADERBOARD_BASE_URL}/leaderboard`, {
+    return fetchWithToken<LeaderboardDTO[]>(`${LEADERBOARD_BASE_URL}/leaderboard`, {
       method: 'GET',
     });
   },
 
   async abandon(sessionId: string): Promise<null> {
-    return fetchWithHandling<null>(`${SESSION_BASE_URL}/sessions/${sessionId}/abandon`, {
+    return fetchWithToken<null>(`${SESSION_BASE_URL}/sessions/${sessionId}/abandon`, {
       method: 'POST',
     });
   },
 
   async swapQuestion(sessionId: string): Promise<Question> {
-    return fetchWithHandling<Question>(`${SESSION_BASE_URL}/sessions/${sessionId}/swap`, {
+    return fetchWithToken<Question>(`${SESSION_BASE_URL}/sessions/${sessionId}/swap`, {
       method: 'POST',
     });
   },
@@ -131,7 +162,7 @@ export const serviceApi = {
     userId: number,
     itemType: PowerUpType
   ): Promise<User> {
-    return fetchWithHandling<User>(
+    return fetchWithToken<User>(
       `${SESSION_BASE_URL}/shop/buy?userId=${userId}&type=${itemType}`,
       { method: 'POST' }
     );

@@ -13,6 +13,11 @@ export interface User {
   inventory: Inventory;
 }
 
+export interface LoginDTO {
+  userDTO: User;
+  jwt: string;
+}
+
 export interface GameSession {
   questions: Question[];
   fiftyFiftyUsed: boolean;
