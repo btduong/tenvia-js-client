@@ -7,6 +7,7 @@ import type {
   UsePowerUpResponse,
   User,
   ErrorResponseDTO,
+  LoginDTO,
 } from '@/types';
 
 const SESSION_BASE_URL = 'http://localhost:8080';
@@ -21,7 +22,19 @@ async function fetchWithHandling<T>(
   options?: RequestInit
 ): Promise<T> {
 
-  const response = await fetch(url, options);
+  const reqOptions = { ...options };
+
+  if (!url.includes('/login')) {
+    const token = localStorage.getItem('jwt_token');
+    if (token) {
+      reqOptions.headers = {
+        ...reqOptions.headers,
+        'Authorization': `Bearer ${token}`
+      };
+    }
+  }
+
+  const response = await fetch(url, reqOptions);
 
   // Handle error response
   if (!response.ok) {
@@ -103,8 +116,8 @@ export const serviceApi = {
     });
   },
 
-  async login(username: string): Promise<User> {
-    return fetchWithHandling<User>(`${SESSION_BASE_URL}/users/login?username=${username}`, {
+  async login(username: string): Promise<LoginDTO> {
+    return fetchWithHandling<LoginDTO>(`${SESSION_BASE_URL}/users/login?username=${username}`, {
       method: 'POST',
     });
   },

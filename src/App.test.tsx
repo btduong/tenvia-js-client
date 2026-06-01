@@ -18,6 +18,11 @@ const validUser = {
   balance: 0,
   inventory: mockInventory,
 };
+
+const mockLoginDTO = {
+  userDTO: validUser,
+  jwt_token: 'jwt_token'
+}
 const validQuestion = {
   id: 1428,
   questionText: 'questionText',
@@ -32,7 +37,7 @@ const restHandlers = [
   http.post('*/users/login', ({ request }) => {
     const url = new URL(request.url);
     const username = url.searchParams.get('username');
-    return HttpResponse.json(validUser);
+    return HttpResponse.json(mockLoginDTO);
   }),
   http.post('*/start', () => {
     return HttpResponse.json(validSession);
