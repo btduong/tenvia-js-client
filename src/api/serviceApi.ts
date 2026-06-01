@@ -14,27 +14,45 @@ const SESSION_BASE_URL = 'http://localhost:8080';
 const LEADERBOARD_BASE_URL = 'http://localhost:8081';
 
 /**
- * A generic helper to process API requests.
- * Handles the server's standard ErrorResponseDTO and data parsing.
+ * A fetch with the provided JwT token from the server.
+ * This is needed to communicate with the backend server as all endpoints (except /login)
+ * required the Authorization header.
+ *
+ * @param url 
+ * @param options 
+ * @returns a promise of T
  */
-async function fetchWithHandling<T>(
+async function fetchWithToken<T>(
   url: string,
   options?: RequestInit
 ): Promise<T> {
 
-  const reqOptions = { ...options };
+  const token = localStorage.getItem('jwt_token');
+  const headers: Record<string, string> = {
+    ...(options?.headers as Record<string, string>)
+  };
 
-  if (!url.includes('/login')) {
-    const token = localStorage.getItem('jwt_token');
-    if (token) {
-      reqOptions.headers = {
-        ...reqOptions.headers,
-        'Authorization': `Bearer ${token}`
-      };
-    }
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(url, reqOptions);
+  return fetchPublic<T>(url, {...options, headers});
+}
+
+/**
+ * A generic fetch helper to process API requests.
+ * This does not attach a token to the Authorization header as it is supposed to communicate to 
+ * the endpoints on server without a token like /login.
+ * For all other endpoints that needed a token, use #fetchWithToken
+ *
+ * Handles the server's standard ErrorResponseDTO and data parsing.
+ */
+async function fetchPublic<T>(
+  url: string,
+  options?: RequestInit
+): Promise<T> {
+
+  const response = await fetch(url, options);
 
   // Handle error response
   if (!response.ok) {
@@ -75,14 +93,14 @@ export const serviceApi = {
     userId: number,
     questionLimit: number
   ): Promise<GameSession> {
-    return fetchWithHandling<GameSession>(
+    return fetchWithToken<GameSession>(
       `${SESSION_BASE_URL}/sessions/start?id=${userId}&limit=${questionLimit}`,
       { method: 'POST' }
     );
   },
 
   async getQuestion(sessionId: string): Promise<Question> {
-    return fetchWithHandling<Question>(`${SESSION_BASE_URL}/sessions/${sessionId}/questions/next`, {
+    return fetchWithToken<Question>(`${SESSION_BASE_URL}/sessions/${sessionId}/questions/next`, {
       method: 'GET',
     });
   },
@@ -92,7 +110,7 @@ export const serviceApi = {
     userId: number,
     sessionId: string
   ): Promise<UsePowerUpResponse> {
-    return fetchWithHandling<UsePowerUpResponse>(
+    return fetchWithToken<UsePowerUpResponse>(
       `${SESSION_BASE_URL}/api/powerups/use?type=${type}&userId=${userId}&sessionId=${sessionId}`,
       { method: 'POST' }
     );
@@ -109,7 +127,7 @@ export const serviceApi = {
     sessionId: string,
     optionId: number | null
   ): Promise<AnswerResponse> {
-    return fetchWithHandling<AnswerResponse>(`${SESSION_BASE_URL}/sessions/${sessionId}/answer`, {
+    return fetchWithToken<AnswerResponse>(`${SESSION_BASE_URL}/sessions/${sessionId}/answer`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ selectedOptionId: optionId }),
@@ -117,25 +135,25 @@ export const serviceApi = {
   },
 
   async login(username: string): Promise<LoginDTO> {
-    return fetchWithHandling<LoginDTO>(`${SESSION_BASE_URL}/users/login?username=${username}`, {
+    return fetchPublic<LoginDTO>(`${SESSION_BASE_URL}/users/login?username=${username}`, {
       method: 'POST',
     });
   },
 
   async leaderboardPage(): Promise<LeaderboardDTO[]> {
-    return fetchWithHandling<LeaderboardDTO[]>(`${LEADERBOARD_BASE_URL}/leaderboard`, {
+    return fetchWithToken<LeaderboardDTO[]>(`${LEADERBOARD_BASE_URL}/leaderboard`, {
       method: 'GET',
     });
   },
 
   async abandon(sessionId: string): Promise<null> {
-    return fetchWithHandling<null>(`${SESSION_BASE_URL}/sessions/${sessionId}/abandon`, {
+    return fetchWithToken<null>(`${SESSION_BASE_URL}/sessions/${sessionId}/abandon`, {
       method: 'POST',
     });
   },
 
   async swapQuestion(sessionId: string): Promise<Question> {
-    return fetchWithHandling<Question>(`${SESSION_BASE_URL}/sessions/${sessionId}/swap`, {
+    return fetchWithToken<Question>(`${SESSION_BASE_URL}/sessions/${sessionId}/swap`, {
       method: 'POST',
     });
   },
@@ -144,7 +162,7 @@ export const serviceApi = {
     userId: number,
     itemType: PowerUpType
   ): Promise<User> {
-    return fetchWithHandling<User>(
+    return fetchWithToken<User>(
       `${SESSION_BASE_URL}/shop/buy?userId=${userId}&type=${itemType}`,
       { method: 'POST' }
     );
