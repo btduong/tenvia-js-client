@@ -109,7 +109,7 @@ const App: React.FC = () => {
 
         {user && (
           <>
-            <Route path="/shop" element={<ShopPage user={user} onPurchase={purchaseItem} />} />
+            {/* <Route path="/shop" element={<ShopPage user={user} onPurchase={purchaseItem} />} /> */}
 
             <Route
               path="/quiz"

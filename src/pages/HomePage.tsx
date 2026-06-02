@@ -21,7 +21,7 @@ const HomePage: React.FC<HomeProps> = ({ onStartNewGame }) => {
       </button>
 
       <NavButton to="/leaderboard" label="Leaderboard" ariaLabel="To Leaderboard" />
-      <NavButton to="/shop" label="Shop" ariaLabel="To Shop" />
+      {/* <NavButton to="/shop" label="Shop" ariaLabel="To Shop" /> */}
     </div>
   );
 };
