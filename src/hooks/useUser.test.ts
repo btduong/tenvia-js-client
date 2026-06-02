@@ -97,7 +97,7 @@ describe('useUser', () => {
 
     // purchase
     await act(async () => {
-      apiServicePromise = result.current.purchaseItem('HAMMER');
+      apiServicePromise = result.current.purchaseItem('session123', 'HAMMER');
     });
 
     const purchaseResult = await apiServicePromise;
@@ -111,7 +111,7 @@ describe('useUser', () => {
 
     let apiServicePromise;
     await act(async () => {
-      apiServicePromise = result.current.purchaseItem('HAMMER');
+      apiServicePromise = result.current.purchaseItem('session123', 'HAMMER');
     });
 
     const purchaseResult = await apiServicePromise;

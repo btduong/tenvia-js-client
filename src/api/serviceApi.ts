@@ -160,10 +160,11 @@ export const serviceApi = {
 
   async purchasePowerUp(
     userId: number,
+    sessionId: string,
     itemType: PowerUpType
   ): Promise<User> {
     return fetchWithToken<User>(
-      `${SESSION_BASE_URL}/shop/buy?userId=${userId}&type=${itemType}`,
+      `${SESSION_BASE_URL}/shop/buy?userId=${userId}&sessionId=${sessionId}&type=${itemType}`,
       { method: 'POST' }
     );
   },

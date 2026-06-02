@@ -109,7 +109,9 @@ const App: React.FC = () => {
 
         {user && (
           <>
-            <Route path="/shop" element={<ShopPage user={user} onPurchase={purchaseItem} />} />
+            {contextValue.sessionId && (
+              <Route path="/shop" element={<ShopPage user={user} onPurchase={(itemType) => purchaseItem(contextValue.sessionId!, itemType)} />} />
+            )}
 
             <Route
               path="/quiz"

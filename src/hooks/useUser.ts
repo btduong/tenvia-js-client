@@ -21,9 +21,9 @@ export const useUser = () => {
   });
 
   const purchaseItemMutation = useMutation({
-    mutationFn: (itemType: PowerUpType) => {
+    mutationFn: ({ sessionId, itemType }: { sessionId: string, itemType: PowerUpType }) => {
       if (!user) throw new Error('Not loggegd in');
-      return serviceApi.purchasePowerUp(user.id, itemType);
+      return serviceApi.purchasePowerUp(user.id, sessionId, itemType);
     },
     onSuccess: (updatedUser) => {
       setUser((prev) => (prev ? { ...prev, inventory: updatedUser.inventory } : null));
@@ -37,9 +37,9 @@ export const useUser = () => {
     return await loginMutation.mutateAsync(username);
   };
 
-  const purchaseItem = async (itemType: PowerUpType) => {
+  const purchaseItem = async (sessionId: string, itemType: PowerUpType) => {
     try {
-      await purchaseItemMutation.mutateAsync(itemType);
+      await purchaseItemMutation.mutateAsync({ sessionId, itemType });
       return true;
     } catch {
       return false;
