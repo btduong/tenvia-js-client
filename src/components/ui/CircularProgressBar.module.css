@@ -1,0 +1,20 @@
+.circularTimelineContainer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto; /* center it */
+}
+
+.timeText {
+  position: absolute;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+  /* Center the text right on the center of the circle */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
