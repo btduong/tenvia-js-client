@@ -1,31 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
-import timelineStyle from './QuestionTimer.module.css';
+import { CircularTimeLine } from '../ui/CircularProgressBar';
 
 interface SessionTimerProps {
   duration: number;
   isPause: boolean;
   onComplete: () => void;
 }
-
-/**
- * A timeline component represents a progress bar.
- * @param percentage - 100% = full bar, 0% = empty bar
- * @returns a horizontal div
- */
-const TimeLine = ({ percentage }: { percentage: number }) => {
-  return (
-    <div className={timelineStyle.timelineContainer}>
-      <div
-        style={{
-          width: `${percentage}%`,
-          height: '100%',
-          background: percentage < 20 ? 'red' : 'gold', // Changes color when low
-          transition: 'width 0.1s linear',
-        }}
-      />
-    </div>
-  );
-};
 
 const QuestionTimer: React.FC<SessionTimerProps> = ({ duration, isPause, onComplete }) => {
   const [timeLeft, setTimeLeft] = useState(duration);
@@ -56,7 +36,7 @@ const QuestionTimer: React.FC<SessionTimerProps> = ({ duration, isPause, onCompl
 
   const percentage = (timeLeft / duration) * 100;
 
-  return <TimeLine percentage={percentage} />;
+  return <CircularTimeLine percentage={percentage} timeLeft={timeLeft} />
 };
 
 export default QuestionTimer;
