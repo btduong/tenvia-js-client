@@ -75,7 +75,7 @@ describe('App Login', () => {
     server.close();
   });
 
-  beforeEach(() => {});
+  beforeEach(() => { });
 
   afterEach(() => {
     server.resetHandlers();
@@ -134,17 +134,20 @@ describe('App Login', () => {
     await userEvent.type(input, 'player1');
 
     // Click the player button
-    const loginButton = screen.getByRole('button', { name: /Play/ });
-    await userEvent.click(loginButton);
+    const playButton = screen.getByRole('button', { name: /Play/ });
+    await userEvent.click(playButton);
 
-    // Verify a new game session is created and new game button is there
-    // for player to start playing
     await waitFor(() => {
       expect(screen.getByText(/New Game/i)).toBeInTheDocument();
     });
 
     const newGameButton = screen.getByRole('button', { name: /New Game/ });
     await userEvent.click(newGameButton);
+
+    const startButton = screen.getByRole('button', { name: 'Start' });
+    expect(startButton).toBeInTheDocument();
+
+    await userEvent.click(startButton);
 
     await waitFor(() => {
       expect(audioSpy).toHaveBeenCalled();
@@ -199,6 +202,11 @@ describe('App Login', () => {
 
     const newGameButton = screen.getByRole('button', { name: /New Game/ });
     await userEvent.click(newGameButton);
+
+    const startButton = screen.getByRole('button', { name: 'Start' });
+    expect(startButton).toBeInTheDocument();
+
+    await userEvent.click(startButton);
 
     await waitFor(() => {
       expect(screen.getByText(/Question:/i)).toBeInTheDocument();
