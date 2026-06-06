@@ -121,7 +121,7 @@ const App: React.FC = () => {
                       sessionData={sessionData}
                       currentQuestion={currentQuestion}
                       currentIndex={currentQuestion.index}
-                      questionLimit={questionLimit}
+                      questionLimit={questionLimit.current}
                       onQuestionTimedout={onQuestionTimedout}
                     />
                   </GameProvider>

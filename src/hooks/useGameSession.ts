@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { NavigateFunction, SessionData } from 'react-router-dom';
 import { serviceApi } from '@/api/serviceApi';
 import type {
@@ -31,17 +31,19 @@ export const useGameSession = (
 ) => {
   const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.IDLE);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [questionLimit, setQuestionLimit] = useState<number>(10); // How many questions per game
   const [sessionData, setSessionData] = useState<GameSession | null>(null);
   const [answerSent, setAnswerSent] = useState<boolean>(false);
   const [globalErrorMessage, setGlobalUserMessage] = useState<string>('');
   const [isTicking, setIsTicking] = useState(false);
+
+  const questionLimit = useRef<number>(10); // How many questions per game
+
   useTickingSound(isTicking);
 
   const newSessionMutation = useMutation({
-    mutationFn: () => {
+    mutationFn: (questions: number) => {
       if (!user) throw new Error('Not logged in');
-      return serviceApi.getNewSession(user.id, questionLimit)
+      return serviceApi.getNewSession(user.id, questions)
     },
     onSuccess: (gameSession) => {
       setSessionData(gameSession)
@@ -60,10 +62,11 @@ export const useGameSession = (
    * Start a new game session for a logged in user
    * @returns a new GameSession
    */
-  const startNewGame = async () => {
+  const startNewGame = async (questions: number) => {
     if (!user) return;
 
-    newSessionMutation.mutate();
+    questionLimit.current = questions;
+    newSessionMutation.mutate(questions);
 
   };
 
