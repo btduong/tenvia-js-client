@@ -12,6 +12,7 @@ import { LoginPage } from './pages/LoginPage';
 import QuizCardPage from './pages/QuizCardPage';
 import ShopPage from './pages/ShopPage';
 import SummaryPage from './pages/SummaryPage';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 const App: React.FC = () => {
   const navigate = useNavigate();
@@ -107,34 +108,44 @@ const App: React.FC = () => {
           }
         />
 
-        {user && (
-          <>
-            {/* <Route path="/shop" element={<ShopPage user={user} onPurchase={purchaseItem} />} /> */}
 
-            <Route
-              path="/quiz"
-              element={
-                currentQuestion && sessionData?.id ? (
-                  <GameProvider value={contextValue}>
-                    <QuizCardPage
-                      answerSent={answerSent}
-                      sessionData={sessionData}
-                      currentQuestion={currentQuestion}
-                      currentIndex={currentQuestion.index}
-                      questionLimit={questionLimit.current}
-                      onQuestionTimedout={onQuestionTimedout}
-                    />
-                  </GameProvider>
-                ) : (
-                  <div />
-                )
-              }
-            />
+        {/* <Route path="/shop" element={<ShopPage user={user} onPurchase={purchaseItem} />} /> */}
 
-            <Route path="/summary" element={<SummaryPage />} />
-            <Route path="/leaderboard" element={<LeaderboardPage />} />
-          </>
-        )}
+        <Route
+          path="/quiz"
+          element={
+            <ProtectedRoute user={user}>
+              {currentQuestion && sessionData?.id ? (
+                <GameProvider value={contextValue}>
+                  <QuizCardPage
+                    answerSent={answerSent}
+                    sessionData={sessionData}
+                    currentQuestion={currentQuestion}
+                    currentIndex={currentQuestion.index}
+                    questionLimit={questionLimit.current}
+                    onQuestionTimedout={onQuestionTimedout}
+                  />
+                </GameProvider>
+              ) : (
+                <div />
+              )}
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/summary" element={
+          <ProtectedRoute user={user}>
+            <SummaryPage />
+          </ProtectedRoute>
+        }
+        />
+
+        <Route path="/leaderboard" element={
+          <ProtectedRoute user={user}>
+            <LeaderboardPage />
+          </ProtectedRoute>
+        } />
+
       </Routes>
     </div>
   );
