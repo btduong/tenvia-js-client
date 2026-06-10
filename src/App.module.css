@@ -62,13 +62,6 @@
   background-attachment: fixed;
 }
 
-.quizPage {
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr;
-  flex: 1;
-  padding-bottom: 80px;
-}
 
 .mobileAppWrapper {
   max-width: 430px;
@@ -82,15 +75,6 @@
   overflow-x: hidden;
 }
 
-.currentQuestionCount {
-  text-align: center;
-  width: 100%;
-  display: block;
-  margin-top: 20px;
-  margin-bottom: 2px;
-  background-color: #b63dce;
-  font-size: 1.2rem;
-}
 
 .currentTimeRemaining {
   text-align: center;

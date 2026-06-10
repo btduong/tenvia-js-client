@@ -162,7 +162,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   const hasPowerUps = activePowerUps.length > 0;
 
   return (
-    <div className="flex flex-col border m-auto p-5 content-center gap-5">
+    <div className="flex flex-col w-full px-4 pt-8 gap-5">
       {/* 1. Question Text*/}
       <QuestionHeader
         questionText={currentQuestion.questionText}
@@ -207,7 +207,7 @@ const QuestionHeader = ({
 }) => {
   return (
     <div className="flex flex-col items-center relative w-full">
-      <div className="w-full pt-5">{questionText}</div>
+      <div className="w-full pt-5 text-xl">{questionText}</div>
 
       {potentialReward && (
         <div className="flex flex-row items-center content-center gap-2 p-2">
@@ -287,7 +287,7 @@ const AnswerOptionList = ({
           <div className="w-full" key={option.id}>
             <Button
               variant="outline"
-              className={`w-full h-auto py-6 whitespace-normal rounded-xl border-2 transition-all hover:scale-[1.02] active:scale-[0.98] ${optionButtonStyle}`}
+              className={`w-full h-auto py-6 whitespace-normal rounded-xl border-black border-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-100 ${optionButtonStyle}`}
               disabled={answerResponse !== null || !option.isAvailable || isVerifying}
               onClick={() => {
                 handleOptionSelect(option.id);

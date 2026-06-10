@@ -1,9 +1,16 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
-import { afterEach } from 'vitest';
+import { afterEach, vi } from 'vitest';
 
-// Manually extend Vitest's expect with Jest-DOM matchers
-// This is what makes .toBeInTheDocument() work!
 afterEach(() => {
   cleanup();
+});
+
+/**
+ * Mock this interface as it is not native to jsdom and it is used by shadcn/radix 's Tooltip component
+ */
+vi.stubGlobal('ResizeObserver', class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
 });
