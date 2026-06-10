@@ -19,7 +19,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ handleLogin }) => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-900 to-black p-4">
+    <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-sm shadow-xl">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-extrabold tracking-tight">Tenvia</CardTitle>
