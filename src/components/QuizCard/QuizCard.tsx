@@ -106,20 +106,22 @@ const QuizCard: React.FC<QuizCardProps> = () => {
    */
   const getOptionStyle = (option: QuestionOption) => {
     if (!option.isAvailable) {
-      return "opacity-30 grayscale cursor-not-allowed";
+      return "opacity-30 grayscale cursor-not-allowed border-border";
     }
     if (!answerResponse) {
       // selected an answer option but hasn't submitted yet
-      return selectedOptionId === option.id ? "bg-orange-600 text-white hover:bg-orange-700 hover:text-white border-orange-600" : "hover:bg-orange-600 hover:text-white hover:border-orange-600";
+      return selectedOptionId === option.id
+        ? "bg-orange-500 text-white hover:bg-orange-600 hover:text-white border-orange-500"
+        : "border-border hover:bg-orange-500 hover:text-white hover:border-orange-500";
     }
     if (option.letter === answerResponse.correctLetter) // selected and submitted answer option is the correct one
     {
-      return "bg-green-600 text-white border-green-600 dark:bg-green-500 dark:border-green-500";
+      return "bg-green-600 text-white border-green-600 dark:bg-green-500 dark:border-green-500 disabled:opacity-100";
     }
     if (option.letter !== answerResponse.correctLetter && selectedOptionId === option.id) {
-      return "bg-red-700 text-white border-red-700";
+      return "bg-red-600 text-white border-red-600 dark:bg-red-500 dark:border-red-500 disabled:opacity-100";
     }
-    return "opacity-50"; // "blur" incorrect answers
+    return "border-border opacity-50 disabled:opacity-50"; // Dim unselected incorrect answers
   };
 
   const handleOptionSelect = (optionId: number) => {
@@ -292,7 +294,7 @@ const AnswerOptionList = ({
           <div className="w-full" key={option.id}>
             <Button
               variant="outline"
-              className={`w-full h-auto py-6 whitespace-normal rounded-xl border-black border-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-100 ${optionButtonStyle}`}
+              className={`w-full h-auto py-6 whitespace-normal rounded-xl border-2 transition-all hover:scale-[1.02] active:scale-[0.98] ${optionButtonStyle}`}
               disabled={answerResponse !== null || !option.isAvailable || isVerifying}
               onClick={() => {
                 handleOptionSelect(option.id);
