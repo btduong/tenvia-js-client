@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styles from './LoginPage.module.css';
+import { Button } from '@/components/ui/button';
 
 interface LoginPageProps {
   handleLogin: (username: string) => Promise<void>;
@@ -24,9 +25,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ handleLogin }) => {
         value={userName}
         onChange={(e) => setTypedUsername(e.target.value)}
       />
-      <button type="submit" disabled={!userName.trim()}>
+      <Button type="submit" disabled={!userName.trim()}>
         Play
-      </button>
+      </Button>
     </form>
   );
 };

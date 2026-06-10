@@ -15,6 +15,7 @@ import HomeButton from '@/components/ui/HomeButton';
 
 import hammerIcon from '@/assets/icons/suit_diamonds.png';
 import { useGameContext } from '@/context/GameContext';
+import { Button } from '../ui/button';
 
 /**
  * A map to find icon for a given PowerUpType.
@@ -248,7 +249,7 @@ const ControlBar = ({
       </div>
       {/* rigth space */}
       <div className={styles.navRight}>
-        <button
+        <Button
           className={styles.nextBtn}
           disabled={!answerResponse}
           onClick={() => {
@@ -258,7 +259,7 @@ const ControlBar = ({
           }}
         >
           Next
-        </button>
+        </Button>
       </div>
     </nav>
   );
@@ -286,7 +287,7 @@ const AnswerOptionList = ({
         const optionButtonStyle = getOptionStyle(option);
         return (
           <div className={styles.container} key={option.id}>
-            <button
+            <Button
               className={`${optionButtonStyle}`}
               disabled={answerResponse !== null || !option.isAvailable || isVerifying}
               onClick={() => {
@@ -295,7 +296,7 @@ const AnswerOptionList = ({
             >
               {/* <span className={styles.optionCircle}>{option.letter}</span> */}
               <span className={styles.optionText}>{option.content}</span>
-            </button>
+            </Button>
           </div>
         );
       })}
@@ -328,7 +329,7 @@ const PowerUpItemBar = ({
           <div className="inventory-bar">
             <h4>Your Power-Ups:</h4>
             {activePowerUps.map(([type, _]) => (
-              <button
+              <Button
                 key={type}
                 className={styles.powerUpBtn}
                 data-tooltip={type}
@@ -341,7 +342,7 @@ const PowerUpItemBar = ({
                   className={styles.powerUpBtnIcon}
                   alt={type}
                 />
-              </button>
+              </Button>
             ))}
           </div>
         }

@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import styles from './HomePage.module.css';
 
 import NavButton from '@/components/ui/NavButton';
@@ -34,13 +35,13 @@ const NumberOfQuestionsPicker: React.FC<NumberOfQuestionsPickerProps> = ({ onSta
           </select>
         </label>
         <div className={styles.modalActions}>
-          <button onClick={onCancel}>Cancel</button>
-          <button 
+          <Button variant="outline" onClick={onCancel}>Cancel</Button>
+          <Button 
             onClick={() => {
               onStartNewGame(numberOfQuestions);
               playQuestionStartSound();
             }}
-          >Start</button>
+          >Start</Button>
         </div>
       </div>
     </div>
@@ -54,13 +55,13 @@ const HomePage: React.FC<HomeProps> = ({ onStartNewGame }) => {
     <div className={styles.homeContainer}>
       <h1>Quiz Game</h1>
       
-      <button
+      <Button
         onClick={() => {
           setShowSelection(true);
         }}
       >
         New Game
-      </button>
+      </Button>
 
       {showSelection && (
         <NumberOfQuestionsPicker 
