@@ -27,7 +27,7 @@ export default function LeaderboardPage({ }) {
 
   return (
     <div className="mx-auto w-full max-w-2xl p-6 space-y-6">
-      <h2 className="text-2xl font-bold tracking-tight text-center">Top 10 High Scores</h2>
+      <h2 className="text-3xl font-extrabold tracking-tight text-center">Top 10 High Scores</h2>
       
       <div className="rounded-md border bg-card text-card-foreground shadow-sm">
         <Table>

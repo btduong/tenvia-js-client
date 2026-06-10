@@ -1,7 +1,6 @@
 import { GameStatus } from '@/types';
 import { useMemo } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import appStyles from './App.module.css';
 import { StatusMessage } from './components/ui/StatusMessage';
 import { GameProvider } from './context/GameContext';
 import { useGameSession } from './hooks/useGameSession';
@@ -93,7 +92,7 @@ const App: React.FC = () => {
   const statusMessageUI = UIMessage();
 
   return (
-    <div className={appStyles.mobileAppWrapper}>
+    <div className="max-w-[430px] w-full mx-auto min-h-screen flex flex-col relative bg-slate-950 overflow-x-hidden shadow-2xl dark text-foreground">
       {statusMessageUI && (
         <StatusMessage status={gameStatus} message={statusMessageUI} onClose={handleClearError} />
       )}

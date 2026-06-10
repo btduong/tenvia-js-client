@@ -48,7 +48,7 @@ describe('HomeButton', () => {
         initialEntries={[
           {
             pathname: '/summary',
-            state: { sessionSummary: { score: 1, correctAnswerCount: 2 } },
+            state: { sessionSummary: { score: 2, correctAnswerCount: 2 } },
           },
         ]}
       >
@@ -57,8 +57,8 @@ describe('HomeButton', () => {
     );
 
     expect(screen.getByText(/Game Over/)).toBeInTheDocument();
-    expect(screen.getByText(/Score: 1/)).toBeInTheDocument();
-    expect(screen.getByText(/Correct: 2/)).toBeInTheDocument();
+    expect(screen.getByText(/Final Score/i).nextElementSibling).toHaveTextContent('2');
+    expect(screen.getByText(/^Correct$/i).previousElementSibling).toHaveTextContent('2');
 
     const homeButton = screen.getByRole('button', { name: /To Home/i });
     expect(homeButton).toBeInTheDocument();

@@ -109,16 +109,16 @@ const QuizCard: React.FC<QuizCardProps> = () => {
     }
     if (!answerResponse) {
       // selected an answer option but hasn't submitted yet
-      return selectedOptionId === option.id ? "bg-orange-600 text-white" : "bg-white text-black hover:bg-orange-600";
+      return selectedOptionId === option.id ? "bg-orange-600 text-white hover:bg-orange-700 hover:text-white border-orange-600" : "hover:bg-orange-600 hover:text-white hover:border-orange-600";
     }
     if (option.letter === answerResponse.correctLetter) // selected and submitted answer option is the correct one
     {
-      return "bg-green-500 text-white border-black";
+      return "bg-green-600 text-white border-green-600 dark:bg-green-500 dark:border-green-500";
     }
     if (option.letter !== answerResponse.correctLetter && selectedOptionId === option.id) {
-      return "bg-red-700 text-white border-black";
+      return "bg-red-700 text-white border-red-700";
     }
-    return "bg-white text-black";
+    return "opacity-50"; // "blur" incorrect answers
   };
 
   const handleOptionSelect = (optionId: number) => {

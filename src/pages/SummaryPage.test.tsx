@@ -31,10 +31,10 @@ describe('SummaryPage', () => {
     render(<SummaryPage />);
 
     expect(screen.getByText(/Game Over!/i)).toBeInTheDocument();
-    expect(screen.getByText(/Score: 1/i)).toBeInTheDocument();
-    expect(screen.getByText(/Correct: 1/i)).toBeInTheDocument();
-    expect(screen.getByText(/Incorrect: 2/i)).toBeInTheDocument();
-    expect(screen.getByText(/Skip: 3/i)).toBeInTheDocument();
+    expect(screen.getByText(/Final Score/i).nextElementSibling).toHaveTextContent('1');
+    expect(screen.getByText(/^Correct$/i).previousElementSibling).toHaveTextContent('1');
+    expect(screen.getByText(/^Incorrect$/i).previousElementSibling).toHaveTextContent('2');
+    expect(screen.getByText(/^Skipped$/i).previousElementSibling).toHaveTextContent('3');
   });
 
   it('can render default view without summary', () => {

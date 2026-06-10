@@ -1,6 +1,8 @@
 import QuestionTimer from '@/components/QuestionTimer/QuestionTimer';
 import QuizCard from '@/components/QuizCard/QuizCard';
 
+import { Progress } from '@/components/ui/progress';
+
 import type {
   AnswerResponse,
   GameSession,
@@ -27,10 +29,15 @@ const QuizCardPage: React.FC<QuizCardPageProps> = ({
   answerSent,
   onQuestionTimedout,
 }) => {
+  const progressValue = ((currentIndex + 1) / questionLimit) * 100;
+
   return (
     <div className="flex flex-col flex-1 w-full max-w-md mx-auto relative pb-20">
-      <div className="text-center w-full block mt-5 mb-1 bg-primary text-primary-foreground text-xl py-1">
+      <div className="w-full mt-6 mb-2 px-4 flex flex-col gap-2">
+        <div className="flex justify-left items-center text-sm font-semibold tracking-tight text-muted-foreground">
         {`Question: ${currentIndex + 1}/${questionLimit}`}
+        </div>
+        <Progress value={progressValue} className="h-2 w-full" />
       </div>
       {!!sessionData?.duration && (
         <QuestionTimer
