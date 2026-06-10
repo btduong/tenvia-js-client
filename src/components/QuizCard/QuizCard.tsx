@@ -1,6 +1,5 @@
 import { GameStatus } from '@/types';
 import { useState } from 'react';
-import styles from './QuizCard.module.css';
 
 import { serviceApi } from '@/api/serviceApi';
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
@@ -163,7 +162,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   const hasPowerUps = activePowerUps.length > 0;
 
   return (
-    <div className={styles.mainQuestionContainer}>
+    <div className="flex flex-col border m-auto p-5 content-center gap-5">
       {/* 1. Question Text*/}
       <QuestionHeader
         questionText={currentQuestion.questionText}
@@ -207,18 +206,18 @@ const QuestionHeader = ({
   potentialPenalty: QuestionPenaltyType | null;
 }) => {
   return (
-    <div className={styles.questionWrapper}>
-      <div className={styles.questionText}>{questionText}</div>
+    <div className="flex flex-col items-center relative w-full">
+      <div className="w-full pt-5">{questionText}</div>
 
       {potentialReward && (
-        <div className={styles.stakeBar}>
-          {<span className={styles.reward}> {potentialReward}</span>}
+        <div className="flex flex-row items-center content-center gap-2 p-2">
+          {<span className="text-black bg-amber-200"> {potentialReward}</span>}
         </div>
       )}
 
       {potentialPenalty && (
-        <div className={styles.stakeBar}>
-          {<span className={styles.penalty}> {potentialPenalty}</span>}
+        <div className="flex flex-row items-center content-center gap-2 p-2">
+          {<span className="bg-red-400 text-white"> {potentialPenalty}</span>}
         </div>
       )}
     </div>
@@ -238,18 +237,18 @@ const ControlBar = ({
   handleAbandonSession: () => Promise<boolean> | boolean;
 }) => {
   return (
-    <nav className={styles.controlBar}>
-      <hr />
+    <nav className="fixed bottom-0 left-1/2 w-full max-w-[430px] -translate-x-1/2 px-5 flex items-center justify-between h-[70px] bg-background/95 backdrop-blur border-t">
       {/* left space */}
-      <div className={styles.navSpacer}></div>
+      <div className="flex-1"></div>
       {/* center space*/}
-      <div className={styles.homeBtn}>
+      <div className="flex-1 flex justify-center">
         <HomeButton handleAbandonSession={handleAbandonSession} />
       </div>
       {/* rigth space */}
-      <div className={styles.navRight}>
+      <div className="flex-1 flex justify-end">
         <Button
-          className={styles.nextBtn}
+          variant="secondary"
+          className="font-bold"
           disabled={!answerResponse}
           onClick={() => {
             if (answerResponse) {
@@ -281,20 +280,20 @@ const AnswerOptionList = ({
   getOptionStyle: (option: QuestionOption) => string | undefined;
 }) => {
   return (
-    <div className={styles.optionsContainer}>
+    <div className="grid grid-cols-1 gap-3 w-full mx-auto">
       {options.map((option: QuestionOption) => {
         const optionButtonStyle = getOptionStyle(option);
         return (
-          <div className={styles.container} key={option.id}>
+          <div className="w-full" key={option.id}>
             <Button
-              className={`${optionButtonStyle}`}
+              variant="outline"
+              className={`w-full h-auto py-6 whitespace-normal rounded-xl border-2 transition-all hover:scale-[1.02] active:scale-[0.98] ${optionButtonStyle}`}
               disabled={answerResponse !== null || !option.isAvailable || isVerifying}
               onClick={() => {
                 handleOptionSelect(option.id);
               }}
             >
-              {/* <span className={styles.optionCircle}>{option.letter}</span> */}
-              <span className={styles.optionText}>{option.content}</span>
+              <span className="text-center font-semibold text-base">{option.content}</span>
             </Button>
           </div>
         );
@@ -322,37 +321,33 @@ const PowerUpItemBar = ({
   if (answerResponse || !hasPowerUps || isDisabled) return null;
 
   return (
-    <div style={{ marginTop: '10px' }}>
-      <>
-        {
-          <div className="inventory-bar">
-            <h4>Your Power-Ups:</h4>
-            {activePowerUps.map(([type, _]) => (
-              <Tooltip key={type}>
-                <TooltipTrigger asChild>
-                  <Button
-                    className={styles.powerUpBtn}
-                    data-tooltip={type}
-                    onClick={() => {
-                      handlePowerUpActivate(type);
-                    }}
-                  >
-                    <img
-                      src={POWER_UP_TYPE_ICON_MAP[type]}
-                      className={styles.powerUpBtnIcon}
-                      alt={type}
-                    />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{type}</p>
-                </TooltipContent>
-              </Tooltip>
-
-            ))}
-          </div>
-        }
-      </>
+    <div className="mt-4 flex flex-col items-center border-t pt-4">
+      <h4 className="text-sm text-muted-foreground font-medium mb-3">Your Power-Ups</h4>
+      <div className="flex gap-4">
+        {activePowerUps.map(([type, _]) => (
+          <Tooltip key={type}>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-12 h-12 rounded-full border-2 hover:bg-primary/10 transition-colors"
+                onClick={() => {
+                  handlePowerUpActivate(type);
+                }}
+              >
+                <img
+                  src={POWER_UP_TYPE_ICON_MAP[type]}
+                  className="block w-6 h-6"
+                  alt={type}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{type}</p>
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
     </div>
   );
 };

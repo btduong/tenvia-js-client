@@ -109,7 +109,7 @@ describe('QuizCard', () => {
     expect(await screen.findByRole('button', { name: 'HAMMER' })).toBeInTheDocument();
 
     // The default power-up bar with a power-upitem in the inventory
-    expect(screen.getByText(/Your Power-Ups:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Your Power-Ups/i)).toBeInTheDocument();
 
     const hammerButton = screen.getByRole('button', { name: 'HAMMER' });
     await userEvent.click(hammerButton);
@@ -117,7 +117,7 @@ describe('QuizCard', () => {
     expect(mockHandleUsePowerUp).toHaveBeenCalled();
 
     // The usage limit is reached for current question so hide the power-up bar
-    expect(screen.queryByText(/Your Power-Ups:/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Your Power-Ups/i)).not.toBeInTheDocument();
   });
 
   it('can send validate request', async () => {

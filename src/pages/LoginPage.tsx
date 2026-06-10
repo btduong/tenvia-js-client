@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import styles from './LoginPage.module.css';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -19,7 +18,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ handleLogin }) => {
   };
 
   return (
-    <form className={styles.loginContainer} onSubmit={onSubmit}>
+    <form className="flex flex-col items-center gap-4" onSubmit={onSubmit}>
       <FieldGroup>
         <Field>
           <FieldLabel>
