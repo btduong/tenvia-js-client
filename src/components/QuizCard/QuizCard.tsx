@@ -26,7 +26,7 @@ const POWER_UP_TYPE_ICON_MAP: Record<PowerUpType, string> = {
   SWAP_QUESTION: hammerIcon,
 };
 
-interface QuizCardProps {}
+interface QuizCardProps { }
 
 /**
  * Reander the quiz which includes question text and options for answers
@@ -105,22 +105,20 @@ const QuizCard: React.FC<QuizCardProps> = () => {
    */
   const getOptionStyle = (option: QuestionOption) => {
     if (!option.isAvailable) {
-      return styles.optionDisabled;
+      return "opacity-30 grayscale cursor-not-allowed";
     }
     if (!answerResponse) {
       // selected an answer option but hasn't submitted yet
-      return selectedOptionId === option.id ? styles.optionSelected : styles.optionBtn;
+      return selectedOptionId === option.id ? "bg-orange-600 text-white" : "bg-white text-black hover:bg-orange-600";
     }
-    if (
-      option.letter === answerResponse.correctLetter
-    ) // selected and submitted answer option is the correct one
+    if (option.letter === answerResponse.correctLetter) // selected and submitted answer option is the correct one
     {
-      return styles.optionCorrectBtn;
+      return "bg-green-500 text-white border-black";
     }
     if (option.letter !== answerResponse.correctLetter && selectedOptionId === option.id) {
-      return styles.optionIncorrectBtn;
+      return "bg-red-700 text-white border-black";
     }
-    return styles.optionBtn;
+    return "bg-white text-black";
   };
 
   const handleOptionSelect = (optionId: number) => {
