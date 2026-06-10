@@ -13,6 +13,7 @@ import QuizCardPage from './pages/QuizCardPage';
 import ShopPage from './pages/ShopPage';
 import SummaryPage from './pages/SummaryPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import { TooltipProvider } from './components/ui/tooltip';
 
 const App: React.FC = () => {
   const navigate = useNavigate();
@@ -96,9 +97,10 @@ const App: React.FC = () => {
       {statusMessageUI && (
         <StatusMessage status={gameStatus} message={statusMessageUI} onClose={handleClearError} />
       )}
-      <Routes>
-        <Route
-          path="/"
+      <TooltipProvider>
+        <Routes>
+          <Route
+            path="/"
           element={
             !user ? (
               <LoginPage handleLogin={handleLogin} />
@@ -147,6 +149,7 @@ const App: React.FC = () => {
         } />
 
       </Routes>
+      </TooltipProvider>
     </div>
   );
 };

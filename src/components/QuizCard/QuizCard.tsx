@@ -16,6 +16,7 @@ import HomeButton from '@/components/ui/HomeButton';
 import hammerIcon from '@/assets/icons/suit_diamonds.png';
 import { useGameContext } from '@/context/GameContext';
 import { Button } from '../ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 /**
  * A map to find icon for a given PowerUpType.
@@ -327,20 +328,27 @@ const PowerUpItemBar = ({
           <div className="inventory-bar">
             <h4>Your Power-Ups:</h4>
             {activePowerUps.map(([type, _]) => (
-              <Button
-                key={type}
-                className={styles.powerUpBtn}
-                data-tooltip={type}
-                onClick={() => {
-                  handlePowerUpActivate(type);
-                }}
-              >
-                <img
-                  src={POWER_UP_TYPE_ICON_MAP[type]}
-                  className={styles.powerUpBtnIcon}
-                  alt={type}
-                />
-              </Button>
+              <Tooltip key={type}>
+                <TooltipTrigger asChild>
+                  <Button
+                    className={styles.powerUpBtn}
+                    data-tooltip={type}
+                    onClick={() => {
+                      handlePowerUpActivate(type);
+                    }}
+                  >
+                    <img
+                      src={POWER_UP_TYPE_ICON_MAP[type]}
+                      className={styles.powerUpBtnIcon}
+                      alt={type}
+                    />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{type}</p>
+                </TooltipContent>
+              </Tooltip>
+
             ))}
           </div>
         }
