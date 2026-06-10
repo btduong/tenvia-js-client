@@ -19,7 +19,7 @@ const HomePage: React.FC<HomeProps> = ({ onStartNewGame }) => {
         <CardContent className="flex flex-col gap-4">
           <Dialog>
             <DialogTrigger asChild>
-              <Button size="lg"> New Game </Button>
+              <Button className="w-full h-16 text-xl font-extrabold rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md"> New Game </Button>
             </DialogTrigger>
 
             <DialogContent>
@@ -54,7 +54,7 @@ const HomePage: React.FC<HomeProps> = ({ onStartNewGame }) => {
             </DialogContent>
           </Dialog>
 
-          <NavButton to="/leaderboard" label="Leaderboard" ariaLabel="To Leaderboard" />
+          <NavButton to="/leaderboard" label="Leaderboard" ariaLabel="To Leaderboard" className="w-full h-16 text-xl font-extrabold rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md bg-secondary text-secondary-foreground hover:bg-secondary/80" />
         </CardContent>
       </Card>
       {/* <NavButton to="/shop" label="Shop" ariaLabel="To Shop" /> */}

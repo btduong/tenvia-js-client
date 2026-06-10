@@ -16,6 +16,7 @@ import hammerIcon from '@/assets/icons/suit_diamonds.png';
 import { useGameContext } from '@/context/GameContext';
 import { Button } from '../ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { Card, CardContent } from '../ui/card';
 
 /**
  * A map to find icon for a given PowerUpType.
@@ -207,7 +208,11 @@ const QuestionHeader = ({
 }) => {
   return (
     <div className="flex flex-col items-center relative w-full">
-      <div className="w-full pt-5 text-xl">{questionText}</div>
+      <Card className="mx-auto w-full max-w-sm">
+        <CardContent>
+          <div className="w-full pt-5 text-xl">{questionText}</div>
+        </CardContent>
+      </Card>
 
       {potentialReward && (
         <div className="flex flex-row items-center content-center gap-2 p-2">
