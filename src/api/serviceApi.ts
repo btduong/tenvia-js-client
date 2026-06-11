@@ -10,8 +10,8 @@ import type {
   LoginDTO,
 } from '@/types';
 
-const SESSION_BASE_URL = 'http://localhost:8080';
-const LEADERBOARD_BASE_URL = 'http://localhost:8081';
+const SESSION_BASE_URL = import.meta.env.VITE_APP_API_URL;
+const LEADERBOARD_BASE_URL = import.meta.env.VITE_LEADERBOARD_API_URL;
 
 /**
  * A fetch with the provided JwT token from the server.
