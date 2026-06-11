@@ -1,7 +1,6 @@
 import { GameStatus } from '@/types';
 import { useMemo } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import appStyles from './App.module.css';
 import { StatusMessage } from './components/ui/StatusMessage';
 import { GameProvider } from './context/GameContext';
 import { useGameSession } from './hooks/useGameSession';
@@ -13,6 +12,7 @@ import QuizCardPage from './pages/QuizCardPage';
 import ShopPage from './pages/ShopPage';
 import SummaryPage from './pages/SummaryPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import { TooltipProvider } from './components/ui/tooltip';
 
 const App: React.FC = () => {
   const navigate = useNavigate();
@@ -92,13 +92,14 @@ const App: React.FC = () => {
   const statusMessageUI = UIMessage();
 
   return (
-    <div className={appStyles.mobileAppWrapper}>
+    <div className="max-w-[430px] w-full mx-auto min-h-screen flex flex-col relative bg-slate-950 overflow-x-hidden shadow-2xl dark text-foreground">
       {statusMessageUI && (
         <StatusMessage status={gameStatus} message={statusMessageUI} onClose={handleClearError} />
       )}
-      <Routes>
-        <Route
-          path="/"
+      <TooltipProvider>
+        <Routes>
+          <Route
+            path="/"
           element={
             !user ? (
               <LoginPage handleLogin={handleLogin} />
@@ -147,6 +148,7 @@ const App: React.FC = () => {
         } />
 
       </Routes>
+      </TooltipProvider>
     </div>
   );
 };

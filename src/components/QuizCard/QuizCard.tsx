@@ -1,6 +1,5 @@
 import { GameStatus } from '@/types';
 import { useState } from 'react';
-import styles from './QuizCard.module.css';
 
 import { serviceApi } from '@/api/serviceApi';
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
@@ -15,6 +14,9 @@ import HomeButton from '@/components/ui/HomeButton';
 
 import hammerIcon from '@/assets/icons/suit_diamonds.png';
 import { useGameContext } from '@/context/GameContext';
+import { Button } from '../ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { Card, CardContent } from '../ui/card';
 
 /**
  * A map to find icon for a given PowerUpType.
@@ -25,7 +27,7 @@ const POWER_UP_TYPE_ICON_MAP: Record<PowerUpType, string> = {
   SWAP_QUESTION: hammerIcon,
 };
 
-interface QuizCardProps {}
+interface QuizCardProps { }
 
 /**
  * Reander the quiz which includes question text and options for answers
@@ -104,22 +106,22 @@ const QuizCard: React.FC<QuizCardProps> = () => {
    */
   const getOptionStyle = (option: QuestionOption) => {
     if (!option.isAvailable) {
-      return styles.optionDisabled;
+      return "opacity-30 grayscale cursor-not-allowed border-border";
     }
     if (!answerResponse) {
       // selected an answer option but hasn't submitted yet
-      return selectedOptionId === option.id ? styles.optionSelected : styles.optionBtn;
+      return selectedOptionId === option.id
+        ? "bg-orange-500 text-white hover:bg-orange-600 hover:text-white border-orange-500"
+        : "border-border hover:bg-orange-500 hover:text-white hover:border-orange-500";
     }
-    if (
-      option.letter === answerResponse.correctLetter
-    ) // selected and submitted answer option is the correct one
+    if (option.letter === answerResponse.correctLetter) // selected and submitted answer option is the correct one
     {
-      return styles.optionCorrectBtn;
+      return "bg-green-600 text-white border-green-600 dark:bg-green-500 dark:border-green-500 disabled:opacity-100";
     }
     if (option.letter !== answerResponse.correctLetter && selectedOptionId === option.id) {
-      return styles.optionIncorrectBtn;
+      return "bg-red-600 text-white border-red-600 dark:bg-red-500 dark:border-red-500 disabled:opacity-100";
     }
-    return styles.optionBtn;
+    return "border-border opacity-50 disabled:opacity-50"; // Dim unselected incorrect answers
   };
 
   const handleOptionSelect = (optionId: number) => {
@@ -163,7 +165,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
   const hasPowerUps = activePowerUps.length > 0;
 
   return (
-    <div className={styles.mainQuestionContainer}>
+    <div className="flex flex-col w-full px-4 pt-8 gap-5">
       {/* 1. Question Text*/}
       <QuestionHeader
         questionText={currentQuestion.questionText}
@@ -207,18 +209,22 @@ const QuestionHeader = ({
   potentialPenalty: QuestionPenaltyType | null;
 }) => {
   return (
-    <div className={styles.questionWrapper}>
-      <div className={styles.questionText}>{questionText}</div>
+    <div className="flex flex-col items-center relative w-full">
+      <Card className="mx-auto w-full max-w-sm">
+        <CardContent>
+          <div className="w-full pt-5 text-xl">{questionText}</div>
+        </CardContent>
+      </Card>
 
       {potentialReward && (
-        <div className={styles.stakeBar}>
-          {<span className={styles.reward}> {potentialReward}</span>}
+        <div className="flex flex-row items-center content-center gap-2 p-2">
+          {<span className="text-black bg-amber-200"> {potentialReward}</span>}
         </div>
       )}
 
       {potentialPenalty && (
-        <div className={styles.stakeBar}>
-          {<span className={styles.penalty}> {potentialPenalty}</span>}
+        <div className="flex flex-row items-center content-center gap-2 p-2">
+          {<span className="bg-red-400 text-white"> {potentialPenalty}</span>}
         </div>
       )}
     </div>
@@ -238,18 +244,18 @@ const ControlBar = ({
   handleAbandonSession: () => Promise<boolean> | boolean;
 }) => {
   return (
-    <nav className={styles.controlBar}>
-      <hr />
+    <nav className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 px-5 flex items-center justify-between bg-background/95 backdrop-blur border-t">
       {/* left space */}
-      <div className={styles.navSpacer}></div>
+      <div className="flex-1"></div>
       {/* center space*/}
-      <div className={styles.homeBtn}>
+      <div className="flex-1 flex justify-center">
         <HomeButton handleAbandonSession={handleAbandonSession} />
       </div>
       {/* rigth space */}
-      <div className={styles.navRight}>
-        <button
-          className={styles.nextBtn}
+      <div className="flex-1 flex justify-end">
+        <Button
+          variant="secondary"
+          className="font-bold"
           disabled={!answerResponse}
           onClick={() => {
             if (answerResponse) {
@@ -258,7 +264,7 @@ const ControlBar = ({
           }}
         >
           Next
-        </button>
+        </Button>
       </div>
     </nav>
   );
@@ -281,21 +287,21 @@ const AnswerOptionList = ({
   getOptionStyle: (option: QuestionOption) => string | undefined;
 }) => {
   return (
-    <div className={styles.optionsContainer}>
+    <div className="grid grid-cols-1 gap-3 w-full mx-auto">
       {options.map((option: QuestionOption) => {
         const optionButtonStyle = getOptionStyle(option);
         return (
-          <div className={styles.container} key={option.id}>
-            <button
-              className={`${optionButtonStyle}`}
+          <div className="w-full" key={option.id}>
+            <Button
+              variant="outline"
+              className={`w-full h-auto py-6 whitespace-normal rounded-xl border-2 transition-all hover:scale-[1.02] active:scale-[0.98] ${optionButtonStyle}`}
               disabled={answerResponse !== null || !option.isAvailable || isVerifying}
               onClick={() => {
                 handleOptionSelect(option.id);
               }}
             >
-              {/* <span className={styles.optionCircle}>{option.letter}</span> */}
-              <span className={styles.optionText}>{option.content}</span>
-            </button>
+              <span className="text-center font-semibold text-base">{option.content}</span>
+            </Button>
           </div>
         );
       })}
@@ -322,30 +328,33 @@ const PowerUpItemBar = ({
   if (answerResponse || !hasPowerUps || isDisabled) return null;
 
   return (
-    <div style={{ marginTop: '10px' }}>
-      <>
-        {
-          <div className="inventory-bar">
-            <h4>Your Power-Ups:</h4>
-            {activePowerUps.map(([type, _]) => (
-              <button
-                key={type}
-                className={styles.powerUpBtn}
-                data-tooltip={type}
+    <div className="mt-4 flex flex-col items-center border-t pt-4">
+      <h4 className="text-sm text-muted-foreground font-medium mb-3">Your Power-Ups</h4>
+      <div className="flex gap-4">
+        {activePowerUps.map(([type, _]) => (
+          <Tooltip key={type}>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-12 h-12 rounded-full border-2 hover:bg-primary/10 transition-colors"
                 onClick={() => {
                   handlePowerUpActivate(type);
                 }}
               >
                 <img
                   src={POWER_UP_TYPE_ICON_MAP[type]}
-                  className={styles.powerUpBtnIcon}
+                  className="block w-6 h-6"
                   alt={type}
                 />
-              </button>
-            ))}
-          </div>
-        }
-      </>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{type}</p>
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
     </div>
   );
 };

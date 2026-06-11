@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import type { PowerUpType, User } from '@/types';
 import styles from './ShopModal.module.css';
 import hammerIcon from '@/assets/icons/suit_diamonds.png';
+import { Button } from '../ui/button';
 
 interface ShopModalProps {
   user: User;
@@ -22,9 +23,9 @@ const ShopModal: React.FC<ShopModalProps> = ({ user, onPurchase }) => {
       <div className={styles.shopModal}>
         <div className={styles.shopHeader}>
           <h2 className={styles.title}>🛒 Power-Up Store</h2>
-          <button className={styles.closeBtn} onClick={handleClose}>
+          <Button className={styles.closeBtn} onClick={handleClose}>
             &times;
-          </button>
+          </Button>
         </div>
 
         <div className={styles.shopBalance}>

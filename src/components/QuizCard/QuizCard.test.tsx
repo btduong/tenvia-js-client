@@ -8,6 +8,7 @@ import type { PowerUpType } from '@/types';
 import { GameStatus } from '@/types';
 import QuizCard from './QuizCard';
 import { serviceApi } from '@/api/serviceApi';
+import { TooltipProvider } from '../ui/tooltip';
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', () => ({
@@ -66,12 +67,12 @@ describe('QuizCard', () => {
 
   it('can render default view when question is null', () => {
     vi.mocked(useGameContext).mockReturnValue({ ...defaultGameContext, currentQuestion: null });
-    const { container } = render(<QuizCard />);
+    const { container } = render(<TooltipProvider><QuizCard /></TooltipProvider>);
     expect(container).toBeEmptyDOMElement();
   });
 
   it('can render question', () => {
-    render(<QuizCard />);
+    render(<TooltipProvider><QuizCard /></TooltipProvider>);
     expect(screen.getByText('who are you')).toBeInTheDocument();
   });
 
@@ -80,7 +81,7 @@ describe('QuizCard', () => {
       ...defaultGameContext,
       gameStatus: GameStatus.VALIDATING_ANSWER,
     });
-    render(<QuizCard />);
+    render(<TooltipProvider><QuizCard /></TooltipProvider>);
 
     const optionButtons = [
       screen.getByRole('button', { name: 'me' }),
@@ -92,7 +93,7 @@ describe('QuizCard', () => {
   });
 
   it('expect power-up bar to be hidden after used a power-up item ', async () => {
-    render(<QuizCard />);
+    render(<TooltipProvider><QuizCard /></TooltipProvider>);
 
     const useHammerPowerUpResponse = {
       updateUser: {},
@@ -108,7 +109,7 @@ describe('QuizCard', () => {
     expect(await screen.findByRole('button', { name: 'HAMMER' })).toBeInTheDocument();
 
     // The default power-up bar with a power-upitem in the inventory
-    expect(screen.getByText(/Your Power-Ups:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Your Power-Ups/i)).toBeInTheDocument();
 
     const hammerButton = screen.getByRole('button', { name: 'HAMMER' });
     await userEvent.click(hammerButton);
@@ -116,11 +117,11 @@ describe('QuizCard', () => {
     expect(mockHandleUsePowerUp).toHaveBeenCalled();
 
     // The usage limit is reached for current question so hide the power-up bar
-    expect(screen.queryByText(/Your Power-Ups:/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Your Power-Ups/i)).not.toBeInTheDocument();
   });
 
   it('can send validate request', async () => {
-    render(<QuizCard />);
+    render(<TooltipProvider><QuizCard /></TooltipProvider>);
 
     const mockAnswerResponse = {
       correctLetter: 'A',

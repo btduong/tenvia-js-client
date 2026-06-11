@@ -19,7 +19,6 @@ describe('HomePage', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Quiz Game/i)).toBeInTheDocument();
 
     const newGameButton = screen.getByRole('button', { name: 'New Game' });
     expect(newGameButton).toBeInTheDocument();
@@ -35,7 +34,6 @@ describe('HomePage', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Quiz Game/i)).toBeInTheDocument();
     const newGameButton = screen.getByRole('button', { name: 'New Game' });
     expect(newGameButton).toBeInTheDocument();
 
@@ -55,7 +53,6 @@ describe('HomePage', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Quiz Game/i)).toBeInTheDocument();
     const newGameButton = screen.getByRole('button', { name: 'New Game' });
     expect(newGameButton).toBeInTheDocument();
 

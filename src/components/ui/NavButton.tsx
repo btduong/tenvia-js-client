@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { playClickSound } from '@/utils/sounds';
+import { Button} from "@/components/ui/button";
 
 interface NavButtonProps {
   to: string;
@@ -32,10 +33,10 @@ const NavButton: React.FC<NavButtonProps> = ({
   };
 
   return (
-    <button aria-label={ariaLabel} onClick={handleClick} className={className || ''}>
+    <Button aria-label={ariaLabel} onClick={handleClick} className={className || ''}>
       {icon && <span className={`${iconClassName}`}>{icon}</span>}
       {!icon && label}
-    </button>
+    </Button>
   );
 };
 

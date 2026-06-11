@@ -1,75 +1,62 @@
-import styles from './HomePage.module.css';
-
+import { Button } from '@/components/ui/button';
 import NavButton from '@/components/ui/NavButton';
 import { playQuestionStartSound } from '@/utils/sounds';
 import { useState } from 'react';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface HomeProps {
   onStartNewGame: (numberOfQuestions: number) => void;
 }
 
-interface NumberOfQuestionsPickerProps {
-  onStartNewGame: (numberOfQuestions: number) => void;
-  onCancel: () => void;
-}
-/**
- * A dropdown list component represents the selection of number of questions the players will get
- */
-const NumberOfQuestionsPicker: React.FC<NumberOfQuestionsPickerProps> = ({ onStartNewGame, onCancel }) => {
-  const [numberOfQuestions, setNumberOfQuestions] = useState<number>(10);
-  return (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
-        <h2 style={{margin: 0}}>Start New Game</h2>
-        <label className={styles.modalLabel}>
-          Select number of questions:
-          <select name="selectionQuestions"
-            className={styles.modalSelect}
-            value={numberOfQuestions}
-            onChange={e => setNumberOfQuestions(parseInt(e.target.value))}
-          >
-            <option value="10">10</option>
-            <option value="30">30</option>
-            <option value="50">50</option>
-          </select>
-        </label>
-        <div className={styles.modalActions}>
-          <button onClick={onCancel}>Cancel</button>
-          <button 
-            onClick={() => {
-              onStartNewGame(numberOfQuestions);
-              playQuestionStartSound();
-            }}
-          >Start</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 const HomePage: React.FC<HomeProps> = ({ onStartNewGame }) => {
-  const [showSelection, setShowSelection] = useState<boolean>(false);
+  const [numberOfQuestions, setNumberOfQuestions] = useState<number>(10);
 
   return (
-    <div className={styles.homeContainer}>
-      <h1>Quiz Game</h1>
-      
-      <button
-        onClick={() => {
-          setShowSelection(true);
-        }}
-      >
-        New Game
-      </button>
+    <div className="flex min-h-screen items-center justify-center">
+      <Card className="w-full max-w-sm shadow-xl">
+        <CardContent className="flex flex-col gap-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="w-full h-16 text-xl font-extrabold rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md"> New Game </Button>
+            </DialogTrigger>
 
-      {showSelection && (
-        <NumberOfQuestionsPicker 
-          onStartNewGame={onStartNewGame}
-          onCancel={() => setShowSelection(false)}
-        />
-      )}
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Start New Game</DialogTitle>
+                <DialogDescription className="sr-only">Choose number of questions to play.</DialogDescription>
+              </DialogHeader>
 
-      <NavButton to="/leaderboard" label="Leaderboard" ariaLabel="To Leaderboard" />
+              <div className="flex flex-col gap-4 py-4">
+                <Label>Select number of questions:</Label>
+                <select name="selectionQuestions"
+                  className="w-full p-2 rounded-md border bg-background"
+                  value={numberOfQuestions}
+                  onChange={e => setNumberOfQuestions(parseInt(e.target.value))}
+                >
+                  <option value="10">10</option>
+                  <option value="30">30</option>
+                  <option value="50">50</option>
+                </select>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button
+                  onClick={() => {
+                    onStartNewGame(numberOfQuestions);
+                    playQuestionStartSound();
+                  }}
+                >Start</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <NavButton to="/leaderboard" label="Leaderboard" ariaLabel="To Leaderboard" className="w-full h-16 text-xl font-extrabold rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md bg-secondary text-secondary-foreground hover:bg-secondary/80" />
+        </CardContent>
+      </Card>
       {/* <NavButton to="/shop" label="Shop" ariaLabel="To Shop" /> */}
     </div>
   );

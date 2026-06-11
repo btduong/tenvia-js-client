@@ -1,6 +1,5 @@
 import React from 'react';
-import homeStyles from './HomeIcon.module.css';
-import HomeIcon from './HomeIcon';
+import { Home } from 'lucide-react';
 import NavButton from './NavButton';
 
 interface HomeButtonProps {
@@ -13,7 +12,8 @@ const HomeButton: React.FC<HomeButtonProps> = ({ handleAbandonSession }) => {
       to="/"
       label="Home"
       ariaLabel="To Home"
-      icon={<HomeIcon className={homeStyles.homeSvg} />}
+      icon={<Home className="w-8 h-8" />}
+      className="w-14 h-14 flex items-center justify-center border-2 hover:scale-[1.05] active:scale-[0.95] transition-all shadow-md bg-background text-foreground hover:bg-muted"
       onNavigate={handleAbandonSession}
     />
   );
