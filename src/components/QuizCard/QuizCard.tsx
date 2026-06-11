@@ -244,7 +244,7 @@ const ControlBar = ({
   handleAbandonSession: () => Promise<boolean> | boolean;
 }) => {
   return (
-    <nav className="fixed bottom-0 left-1/2 w-full max-w-[430px] -translate-x-1/2 px-5 flex items-center justify-between h-[70px] bg-background/95 backdrop-blur border-t">
+    <nav className="fixed bottom-0 left-1/2 w-full -translate-x-1/2 px-5 flex items-center justify-between bg-background/95 backdrop-blur border-t">
       {/* left space */}
       <div className="flex-1"></div>
       {/* center space*/}
