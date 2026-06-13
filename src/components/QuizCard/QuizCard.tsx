@@ -106,22 +106,22 @@ const QuizCard: React.FC<QuizCardProps> = () => {
    */
   const getOptionStyle = (option: QuestionOption) => {
     if (!option.isAvailable) {
-      return "opacity-30 grayscale cursor-not-allowed border-border";
+      return "opacity-30 grayscale cursor-not-allowed bg-white text-black";
     }
     if (!answerResponse) {
       // selected an answer option but hasn't submitted yet
-      return selectedOptionId === option.id
-        ? "bg-orange-500 text-white hover:bg-orange-600 hover:text-white border-orange-500"
-        : "border-border hover:bg-orange-500 hover:text-white hover:border-orange-500";
+      return selectedOptionId === option.id 
+        ? "bg-orange-500 text-white hover:bg-orange-600 hover:text-white" 
+        : "bg-white text-black hover:bg-slate-100 hover:text-black";
     }
     if (option.letter === answerResponse.correctLetter) // selected and submitted answer option is the correct one
     {
-      return "bg-green-600 text-white border-green-600 dark:bg-green-500 dark:border-green-500 disabled:opacity-100";
+      return "bg-green-500 text-white disabled:opacity-100";
     }
     if (option.letter !== answerResponse.correctLetter && selectedOptionId === option.id) {
-      return "bg-red-600 text-white border-red-600 dark:bg-red-500 dark:border-red-500 disabled:opacity-100";
+      return "bg-red-500 text-white disabled:opacity-100";
     }
-    return "border-border opacity-50 disabled:opacity-50"; // Dim unselected incorrect answers
+    return "bg-white text-black opacity-50 disabled:opacity-50"; // Dim unselected incorrect answers
   };
 
   const handleOptionSelect = (optionId: number) => {
@@ -209,12 +209,8 @@ const QuestionHeader = ({
   potentialPenalty: QuestionPenaltyType | null;
 }) => {
   return (
-    <div className="flex flex-col items-center relative w-full">
-      <Card className="mx-auto w-full max-w-sm">
-        <CardContent>
-          <div className="w-full pt-5 text-xl">{questionText}</div>
-        </CardContent>
-      </Card>
+    <div className="flex flex-col items-start relative w-full px-2 mb-4">
+      <div className="w-full text-2xl font-extrabold text-white tracking-tight leading-snug text-left drop-shadow-sm">{questionText}</div>
 
       {potentialReward && (
         <div className="flex flex-row items-center content-center gap-2 p-2">
@@ -293,8 +289,7 @@ const AnswerOptionList = ({
         return (
           <div className="w-full" key={option.id}>
             <Button
-              variant="outline"
-              className={`w-full h-auto py-6 whitespace-normal rounded-xl border-2 transition-all hover:scale-[1.02] active:scale-[0.98] ${optionButtonStyle}`}
+              className={`w-full h-auto py-5 whitespace-normal rounded-2xl border-none transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md ${optionButtonStyle}`}
               disabled={answerResponse !== null || !option.isAvailable || isVerifying}
               onClick={() => {
                 handleOptionSelect(option.id);

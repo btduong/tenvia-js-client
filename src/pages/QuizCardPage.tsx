@@ -34,7 +34,7 @@ const QuizCardPage: React.FC<QuizCardPageProps> = ({
   return (
     <div className="flex flex-col flex-1 w-full max-w-md mx-auto relative pb-20">
       <div className="w-full mt-6 mb-2 px-4 flex flex-col gap-2">
-        <div className="flex justify-left items-center text-sm font-semibold tracking-tight text-muted-foreground">
+        <div className="flex justify-left items-center text-sm font-semibold tracking-tight text-white/90">
         {`Question: ${currentIndex + 1}/${questionLimit}`}
         </div>
         <Progress value={progressValue} className="h-2 w-full" />
