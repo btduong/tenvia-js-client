@@ -92,7 +92,7 @@ const App: React.FC = () => {
   const statusMessageUI = UIMessage();
 
   return (
-    <div className="max-w-[430px] w-full mx-auto min-h-screen flex flex-col relative bg-slate-950 overflow-x-hidden shadow-2xl dark text-foreground">
+    <div className="max-w-[430px] w-full mx-auto min-h-screen flex flex-col relative bg-background overflow-x-hidden shadow-2xl text-foreground">
       {statusMessageUI && (
         <StatusMessage status={gameStatus} message={statusMessageUI} onClose={handleClearError} />
       )}
