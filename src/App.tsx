@@ -1,4 +1,4 @@
-import { GameStatus } from '@/types';
+import { GameStatus, type Inventory } from '@/types';
 import { useMemo } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { StatusMessage } from './components/ui/StatusMessage';
@@ -40,7 +40,7 @@ const App: React.FC = () => {
     () => ({
       gameStatus: gameStatus,
       sessionId: sessionData?.id || null,
-      inventory: user?.inventory || ({} as any),
+      inventory: user?.inventory || {} as Inventory,
       currentQuestion: currentQuestion,
       handleUsePoweUp: handleUsePowerUp,
       updateBalance: updateBalance,

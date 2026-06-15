@@ -1,10 +1,11 @@
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import NavButton from '@/components/ui/NavButton';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { playQuestionStartSound } from '@/utils/sounds';
 import { useState } from 'react';
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface HomeProps {
   onStartNewGame: (numberOfQuestions: number) => void;
@@ -29,16 +30,23 @@ const HomePage: React.FC<HomeProps> = ({ onStartNewGame }) => {
               </DialogHeader>
 
               <div className="flex flex-col gap-4 py-4">
-                <Label>Select number of questions:</Label>
-                <select name="selectionQuestions"
-                  className="w-full p-2 rounded-md border bg-background"
-                  value={numberOfQuestions}
-                  onChange={e => setNumberOfQuestions(parseInt(e.target.value))}
+                <Select name="selectionQuestions"
+                  value={numberOfQuestions.toString()}
+                  onValueChange={(value) => setNumberOfQuestions(parseInt(value))} // shadcn value & onValueChange expects string.
                 >
-                  <option value="10">10</option>
-                  <option value="30">30</option>
-                  <option value="50">50</option>
-                </select>
+                  <Label>Select number of questions:</Label>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select number of questions:" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup >
+
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="30">30</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
               <DialogFooter>
                 <DialogClose asChild>
