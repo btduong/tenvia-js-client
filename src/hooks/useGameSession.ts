@@ -1,19 +1,17 @@
-import { useRef, useState } from 'react';
-import type { NavigateFunction, SessionData } from 'react-router-dom';
 import { serviceApi } from '@/api/serviceApi';
+import { useGameStore } from '@/store/useGameStore';
 import type {
   AnswerResponse,
-  GameSession,
   Inventory,
   PowerUpType,
-  Question,
   UsePowerUpResponse,
-  User,
+  User
 } from '@/types';
 import { GameStatus } from '@/types';
-import { waitFor } from '@/utils/timer';
-import { useTickingSound } from './useTickingSound';
 import { useMutation } from '@tanstack/react-query';
+import { useRef } from 'react';
+import type { NavigateFunction } from 'react-router-dom';
+import { useTickingSound } from './useTickingSound';
 
 /**
  * A custom hook that encapsulates the states and logic of a game session. It manages the current question, the user's progress,
@@ -29,14 +27,21 @@ export const useGameSession = (
   updateInventory: (inventory: Inventory) => void,
   navigate: NavigateFunction
 ) => {
-  const [gameStatus, setGameStatus] = useState<GameStatus>(GameStatus.IDLE);
-  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [sessionData, setSessionData] = useState<GameSession | null>(null);
-  const [answerSent, setAnswerSent] = useState<boolean>(false);
-  const [globalErrorMessage, setGlobalUserMessage] = useState<string>('');
-  const [isTicking, setIsTicking] = useState(false);
 
   const questionLimit = useRef<number>(10); // How many questions per game
+
+  const setGameStatus = useGameStore((state) => state.setGameStatus);
+  const setSessionData = useGameStore((state) => state.setSessionData);
+  const setAnswerSent = useGameStore((state) => state.setAnswerSent);
+  const setIsTicking = useGameStore((state) => state.setIsTicking);
+  const setCurrentQuestion = useGameStore((state) => state.setCurrentQuestion);
+  const setGlobalUserMessage = useGameStore((state) => state.setGlobalErrorMessage);
+  const gameStatus = useGameStore((state) => state.gameStatus);
+  const isTicking = useGameStore((state) => state.isTicking);
+  const sessionData = useGameStore((state) => state.sessionData);
+  const currentQuestion = useGameStore((state) => state.currentQuestion);
+  const answerSent = useGameStore((state) => state.answerSent);
+  const globalErrorMessage = useGameStore((state) => state.globalErrorMessage);
 
   useTickingSound(isTicking);
 

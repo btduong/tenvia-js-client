@@ -19,6 +19,12 @@ interface QuizCardPageProps {
   sessionData: GameSession | null;
   answerSent: boolean;
   onQuestionTimedout: () => Promise<void>;
+  handleUsePowerUp: (type: PowerUpType) => Promise<UsePowerUpResponse | null>;
+  updateBalance: (newBalance: number) => void;
+  onAnswerSent: () => void;
+  handleAnswerResponse: (response: AnswerResponse) => void;
+  triggerGlobalError: (message: string) => void;
+  handleAbandonSession: () => void;
 }
 
 const QuizCardPage: React.FC<QuizCardPageProps> = ({
@@ -28,6 +34,12 @@ const QuizCardPage: React.FC<QuizCardPageProps> = ({
   sessionData,
   answerSent,
   onQuestionTimedout,
+  handleUsePowerUp,
+  updateBalance,
+  onAnswerSent,
+  handleAnswerResponse,
+  triggerGlobalError,
+  handleAbandonSession,
 }) => {
   const progressValue = ((currentIndex + 1) / questionLimit) * 100;
 
@@ -35,7 +47,7 @@ const QuizCardPage: React.FC<QuizCardPageProps> = ({
     <div className="flex flex-col flex-1 w-full max-w-md mx-auto relative pb-20">
       <div className="w-full mt-6 mb-2 px-4 flex flex-col gap-2">
         <div className="flex justify-left items-center text-sm font-semibold tracking-tight text-white/90">
-        {`Question: ${currentIndex + 1}/${questionLimit}`}
+          {`Question: ${currentIndex + 1}/${questionLimit}`}
         </div>
         <Progress value={progressValue} className="h-2 w-full" />
       </div>
@@ -48,7 +60,14 @@ const QuizCardPage: React.FC<QuizCardPageProps> = ({
         />
       )}
       <div className="flex-1 flex flex-col w-full">
-        <QuizCard key={currentQuestion.id} />
+        <QuizCard key={currentQuestion.id}
+          handleUsePowerUp={handleUsePowerUp}
+          updateBalance={updateBalance}
+          onAnswerSent={onAnswerSent}
+          handleAnswerResponse={handleAnswerResponse}
+          triggerGlobalError={triggerGlobalError}
+          handleAbandonSession={handleAbandonSession}
+        />
       </div>
     </div>
   );

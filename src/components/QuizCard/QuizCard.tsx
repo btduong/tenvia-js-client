@@ -2,21 +2,20 @@ import { GameStatus } from '@/types';
 import { useState } from 'react';
 
 import { serviceApi } from '@/api/serviceApi';
+import HomeButton from '@/components/ui/HomeButton';
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut';
-import type { AnswerResponse, PowerUpType, QuestionOption, QuestionPenaltyType } from '@/types';
+import type { AnswerResponse, PowerUpType, QuestionOption, QuestionPenaltyType, UsePowerUpResponse } from '@/types';
 import {
   playClickSound,
   playCorrectAnswerSound,
   playIncorrectAnswerSound,
   playQuestionStartSound,
 } from '@/utils/sounds';
-import HomeButton from '@/components/ui/HomeButton';
 
 import hammerIcon from '@/assets/icons/suit_diamonds.png';
-import { useGameContext } from '@/context/GameContext';
 import { Button } from '../ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
-import { Card, CardContent } from '../ui/card';
+import { useGameStore } from '@/store/useGameStore';
 
 /**
  * A map to find icon for a given PowerUpType.
@@ -27,24 +26,31 @@ const POWER_UP_TYPE_ICON_MAP: Record<PowerUpType, string> = {
   SWAP_QUESTION: hammerIcon,
 };
 
-interface QuizCardProps { }
+interface QuizCardProps {
+  handleUsePowerUp: (type: PowerUpType) => Promise<UsePowerUpResponse | null>;
+  updateBalance: (newBalance: number) => void;
+  onAnswerSent: () => void;
+  handleAnswerResponse: (response: AnswerResponse) => void;
+  triggerGlobalError: (message: string) => void;
+  handleAbandonSession: () => void;
+}
 
 /**
  * Reander the quiz which includes question text and options for answers
  */
-const QuizCard: React.FC<QuizCardProps> = () => {
-  const {
-    gameStatus,
-    currentQuestion,
-    sessionId,
-    inventory,
-    handleUsePoweUp,
-    updateBalance,
-    onAnswerSent,
-    handleAnswerResponse,
-    triggerGlobalError,
-    handleAbandonSession,
-  } = useGameContext();
+const QuizCard: React.FC<QuizCardProps> = ({
+  handleUsePowerUp,
+  updateBalance,
+  onAnswerSent,
+  handleAnswerResponse,
+  triggerGlobalError,
+  handleAbandonSession }) => {
+
+  const gameStatus = useGameStore((state) => state.gameStatus);
+  const inventory = useGameStore((state) => state.sessionData?.user?.inventory) || {};
+  const sessionId = useGameStore((state) => state.sessionData?.id);
+  const currentQuestion = useGameStore((state) => state.currentQuestion);
+
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
   const [canUsePowerUp, setCanUsePowerUp] = useState<boolean>(true);
@@ -66,7 +72,7 @@ const QuizCard: React.FC<QuizCardProps> = () => {
    * @param type - the power up type ie hammer or 50-50
    */
   const handlePowerUpClick = async (type: PowerUpType) => {
-    const usePowerUpResponse = await handleUsePoweUp(type);
+    const usePowerUpResponse = await handleUsePowerUp(type);
     if (usePowerUpResponse) setCanUsePowerUp(usePowerUpResponse.effectResult.canUsePowerUps);
   };
 
@@ -110,8 +116,8 @@ const QuizCard: React.FC<QuizCardProps> = () => {
     }
     if (!answerResponse) {
       // selected an answer option but hasn't submitted yet
-      return selectedOptionId === option.id 
-        ? "bg-orange-500 text-white hover:bg-orange-600 hover:text-white" 
+      return selectedOptionId === option.id
+        ? "bg-orange-500 text-white hover:bg-orange-600 hover:text-white"
         : "bg-white text-black hover:bg-slate-100 hover:text-black";
     }
     if (option.letter === answerResponse.correctLetter) // selected and submitted answer option is the correct one
