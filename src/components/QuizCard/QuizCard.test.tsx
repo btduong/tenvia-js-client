@@ -1,14 +1,12 @@
-import { isFunctionTypeNode, visitCommaListElements } from 'typescript';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import { useNavigate } from 'react-router-dom';
-import userEvent from '@testing-library/user-event';
-import { useGameContext } from '@/context/GameContext';
+import { serviceApi } from '@/api/serviceApi';
+import { useGameStore } from '@/store/useGameStore';
 import type { PowerUpType } from '@/types';
 import { GameStatus } from '@/types';
-import QuizCard from './QuizCard';
-import { serviceApi } from '@/api/serviceApi';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TooltipProvider } from '../ui/tooltip';
+import QuizCard from './QuizCard';
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', () => ({
@@ -16,13 +14,13 @@ vi.mock('react-router-dom', () => ({
 }));
 
 /**
- * Needed for `vi.mocked(useGameContext).mockReturnValue(defaultGameContext)` to work in test.
+ * Needed for `vi.mocked(useGameStore).mockReturnValue(defaultGameContext)` to work in test.
  * This is due to vi 'hoisted' the vi.mock to the top of the file so vi.mocked...was never in the test.
  * Therefore this vi.mock here is mocking the 'module' GameContext and return a mock.
  * Then the vi.mocked...mockReturnValue can work as expected.
  */
-vi.mock('../../context/GameContext');
-vi.mock('../../api/serviceApi');
+vi.mock('@/store/useGameStore');
+vi.mock('@/api/serviceApi');
 
 const mockQuestion = {
   id: 1,
@@ -46,12 +44,8 @@ const inventory = {
 
 const mockHandleUsePowerUp = vi.fn();
 
-const defaultGameContext = {
-  gameStatus: GameStatus.PLAYING as GameStatus,
-  currentQuestion: mockQuestion,
-  sessionId: '123',
-  inventory: inventory,
-  handleUsePoweUp: mockHandleUsePowerUp,
+const mockDefaultProps = {
+  handleUsePowerUp: mockHandleUsePowerUp,
   updateBalance: vi.fn(),
   onAnswerSent: vi.fn(),
   handleAnswerResponse: vi.fn(),
@@ -59,29 +53,40 @@ const defaultGameContext = {
   handleAbandonSession: vi.fn(),
 };
 
+const mockStoreState = {
+  gameStatus: GameStatus.IDLE,
+  currentQuestion: mockQuestion,
+  sessionData: { id: '123', user: { inventory: inventory } },
+  answerSent: false,
+}
+
 describe('QuizCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useGameContext).mockReturnValue(defaultGameContext);
+    vi.mocked(useGameStore).mockImplementation((selector: any) => {
+      return selector(mockStoreState);
+    });
   });
 
   it('can render default view when question is null', () => {
-    vi.mocked(useGameContext).mockReturnValue({ ...defaultGameContext, currentQuestion: null });
-    const { container } = render(<TooltipProvider><QuizCard /></TooltipProvider>);
+    vi.mocked(useGameStore).mockImplementation((selector: any) => {
+      return selector({ ...mockStoreState, currentQuestion: null })
+    });
+
+    const { container } = render(<TooltipProvider><QuizCard {...mockDefaultProps} /></TooltipProvider>);
     expect(container).toBeEmptyDOMElement();
   });
 
   it('can render question', () => {
-    render(<TooltipProvider><QuizCard /></TooltipProvider>);
+    render(<TooltipProvider><QuizCard {...mockDefaultProps} /></TooltipProvider>);
     expect(screen.getByText('who are you')).toBeInTheDocument();
   });
 
   it('disables options when gameStatus is VALIDATING_ANSWER', () => {
-    vi.mocked(useGameContext).mockReturnValue({
-      ...defaultGameContext,
-      gameStatus: GameStatus.VALIDATING_ANSWER,
+    vi.mocked(useGameStore).mockImplementation((selector: any) => {
+      return selector({ ...mockStoreState, gameStatus: GameStatus.VALIDATING_ANSWER });
     });
-    render(<TooltipProvider><QuizCard /></TooltipProvider>);
+    render(<TooltipProvider><QuizCard {...mockDefaultProps} /></TooltipProvider>);
 
     const optionButtons = [
       screen.getByRole('button', { name: 'me' }),
@@ -93,7 +98,7 @@ describe('QuizCard', () => {
   });
 
   it('expect power-up bar to be hidden after used a power-up item ', async () => {
-    render(<TooltipProvider><QuizCard /></TooltipProvider>);
+    render(<TooltipProvider><QuizCard {...mockDefaultProps} /></TooltipProvider>);
 
     const useHammerPowerUpResponse = {
       updateUser: {},
@@ -121,7 +126,7 @@ describe('QuizCard', () => {
   });
 
   it('can send validate request', async () => {
-    render(<TooltipProvider><QuizCard /></TooltipProvider>);
+    render(<TooltipProvider><QuizCard {...mockDefaultProps} /></TooltipProvider>);
 
     const mockAnswerResponse = {
       correctLetter: 'A',
@@ -151,7 +156,7 @@ describe('QuizCard', () => {
     expect(serviceApi.validateSelectedAnswer).toHaveBeenCalledWith('123', 10);
 
     await waitFor(() => {
-      expect(defaultGameContext.updateBalance).toHaveBeenCalledWith(8);
+      expect(mockDefaultProps.updateBalance).toHaveBeenCalledWith(8);
       expect(optionButton1).toBeDisabled();
     });
   });

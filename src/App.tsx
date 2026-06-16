@@ -1,18 +1,16 @@
 import { GameStatus, type Inventory } from '@/types';
 import { useMemo } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 import { StatusMessage } from './components/ui/StatusMessage';
-import { GameProvider } from './context/GameContext';
+import { TooltipProvider } from './components/ui/tooltip';
 import { useGameSession } from './hooks/useGameSession';
 import { useUser } from './hooks/useUser';
 import HomePage from './pages/HomePage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import { LoginPage } from './pages/LoginPage';
 import QuizCardPage from './pages/QuizCardPage';
-import ShopPage from './pages/ShopPage';
 import SummaryPage from './pages/SummaryPage';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-import { TooltipProvider } from './components/ui/tooltip';
 
 const App: React.FC = () => {
   const navigate = useNavigate();
@@ -48,19 +46,7 @@ const App: React.FC = () => {
       handleAnswerResponse: handleAnswerResponse,
       triggerGlobalError: triggerGlobalError,
       handleAbandonSession: handleGameOver,
-    }),
-    [
-      gameStatus,
-      sessionData?.id,
-      user?.inventory,
-      currentQuestion,
-      handleUsePowerUp,
-      updateBalance,
-      onAnswerSent,
-      handleAnswerResponse,
-      triggerGlobalError,
-      handleGameOver,
-    ]
+    }), []
   );
   /**
    * Logging in the game with a username.
@@ -92,7 +78,7 @@ const App: React.FC = () => {
   const statusMessageUI = UIMessage();
 
   return (
-    <div className="max-w-[430px] w-full mx-auto min-h-screen flex flex-col relative bg-background overflow-x-hidden shadow-2xl text-foreground">
+    <div className="w-full mx-auto min-h-screen flex flex-col relative bg-background overflow-x-hidden shadow-2xl text-foreground">
       {statusMessageUI && (
         <StatusMessage status={gameStatus} message={statusMessageUI} onClose={handleClearError} />
       )}
@@ -100,54 +86,58 @@ const App: React.FC = () => {
         <Routes>
           <Route
             path="/"
-          element={
-            !user ? (
-              <LoginPage handleLogin={handleLogin} />
-            ) : (
-              <HomePage onStartNewGame={startNewGame} />
-            )
-          }
-        />
-
-
-        {/* <Route path="/shop" element={<ShopPage user={user} onPurchase={purchaseItem} />} /> */}
-
-        <Route
-          path="/quiz"
-          element={
-            <ProtectedRoute user={user}>
-              {currentQuestion && sessionData?.id ? (
-                <GameProvider value={contextValue}>
-                  <QuizCardPage
-                    answerSent={answerSent}
-                    sessionData={sessionData}
-                    currentQuestion={currentQuestion}
-                    currentIndex={currentQuestion.index}
-                    questionLimit={questionLimit.current}
-                    onQuestionTimedout={onQuestionTimedout}
-                  />
-                </GameProvider>
+            element={
+              !user ? (
+                <LoginPage handleLogin={handleLogin} />
               ) : (
-                <div />
-              )}
+                <HomePage onStartNewGame={startNewGame} />
+              )
+            }
+          />
+
+
+          {/* <Route path="/shop" element={<ShopPage user={user} onPurchase={purchaseItem} />} /> */}
+
+          <Route
+            path="/quiz"
+            element={
+              <ProtectedRoute user={user}>
+                {currentQuestion && sessionData?.id ? (
+                    <QuizCardPage
+                      answerSent={answerSent}
+                      sessionData={sessionData}
+                      currentQuestion={currentQuestion}
+                      currentIndex={currentQuestion.index}
+                      questionLimit={questionLimit.current}
+                      onQuestionTimedout={onQuestionTimedout}
+                      handleUsePowerUp={handleUsePowerUp}
+                      updateBalance={updateBalance}
+                      onAnswerSent={onAnswerSent}
+                      handleAnswerResponse={handleAnswerResponse}
+                      triggerGlobalError={triggerGlobalError}
+                      handleAbandonSession={handleGameOver}
+                    />
+                ) : (
+                  <div />
+                )}
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/summary" element={
+            <ProtectedRoute user={user}>
+              <SummaryPage />
             </ProtectedRoute>
           }
-        />
+          />
 
-        <Route path="/summary" element={
-          <ProtectedRoute user={user}>
-            <SummaryPage />
-          </ProtectedRoute>
-        }
-        />
+          <Route path="/leaderboard" element={
+            <ProtectedRoute user={user}>
+              <LeaderboardPage />
+            </ProtectedRoute>
+          } />
 
-        <Route path="/leaderboard" element={
-          <ProtectedRoute user={user}>
-            <LeaderboardPage />
-          </ProtectedRoute>
-        } />
-
-      </Routes>
+        </Routes>
       </TooltipProvider>
     </div>
   );
