@@ -11,43 +11,24 @@ import LeaderboardPage from './pages/LeaderboardPage';
 import { LoginPage } from './pages/LoginPage';
 import QuizCardPage from './pages/QuizCardPage';
 import SummaryPage from './pages/SummaryPage';
+import { useGameSessionErrors } from './hooks/useGameSessionErrors';
+import { useGameStore } from './store/useGameStore';
 
 const App: React.FC = () => {
   const navigate = useNavigate();
   const { user, loading, login, purchaseItem, updateBalance, updateInventory } = useUser();
+  const { triggerGlobalError, handleClearError } = useGameSessionErrors();
+  const setGameStatus = useGameStore((state) => state.setGameStatus);
+  const gameStatus = useGameStore((state) => state.gameStatus);
+  const globalErrorMessage = useGameStore((state) => state.globalErrorMessage);
+  const currentQuestion = useGameStore((state) => state.currentQuestion);
+  const sessionData = useGameStore((state) => state.sessionData);
 
-  const {
-    gameStatus,
-    setGameStatus,
-    currentQuestion,
-    sessionData,
-    answerSent,
-    questionLimit,
-    globalErrorMessage,
-    startNewGame,
-    onAnswerSent,
-    handleAnswerResponse,
-    onQuestionTimedout,
-    handleUsePowerUp,
-    triggerGlobalError,
-    handleClearError,
-    handleGameOver,
-  } = useGameSession(user, updateInventory, navigate);
+  const onHandleClearError = () => {
+    handleClearError();
+    navigate('/');
+  }
 
-  const contextValue = useMemo(
-    () => ({
-      gameStatus: gameStatus,
-      sessionId: sessionData?.id || null,
-      inventory: user?.inventory || {} as Inventory,
-      currentQuestion: currentQuestion,
-      handleUsePoweUp: handleUsePowerUp,
-      updateBalance: updateBalance,
-      onAnswerSent: onAnswerSent,
-      handleAnswerResponse: handleAnswerResponse,
-      triggerGlobalError: triggerGlobalError,
-      handleAbandonSession: handleGameOver,
-    }), []
-  );
   /**
    * Logging in the game with a username.
    * @param name - name to display in the game
@@ -80,7 +61,7 @@ const App: React.FC = () => {
   return (
     <div className="w-full mx-auto min-h-screen flex flex-col relative bg-background overflow-x-hidden shadow-2xl text-foreground">
       {statusMessageUI && (
-        <StatusMessage status={gameStatus} message={statusMessageUI} onClose={handleClearError} />
+        <StatusMessage status={gameStatus} message={statusMessageUI} onClose={onHandleClearError} />
       )}
       <TooltipProvider>
         <Routes>
@@ -90,7 +71,7 @@ const App: React.FC = () => {
               !user ? (
                 <LoginPage handleLogin={handleLogin} />
               ) : (
-                <HomePage onStartNewGame={startNewGame} />
+                <HomePage />
               )
             }
           />
@@ -103,20 +84,7 @@ const App: React.FC = () => {
             element={
               <ProtectedRoute user={user}>
                 {currentQuestion && sessionData?.id ? (
-                    <QuizCardPage
-                      answerSent={answerSent}
-                      sessionData={sessionData}
-                      currentQuestion={currentQuestion}
-                      currentIndex={currentQuestion.index}
-                      questionLimit={questionLimit.current}
-                      onQuestionTimedout={onQuestionTimedout}
-                      handleUsePowerUp={handleUsePowerUp}
-                      updateBalance={updateBalance}
-                      onAnswerSent={onAnswerSent}
-                      handleAnswerResponse={handleAnswerResponse}
-                      triggerGlobalError={triggerGlobalError}
-                      handleAbandonSession={handleGameOver}
-                    />
+                  <QuizCardPage />
                 ) : (
                   <div />
                 )}

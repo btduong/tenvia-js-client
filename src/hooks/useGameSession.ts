@@ -11,6 +11,7 @@ export const useGameSession = (
   updateInventory: (inventory: Inventory) => void,
   navigate: NavigateFunction
 ) => {
+
   const questionLimit = useRef<number>(10);
 
   const setGameStatus = useGameStore((state) => state.setGameStatus);
@@ -18,14 +19,9 @@ export const useGameSession = (
   const setAnswerSent = useGameStore((state) => state.setAnswerSent);
   const setIsTicking = useGameStore((state) => state.setIsTicking);
   const setCurrentQuestion = useGameStore((state) => state.setCurrentQuestion);
-  const setGlobalUserMessage = useGameStore((state) => state.setGlobalErrorMessage);
-  
-  const gameStatus = useGameStore((state) => state.gameStatus);
+
   const isTicking = useGameStore((state) => state.isTicking);
   const sessionData = useGameStore((state) => state.sessionData);
-  const currentQuestion = useGameStore((state) => state.currentQuestion);
-  const answerSent = useGameStore((state) => state.answerSent);
-  const globalErrorMessage = useGameStore((state) => state.globalErrorMessage);
 
   useTickingSound(isTicking);
 
@@ -68,54 +64,11 @@ export const useGameSession = (
     }
   };
 
-  const timeoutMutation = useTimeoutMutation(handleAnswerResponse);
-
-  const onQuestionTimedout = async () => {
-    setIsTicking(false);
-    if (sessionData?.id) {
-      timeoutMutation.mutate(sessionData.id);
-    }
-  };
-
-  const powerUpMutation = usePowerUpMutation(updateInventory);
-
-  const handleUsePowerUp = async (type: PowerUpType): Promise<UsePowerUpResponse | null> => {
-    if (!user || !sessionData || !sessionData.id) return null;
-    try {
-      return await powerUpMutation.mutateAsync({ type, userId: user.id, sessionId: sessionData.id });
-    } catch {
-      return null;
-    }
-  };
-
-  const triggerGlobalError = (message: string) => {
-    setGameStatus(GameStatus.ERROR);
-    setGlobalUserMessage(message);
-  };
-
-  const handleClearError = () => {
-    setGameStatus(GameStatus.IDLE);
-    setCurrentQuestion(null);
-    setSessionData(null);
-    setGlobalUserMessage('');
-    navigate('/');
-  };
-
   return {
-    gameStatus,
-    setGameStatus,
-    currentQuestion,
-    sessionData,
-    answerSent,
     questionLimit,
-    globalErrorMessage,
     startNewGame,
     onAnswerSent,
     handleAnswerResponse,
-    onQuestionTimedout,
-    handleUsePowerUp,
-    triggerGlobalError,
-    handleClearError,
     handleGameOver,
   };
 };

@@ -1,8 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import QuizCardPage from '@/pages/QuizCardPage';
 import { render, screen } from '@testing-library/react';
-import type { SessionData } from 'react-router-dom';
+import { MemoryRouter, useNavigate, type SessionData } from 'react-router-dom';
 import type { GameSession } from '@/types';
+import { useGameStore } from '@/store/useGameStore';
+import { renderWithClient } from '@/test/test-utils';
 
 /**
  * default is needed because vitest use ESM.
@@ -27,7 +29,21 @@ vi.mock('../components/QuestionTimer/QuestionTimer', () => {
   };
 });
 
+vi.mock('@/store/useGameStore');
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+  };
+});
+
 describe('QuizCardPage', () => {
+  beforeAll(() => {
+    window.HTMLMediaElement.prototype.play = vi.fn(() => Promise.resolve());
+    window.HTMLMediaElement.prototype.pause = vi.fn(() => Promise.resolve());
+  });
+
   const mockQuestion = {
     id: 1,
     questionText: 'text',
@@ -49,20 +65,40 @@ describe('QuizCardPage', () => {
     onQuestionTimedout: mockOnQuestionTimedout,
   };
 
+  const mockStoreState = {
+    currentQuestion: mockQuestion,
+    sessionData: { duration: 1 },
+    answerSent: false,
+  };
+
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.mocked(useGameStore).mockImplementation((selector: any) => selector(mockStoreState));
   });
 
   it('can reander', () => {
-    render(<QuizCardPage {...defaultProps} />);
+    renderWithClient(
+      <MemoryRouter>
+        <QuizCardPage />
+      </MemoryRouter>
+    );
 
-    expect(screen.getByText('Question: 2/10')).toBeInTheDocument();
+    expect(screen.getByText('Question: 1/10')).toBeInTheDocument();
     expect(screen.getByTestId('mock-quiz-data-id')).toBeInTheDocument();
     expect(screen.getByTestId('mock-question-timer')).toBeInTheDocument();
   });
 
   it('does not render QuestionTimer if sessionData is null', () => {
-    render(<QuizCardPage {...defaultProps} sessionData={null} />);
+    vi.mocked(useGameStore).mockImplementation((selector: any) => selector({
+      currentQuestion: mockQuestion,
+      sessionData: null,
+      answerSent: false,
+    }));
+    renderWithClient(
+      <MemoryRouter>
+        <QuizCardPage />
+      </MemoryRouter>
+    );
     expect(screen.queryByTestId('mock-question-timer')).not.toBeInTheDocument();
   });
 });

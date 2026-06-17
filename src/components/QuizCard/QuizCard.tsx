@@ -16,6 +16,11 @@ import hammerIcon from '@/assets/icons/suit_diamonds.png';
 import { Button } from '../ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { useGameStore } from '@/store/useGameStore';
+import { useGameSessionErrors } from '@/hooks/useGameSessionErrors';
+import { usePowerUp } from '@/hooks/usePowerUp';
+import { useUser } from '@/hooks/useUser';
+import { useGameSession } from '@/hooks/useGameSession';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * A map to find icon for a given PowerUpType.
@@ -26,31 +31,21 @@ const POWER_UP_TYPE_ICON_MAP: Record<PowerUpType, string> = {
   SWAP_QUESTION: hammerIcon,
 };
 
-interface QuizCardProps {
-  handleUsePowerUp: (type: PowerUpType) => Promise<UsePowerUpResponse | null>;
-  updateBalance: (newBalance: number) => void;
-  onAnswerSent: () => void;
-  handleAnswerResponse: (response: AnswerResponse) => void;
-  triggerGlobalError: (message: string) => void;
-  handleAbandonSession: () => void;
-}
-
 /**
  * Reander the quiz which includes question text and options for answers
  */
-const QuizCard: React.FC<QuizCardProps> = ({
-  handleUsePowerUp,
-  updateBalance,
-  onAnswerSent,
-  handleAnswerResponse,
-  triggerGlobalError,
-  handleAbandonSession }) => {
+const QuizCard: React.FC = () => {
 
   const gameStatus = useGameStore((state) => state.gameStatus);
   const inventory = useGameStore((state) => state.sessionData?.user?.inventory) || {};
   const sessionId = useGameStore((state) => state.sessionData?.id);
   const currentQuestion = useGameStore((state) => state.currentQuestion);
 
+  const navigate = useNavigate();
+  const { triggerGlobalError } = useGameSessionErrors();
+  const { user, updateInventory, updateBalance } = useUser();
+  const { handleAnswerResponse, onAnswerSent, handleGameOver } = useGameSession(user, updateInventory, navigate);
+  const { handleUsePowerUp } = usePowerUp(user, updateInventory);
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
   const [canUsePowerUp, setCanUsePowerUp] = useState<boolean>(true);
@@ -157,7 +152,7 @@ const QuizCard: React.FC<QuizCardProps> = ({
       await serviceApi.abandon(sessionId);
     }
 
-    handleAbandonSession();
+    handleGameOver();
     return true;
   };
 
@@ -361,3 +356,4 @@ const PowerUpItemBar = ({
 };
 
 export default QuizCard;
+

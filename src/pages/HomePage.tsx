@@ -4,15 +4,18 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Label } from '@/components/ui/label';
 import NavButton from '@/components/ui/NavButton';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useGameSession } from '@/hooks/useGameSession';
+import { useUser } from '@/hooks/useUser';
 import { playQuestionStartSound } from '@/utils/sounds';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-interface HomeProps {
-  onStartNewGame: (numberOfQuestions: number) => void;
-}
 
-const HomePage: React.FC<HomeProps> = ({ onStartNewGame }) => {
+const HomePage: React.FC = () => {
   const [numberOfQuestions, setNumberOfQuestions] = useState<number>(10);
+  const { user, updateInventory } = useUser();
+  const navigate = useNavigate();
+  const { startNewGame } = useGameSession(user, updateInventory, navigate);
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -54,7 +57,7 @@ const HomePage: React.FC<HomeProps> = ({ onStartNewGame }) => {
                 </DialogClose>
                 <Button
                   onClick={() => {
-                    onStartNewGame(numberOfQuestions);
+                    startNewGame(numberOfQuestions);
                     playQuestionStartSound();
                   }}
                 >Start</Button>

@@ -4,9 +4,14 @@ import type { PowerUpType } from '@/types';
 import { GameStatus } from '@/types';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TooltipProvider } from '../ui/tooltip';
 import QuizCard from './QuizCard';
+import { renderWithClient } from '@/test/test-utils';
+import { usePowerUp } from '@/hooks/usePowerUp';
+import { useUser } from '@/hooks/useUser';
+import { useGameSession } from '@/hooks/useGameSession';
+import { useGameSessionErrors } from '@/hooks/useGameSessionErrors';
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', () => ({
@@ -21,6 +26,10 @@ vi.mock('react-router-dom', () => ({
  */
 vi.mock('@/store/useGameStore');
 vi.mock('@/api/serviceApi');
+vi.mock('@/hooks/usePowerUp');
+vi.mock('@/hooks/useUser');
+vi.mock('@/hooks/useGameSession');
+vi.mock('@/hooks/useGameSessionErrors');
 
 const mockQuestion = {
   id: 1,
@@ -44,28 +53,50 @@ const inventory = {
 
 const mockHandleUsePowerUp = vi.fn();
 
-const mockDefaultProps = {
-  handleUsePowerUp: mockHandleUsePowerUp,
-  updateBalance: vi.fn(),
-  onAnswerSent: vi.fn(),
-  handleAnswerResponse: vi.fn(),
-  triggerGlobalError: vi.fn(),
-  handleAbandonSession: vi.fn(),
-};
+const mockUpdateBalance = vi.fn();
+const mockHandleAnswerResponse = vi.fn();
+const mockOnAnswerSent = vi.fn();
+const mockTriggerGlobalError = vi.fn();
+const mockHandleGameOver = vi.fn();
 
 const mockStoreState = {
   gameStatus: GameStatus.IDLE,
   currentQuestion: mockQuestion,
   sessionData: { id: '123', user: { inventory: inventory } },
   answerSent: false,
-}
+};
 
 describe('QuizCard', () => {
+  beforeAll(() => {
+    window.HTMLMediaElement.prototype.play = vi.fn(() => Promise.resolve());
+    window.HTMLMediaElement.prototype.pause = vi.fn(() => Promise.resolve());
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useGameStore).mockImplementation((selector: any) => {
       return selector(mockStoreState);
     });
+
+    vi.mocked(usePowerUp).mockReturnValue({
+      handleUsePowerUp: mockHandleUsePowerUp
+    } as any);
+
+    vi.mocked(useUser).mockReturnValue({
+      user: { id: '1', inventory },
+      updateInventory: vi.fn(),
+      updateBalance: mockUpdateBalance
+    } as any);
+
+    vi.mocked(useGameSession).mockReturnValue({
+      handleAnswerResponse: mockHandleAnswerResponse,
+      onAnswerSent: mockOnAnswerSent,
+      handleGameOver: mockHandleGameOver
+    } as any);
+
+    vi.mocked(useGameSessionErrors).mockReturnValue({
+      triggerGlobalError: mockTriggerGlobalError
+    } as any);
   });
 
   it('can render default view when question is null', () => {
@@ -73,12 +104,12 @@ describe('QuizCard', () => {
       return selector({ ...mockStoreState, currentQuestion: null })
     });
 
-    const { container } = render(<TooltipProvider><QuizCard {...mockDefaultProps} /></TooltipProvider>);
+    const { container } = renderWithClient(<TooltipProvider><QuizCard /></TooltipProvider>);
     expect(container).toBeEmptyDOMElement();
   });
 
   it('can render question', () => {
-    render(<TooltipProvider><QuizCard {...mockDefaultProps} /></TooltipProvider>);
+    renderWithClient(<TooltipProvider><QuizCard /></TooltipProvider>);
     expect(screen.getByText('who are you')).toBeInTheDocument();
   });
 
@@ -86,7 +117,7 @@ describe('QuizCard', () => {
     vi.mocked(useGameStore).mockImplementation((selector: any) => {
       return selector({ ...mockStoreState, gameStatus: GameStatus.VALIDATING_ANSWER });
     });
-    render(<TooltipProvider><QuizCard {...mockDefaultProps} /></TooltipProvider>);
+    renderWithClient(<TooltipProvider><QuizCard /></TooltipProvider>);
 
     const optionButtons = [
       screen.getByRole('button', { name: 'me' }),
@@ -98,7 +129,7 @@ describe('QuizCard', () => {
   });
 
   it('expect power-up bar to be hidden after used a power-up item ', async () => {
-    render(<TooltipProvider><QuizCard {...mockDefaultProps} /></TooltipProvider>);
+    renderWithClient(<TooltipProvider><QuizCard /></TooltipProvider>);
 
     const useHammerPowerUpResponse = {
       updateUser: {},
@@ -126,7 +157,7 @@ describe('QuizCard', () => {
   });
 
   it('can send validate request', async () => {
-    render(<TooltipProvider><QuizCard {...mockDefaultProps} /></TooltipProvider>);
+    renderWithClient(<TooltipProvider><QuizCard /></TooltipProvider>);
 
     const mockAnswerResponse = {
       correctLetter: 'A',
@@ -156,7 +187,7 @@ describe('QuizCard', () => {
     expect(serviceApi.validateSelectedAnswer).toHaveBeenCalledWith('123', 10);
 
     await waitFor(() => {
-      expect(mockDefaultProps.updateBalance).toHaveBeenCalledWith(8);
+      expect(mockUpdateBalance).toHaveBeenCalledWith(8);
       expect(optionButton1).toBeDisabled();
     });
   });
