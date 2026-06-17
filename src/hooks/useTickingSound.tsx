@@ -26,12 +26,19 @@ export const useTickingSound = (isPlaying: boolean) => {
 
   /**
    * Handle Audio state changes.
+   * This ignores the AbortError that gets printed to the console:
+   * Audio playback failed DOMException: The fetching process for the media resource was aborted by the user agent at the user's request.
+   * This is because the audio.play() returns a promise which get resolved once the audio starts playing.
+   * This error is when the 'isPlaying' turns to false due to component gets re-render before the Promise resolves.
    */
   useEffect(() => {
     if (!audioRef.current) return;
 
     if (isPlaying) {
-      audioRef.current.play().catch((err) => console.error('Audio playback failed', err));
+      audioRef.current.play().catch((err) => {
+        if (err.name === 'AbortError') return;
+        console.error('Audio playback failed', err);
+      });
     } else {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
