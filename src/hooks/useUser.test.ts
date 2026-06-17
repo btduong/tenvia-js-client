@@ -3,6 +3,7 @@ import { renderHookWithClient } from '@/test/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useUser } from './useUser';
 import { serviceApi } from '@/api/serviceApi';
+import { useUserStore } from '@/store/useUserStore';
 
 vi.mock('../api/serviceApi');
 
@@ -12,6 +13,8 @@ beforeEach(() => {
 
 describe('useUser', () => {
   it('can set default value', () => {
+
+    useUserStore.getState().setUser(null);
     const { result } = renderHookWithClient(() => useUser());
     expect(result.current.user).toBeNull();
   });
@@ -46,12 +49,13 @@ describe('useUser', () => {
   });
 
   it('expect loading to be false when login failed', async () => {
+
+    useUserStore.getState().setUser(null);
     vi.mocked(serviceApi.login).mockRejectedValue(new Error('Network failure'));
 
     const { result } = renderHookWithClient(() => useUser());
 
     await act(async () => {
-      // The Vitest native way to handle expected errors!
       await expect(result.current.login('alice')).rejects.toThrow('Network failure');
     });
 
@@ -106,6 +110,7 @@ describe('useUser', () => {
   });
 
   it('expect error when unauthenticated user to try to purchase item', async () => {
+    useUserStore.getState().setUser(null);
     const { result } = renderHookWithClient(() => useUser());
     expect(result.current.user).toBeNull();
 
