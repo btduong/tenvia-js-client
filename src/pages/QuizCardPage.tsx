@@ -2,7 +2,7 @@ import QuestionTimer from '@/components/QuestionTimer/QuestionTimer';
 import QuizCard from '@/components/QuizCard/QuizCard';
 
 import { Progress } from '@/components/ui/progress';
-import { useGameSession } from '@/hooks/useGameSession';
+import { useGameManager } from '@/hooks/useGameManager';
 import { useGameSessionTimer } from '@/hooks/useGameSessionTimer';
 import { useUser } from '@/hooks/useUser';
 import { useGameStore } from '@/store/useGameStore';
@@ -17,7 +17,7 @@ const QuizCardPage: React.FC = () => {
   const { user, updateInventory } = useUser();
   const navigate = useNavigate();
 
-  const { handleAnswerResponse, questionLimit } = useGameSession(user, updateInventory, navigate);
+  const { handleAnswerResponse, questionLimit } = useGameManager(user, updateInventory, navigate);
   const { onQuestionTimedout } = useGameSessionTimer(handleAnswerResponse);
 
   if (!currentQuestion) return null;

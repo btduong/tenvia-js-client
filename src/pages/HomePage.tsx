@@ -4,7 +4,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Label } from '@/components/ui/label';
 import NavButton from '@/components/ui/NavButton';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useGameSession } from '@/hooks/useGameSession';
+import { useGameManager } from '@/hooks/useGameManager';
 import { useUser } from '@/hooks/useUser';
 import { playQuestionStartSound } from '@/utils/sounds';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ const HomePage: React.FC = () => {
   const [numberOfQuestions, setNumberOfQuestions] = useState<number>(10);
   const { user, updateInventory } = useUser();
   const navigate = useNavigate();
-  const { startNewGame } = useGameSession(user, updateInventory, navigate);
+  const { startNewGame } = useGameManager(user, updateInventory, navigate);
 
   return (
     <div className="flex min-h-screen items-center justify-center">

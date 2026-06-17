@@ -4,9 +4,9 @@ import HomePage from './HomePage';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { renderWithClient } from '@/test/test-utils';
-import { useGameSession } from '@/hooks/useGameSession';
+import { useGameManager } from '@/hooks/useGameManager';
 
-vi.mock('@/hooks/useGameSession');
+vi.mock('@/hooks/useGameManager');
 vi.mock('@/utils/sounds', () => ({
   playQuestionStartSound: vi.fn(),
 }));
@@ -17,7 +17,7 @@ describe('HomePage', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
-    vi.mocked(useGameSession).mockReturnValue({
+    vi.mocked(useGameManager).mockReturnValue({
       questionLimit: { current: 10 },
       startNewGame: mockOnStartNewGame,
       onAnswerSent: vi.fn(),

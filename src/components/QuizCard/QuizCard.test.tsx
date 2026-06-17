@@ -10,7 +10,7 @@ import QuizCard from './QuizCard';
 import { renderWithClient } from '@/test/test-utils';
 import { usePowerUp } from '@/hooks/usePowerUp';
 import { useUser } from '@/hooks/useUser';
-import { useGameSession } from '@/hooks/useGameSession';
+import { useGameManager } from '@/hooks/useGameManager';
 import { useGameSessionErrors } from '@/hooks/useGameSessionErrors';
 
 const mockNavigate = vi.fn();
@@ -28,7 +28,7 @@ vi.mock('@/store/useGameStore');
 vi.mock('@/api/serviceApi');
 vi.mock('@/hooks/usePowerUp');
 vi.mock('@/hooks/useUser');
-vi.mock('@/hooks/useGameSession');
+vi.mock('@/hooks/useGameManager');
 vi.mock('@/hooks/useGameSessionErrors');
 
 const mockQuestion = {
@@ -88,7 +88,7 @@ describe('QuizCard', () => {
       updateBalance: mockUpdateBalance
     } as any);
 
-    vi.mocked(useGameSession).mockReturnValue({
+    vi.mocked(useGameManager).mockReturnValue({
       handleAnswerResponse: mockHandleAnswerResponse,
       onAnswerSent: mockOnAnswerSent,
       handleGameOver: mockHandleGameOver

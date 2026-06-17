@@ -6,7 +6,7 @@ import type { NavigateFunction } from 'react-router-dom';
 import { useTickingSound } from './useTickingSound';
 import { useStartSessionMutation, useNextQuestionMutation, useTimeoutMutation, usePowerUpMutation } from './useGameMutations';
 
-export const useGameSession = (
+export const useGameManager = (
   user: User | null,
   updateInventory: (inventory: Inventory) => void,
   navigate: NavigateFunction

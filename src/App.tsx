@@ -4,7 +4,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { StatusMessage } from './components/ui/StatusMessage';
 import { TooltipProvider } from './components/ui/tooltip';
-import { useGameSession } from './hooks/useGameSession';
+import { useGameManager } from './hooks/useGameManager';
 import { useUser } from './hooks/useUser';
 import HomePage from './pages/HomePage';
 import LeaderboardPage from './pages/LeaderboardPage';
@@ -17,6 +17,7 @@ import { useGameStore } from './store/useGameStore';
 const App: React.FC = () => {
   const navigate = useNavigate();
   const { user, loading, login, purchaseItem, updateBalance, updateInventory } = useUser();
+  const { handleAnswerResponse, onAnswerSent, handleGameOver } = useGameManager(user, updateInventory, navigate);
   const { triggerGlobalError, handleClearError } = useGameSessionErrors();
   const setGameStatus = useGameStore((state) => state.setGameStatus);
   const gameStatus = useGameStore((state) => state.gameStatus);

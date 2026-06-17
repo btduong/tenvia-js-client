@@ -19,7 +19,7 @@ import { useGameStore } from '@/store/useGameStore';
 import { useGameSessionErrors } from '@/hooks/useGameSessionErrors';
 import { usePowerUp } from '@/hooks/usePowerUp';
 import { useUser } from '@/hooks/useUser';
-import { useGameSession } from '@/hooks/useGameSession';
+import { useGameManager } from '@/hooks/useGameManager';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -44,7 +44,7 @@ const QuizCard: React.FC = () => {
   const navigate = useNavigate();
   const { triggerGlobalError } = useGameSessionErrors();
   const { user, updateInventory, updateBalance } = useUser();
-  const { handleAnswerResponse, onAnswerSent, handleGameOver } = useGameSession(user, updateInventory, navigate);
+  const { handleAnswerResponse, onAnswerSent, handleGameOver } = useGameManager(user, updateInventory, navigate);
   const { handleUsePowerUp } = usePowerUp(user, updateInventory);
   const [selectedOptionId, setSelectedOptionId] = useState<number>(-1);
   const [answerResponse, setAnswerResponse] = useState<AnswerResponse | null>(null);
