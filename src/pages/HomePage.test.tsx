@@ -3,6 +3,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import HomePage from './HomePage';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
+import { renderWithClient } from '@/test/test-utils';
+import { useGameManager } from '@/hooks/useGameManager';
+
+vi.mock('@/hooks/useGameManager');
+vi.mock('@/utils/sounds', () => ({
+  playQuestionStartSound: vi.fn(),
+}));
 
 const mockOnStartNewGame = vi.fn();
 
@@ -10,12 +17,19 @@ describe('HomePage', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
-  })
+    vi.mocked(useGameManager).mockReturnValue({
+      questionLimit: { current: 10 },
+      startNewGame: mockOnStartNewGame,
+      onAnswerSent: vi.fn(),
+      handleAnswerResponse: vi.fn(),
+      handleGameOver: vi.fn(),
+    });
+  });
 
   it('can render default view', () => {
-    render(
+    renderWithClient(
       <MemoryRouter>
-        <HomePage onStartNewGame={mockOnStartNewGame} />
+        <HomePage />
       </MemoryRouter>
     );
 
@@ -28,9 +42,9 @@ describe('HomePage', () => {
   });
 
   it('can click Start button to start new game', async () => {
-    render(
+    renderWithClient(
       <MemoryRouter>
-        <HomePage onStartNewGame={mockOnStartNewGame} />
+        <HomePage />
       </MemoryRouter>
     );
 
@@ -47,9 +61,9 @@ describe('HomePage', () => {
 
   it('expect no new game start when click Cancel button', async() => {
 
-    render(
+    renderWithClient(
       <MemoryRouter>
-        <HomePage onStartNewGame={mockOnStartNewGame} />
+        <HomePage />
       </MemoryRouter>
     );
 

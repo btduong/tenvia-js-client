@@ -8,6 +8,9 @@ import { setupServer } from 'msw/node';
 import ShopPage from './pages/ShopPage';
 import { serviceApi } from './api/serviceApi';
 import { renderWithClient } from './test/test-utils';
+import { useUserStore } from './store/useUserStore';
+import { useGameStore } from './store/useGameStore';
+import { GameStatus } from './types';
 
 const mockInventory = { HAMMER: 5, FIFTY_FIFTY: 1, SWAP_QUESTION: 1 };
 
@@ -75,7 +78,10 @@ describe('App Login', () => {
     server.close();
   });
 
-  beforeEach(() => { });
+  beforeEach(() => { 
+    useUserStore.getState().setUser(null);
+    useGameStore.getState().setGameStatus(GameStatus.IDLE);
+  });
 
   afterEach(() => {
     server.resetHandlers();
