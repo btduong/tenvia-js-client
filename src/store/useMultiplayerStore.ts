@@ -57,8 +57,9 @@ export const useMultiplayerStore = create<MultiplayerState>((set, get) => ({
     connect: (token: string) => {
         if (get().client) return;
 
+        const baseUrl = import.meta.env.VITE_APP_API_URL || 'http://localhost:8080';
         const client = new Client({
-            webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+            webSocketFactory: () => new SockJS(`${baseUrl}/ws`),
             connectHeaders: {
                 Authorization: `Bearer ${token}`
             },
