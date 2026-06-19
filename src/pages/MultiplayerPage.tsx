@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 const MultiplayerPage: React.FC = () => {
   const { user } = useUser();
   const [joinCode, setJoinCode] = useState('');
+  const [questionLimit, setQuestionLimit] = useState<number>(10);
   
   const {
     connected,
@@ -17,6 +18,7 @@ const MultiplayerPage: React.FC = () => {
     selectedOptionId,
     connect,
     disconnect,
+    leaveCurrentLobby,
     joinLobby,
     startGame,
     submitAnswer
@@ -34,7 +36,7 @@ const MultiplayerPage: React.FC = () => {
 
   const handleCreateLobby = async () => {
     try {
-      const response = await serviceApi.createMultiplayerLobby();
+      const response = await serviceApi.createMultiplayerLobby(questionLimit);
       if (response && response.lobbyId) {
         joinLobby(response.lobbyId, user?.username || 'Host');
       }
@@ -62,6 +64,17 @@ const MultiplayerPage: React.FC = () => {
             <CardTitle className="text-center text-3xl font-extrabold tracking-tight">Multiplayer</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-semibold text-muted-foreground uppercase tracking-widest px-1">Questions</label>
+              <Input 
+                type="number"
+                min={1}
+                max={50}
+                value={questionLimit}
+                onChange={(e) => setQuestionLimit(parseInt(e.target.value) || 10)}
+                className="h-14 text-center text-xl font-bold rounded-xl"
+              />
+            </div>
             <Button onClick={handleCreateLobby} className="w-full h-16 text-xl font-bold rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-transform">
               Create New Room
             </Button>
@@ -147,7 +160,7 @@ const MultiplayerPage: React.FC = () => {
       <div className="flex flex-col min-h-screen items-center justify-center p-4">
          <Card className="w-full max-w-2xl shadow-2xl">
           <CardHeader>
-             <CardTitle className="text-center text-3xl font-black">Question {lobby.currentQuestionIndex + 1}</CardTitle>
+             <CardTitle className="text-center text-3xl font-black">Question {lobby.currentQuestionIndex + 1} / {lobby.totalQuestions}</CardTitle>
              {question && (
                 <p className="text-center text-2xl font-bold mt-4 mb-2">{question.questionText}</p>
              )}
@@ -160,8 +173,8 @@ const MultiplayerPage: React.FC = () => {
                     
                     let btnColor = "bg-secondary/40 text-gray-500 border-2 border-transparent";
                     if (hasAnswered && isSelected) {
-                        // User has answered, highlight their choice lightly
-                        btnColor = "bg-primary/20 text-primary border-2 border-primary/50 shadow-sm";
+                        // User has answered, highlight their choice distinctly
+                        btnColor = "bg-blue-500 text-white border-2 border-blue-600 shadow-[0_0_15px_rgba(59,130,246,0.5)]";
                     } else if (!hasAnswered) {
                         btnColor = "bg-secondary text-secondary-foreground hover:scale-[1.02] active:scale-[0.95] cursor-pointer shadow-md";
                     }
@@ -213,7 +226,7 @@ const MultiplayerPage: React.FC = () => {
        <div className="flex flex-col min-h-screen items-center justify-center p-4">
         <Card className="w-full max-w-2xl shadow-2xl">
           <CardHeader>
-             <CardTitle className="text-center text-3xl font-black">Question {lobby.currentQuestionIndex + 1}</CardTitle>
+             <CardTitle className="text-center text-3xl font-black">Question {lobby.currentQuestionIndex + 1} / {lobby.totalQuestions}</CardTitle>
              {question && (
                 <p className="text-center text-2xl font-bold mt-4 mb-2">{question.questionText}</p>
              )}
@@ -256,6 +269,47 @@ const MultiplayerPage: React.FC = () => {
             )}
 
 
+            
+          </CardContent>
+        </Card>
+       </div>
+    );
+  }
+
+  // View: Finished Game
+  if (lobby.gameState === 'FINISHED') {
+    const sorted = [...lobby.players].sort((a, b) => b.score - a.score);
+    
+    return (
+       <div className="flex flex-col min-h-screen items-center justify-center p-4">
+        <Card className="w-full max-w-2xl shadow-2xl">
+          <CardHeader>
+             <CardTitle className="text-center text-5xl font-black text-primary uppercase tracking-widest">Game Over</CardTitle>
+             <p className="text-center text-xl font-semibold text-muted-foreground mt-2">Final Leaderboard</p>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-6 items-center mt-4 w-full">
+            
+            <div className="bg-secondary/20 rounded-2xl p-6 flex flex-col gap-4 w-full max-h-96 overflow-y-auto">
+              {sorted.map((p, index) => (
+                <div key={p.id} className="flex items-center gap-4 p-4 bg-background rounded-xl shadow-sm border border-border/50">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center font-black text-xl shadow-inner
+                    ${index === 0 ? 'bg-yellow-400 text-yellow-900' : 
+                      index === 1 ? 'bg-gray-300 text-gray-800' : 
+                      index === 2 ? 'bg-amber-600 text-amber-100' : 
+                      'bg-primary/10 text-primary'}`}>
+                    #{index + 1}
+                  </div>
+                  <div className="flex flex-col flex-grow">
+                     <span className="font-bold text-xl">{p.username}</span>
+                  </div>
+                  <span className="font-black text-2xl text-primary">{p.score} pts</span>
+                </div>
+              ))}
+            </div>
+
+            <Button onClick={leaveCurrentLobby} className="mt-4 w-full h-16 text-xl font-bold rounded-xl variant-secondary hover:scale-[1.02] active:scale-[0.98] transition-transform">
+                Leave Room
+            </Button>
             
           </CardContent>
         </Card>

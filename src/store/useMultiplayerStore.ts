@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Client } from '@stomp/stompjs';
+import { Client, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 export type GameState = 'WAITING' | 'ACTIVE' | 'RESULTS' | 'FINISHED';
@@ -31,17 +31,20 @@ export interface Lobby {
     players: Player[];
     gameState: GameState;
     currentQuestionIndex: number;
+    totalQuestions: number;
     currentQuestion?: Question;
 }
 
 interface MultiplayerState {
     client: Client | null;
+    subscription: StompSubscription | null;
     lobby: Lobby | null;
     connected: boolean;
     lastAnswerCorrect: boolean | null;
     selectedOptionId: number | null;
     connect: (token: string) => void;
     disconnect: () => void;
+    leaveCurrentLobby: () => void;
     joinLobby: (lobbyId: string, username: string) => void;
     startGame: () => void;
     submitAnswer: (isCorrect: boolean, optionId: number) => void;
@@ -49,6 +52,7 @@ interface MultiplayerState {
 
 export const useMultiplayerStore = create<MultiplayerState>((set, get) => ({
     client: null,
+    subscription: null,
     lobby: null,
     connected: false,
     lastAnswerCorrect: null,
@@ -67,7 +71,7 @@ export const useMultiplayerStore = create<MultiplayerState>((set, get) => ({
                 set({ connected: true });
             },
             onDisconnect: () => {
-                set({ connected: false, lobby: null });
+                set({ connected: false, lobby: null, subscription: null });
             },
             debug: (msg) => console.log('STOMP:', msg)
         });
@@ -77,10 +81,26 @@ export const useMultiplayerStore = create<MultiplayerState>((set, get) => ({
     },
 
     disconnect: () => {
-        const { client } = get();
+        const { client, subscription } = get();
+        if (subscription) {
+            subscription.unsubscribe();
+        }
         if (client) {
             client.deactivate();
-            set({ client: null, connected: false, lobby: null });
+            set({ client: null, connected: false, lobby: null, subscription: null });
+        }
+    },
+
+    leaveCurrentLobby: () => {
+        const { client, lobby, subscription } = get();
+        if (client && client.connected && lobby) {
+            client.publish({
+                destination: `/app/lobby/${lobby.lobbyId}/leave`
+            });
+            if (subscription) {
+                subscription.unsubscribe();
+            }
+            set({ lobby: null, lastAnswerCorrect: null, selectedOptionId: null, subscription: null });
         }
     },
 
@@ -88,11 +108,21 @@ export const useMultiplayerStore = create<MultiplayerState>((set, get) => ({
         const { client } = get();
         if (!client || !client.connected) return;
 
+        const { subscription } = get();
+        if (subscription) {
+            subscription.unsubscribe();
+        }
+
         // Subscribe to lobby updates
-        client.subscribe(`/topic/lobby/${lobbyId}`, (message) => {
-            const lobbyState = JSON.parse(message.body);
-            set({ lobby: lobbyState });
+        const newSubscription = client.subscribe(`/topic/lobby/${lobbyId}`, (message) => {
+            const currentState = get();
+            if (currentState.subscription?.id === newSubscription.id) {
+                const lobbyState = JSON.parse(message.body);
+                set({ lobby: lobbyState });
+            }
         });
+
+        set({ subscription: newSubscription });
 
         // Send join message
         client.publish({

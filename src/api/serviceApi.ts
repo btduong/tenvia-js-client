@@ -99,9 +99,9 @@ export const serviceApi = {
     );
   },
 
-  async createMultiplayerLobby(): Promise<{ lobbyId: string }> {
+  async createMultiplayerLobby(limit: number = 10): Promise<{ lobbyId: string }> {
     return fetchWithToken<{ lobbyId: string }>(
-      `${SESSION_BASE_URL}/api/multiplayer/lobby`,
+      `${SESSION_BASE_URL}/api/multiplayer/lobby?limit=${limit}`,
       { method: 'POST' }
     );
   },
