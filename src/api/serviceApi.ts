@@ -99,6 +99,13 @@ export const serviceApi = {
     );
   },
 
+  async createMultiplayerLobby(): Promise<{ lobbyId: string }> {
+    return fetchWithToken<{ lobbyId: string }>(
+      `${SESSION_BASE_URL}/api/multiplayer/lobby`,
+      { method: 'POST' }
+    );
+  },
+
   async getQuestion(sessionId: string): Promise<Question> {
     return fetchWithToken<Question>(`${SESSION_BASE_URL}/sessions/${sessionId}/questions/next`, {
       method: 'GET',

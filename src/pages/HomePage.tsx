@@ -65,7 +65,8 @@ const HomePage: React.FC = () => {
             </DialogContent>
           </Dialog>
 
-          <NavButton to="/leaderboard" label="Leaderboard" ariaLabel="To Leaderboard" className="w-full h-16 text-xl font-extrabold rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md bg-secondary text-secondary-foreground hover:bg-secondary/80" />
+          <NavButton to="/multiplayer" label="Multiplayer" ariaLabel="To Multiplayer" className="w-full h-16 text-xl font-extrabold rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md bg-primary text-primary-foreground hover:bg-primary/90 mt-2" />
+          <NavButton to="/leaderboard" label="Leaderboard" ariaLabel="To Leaderboard" className="w-full h-16 text-xl font-extrabold rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-md bg-secondary text-secondary-foreground hover:bg-secondary/80 mt-2" />
         </CardContent>
       </Card>
       {/* <NavButton to="/shop" label="Shop" ariaLabel="To Shop" /> */}

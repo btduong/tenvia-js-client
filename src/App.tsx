@@ -11,6 +11,7 @@ import LeaderboardPage from './pages/LeaderboardPage';
 import { LoginPage } from './pages/LoginPage';
 import QuizCardPage from './pages/QuizCardPage';
 import SummaryPage from './pages/SummaryPage';
+import MultiplayerPage from './pages/MultiplayerPage';
 import { useGameSessionErrors } from './hooks/useGameSessionErrors';
 import { useGameStore } from './store/useGameStore';
 
@@ -99,6 +100,12 @@ const App: React.FC = () => {
             </ProtectedRoute>
           }
           />
+
+          <Route path="/multiplayer" element={
+            <ProtectedRoute user={user}>
+              <MultiplayerPage />
+            </ProtectedRoute>
+          } />
 
           <Route path="/leaderboard" element={
             <ProtectedRoute user={user}>
